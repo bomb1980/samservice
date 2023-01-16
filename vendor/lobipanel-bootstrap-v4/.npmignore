@@ -1,0 +1,15 @@
+/.idea/
+/.sass-cache/
+/bower_components/
+/css/
+/demo/
+/bootstrap/
+/js/
+/lib/
+/scss/
+/less/
+/gruntfile.js
+/bower.json
+/index.html
+/index-old.html
+!/dist/

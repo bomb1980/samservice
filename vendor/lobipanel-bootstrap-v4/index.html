@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Lobipanel - jQuery plugin for bootstrap panels. It extends panels with several common and useful functions.</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="bower_components/jquery-ui/themes/ui-lightness/jquery-ui.min.css"/>
+    <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css"/>
+
+    <link rel="stylesheet" href="dist/css/lobipanel.min.css"/>
+
+    <link rel="stylesheet" href="lib/highlight/github.css"/>
+    <link rel="stylesheet" href="demo/documentation.css"/>
+    <link rel="stylesheet" href="demo/demo.css"/>
+</head>
+<body>
+<div id="lobipanel">
+    <div class="container">
+        <p></p>
+        <div class="alert alert-info">
+            <p>For documentation visit <a href="http://lobianijs.com/site/lobipanel">Lobipanel webpage</a></p>
+        </div>
+        <div id="lobipanel-examples">
+            <!--Basic example-->
+            <div>
+                <h3>Basic example</h3>
+                <div class="bs-example">
+                    <div class="card lobipanel-1">
+                        <div class="card-header">
+                            <h4 class="card-title">Panel title</h4>
+                        </div>
+                        <div class="card-block">Lorem ipsum dolor sit amet concealed leaf shah proper council binary.
+                            Concealed assured affairs faces, finish easily glows shouted faint. Sentence
+                            islands spouting we unbeguiled, faces concealed. Diam rays countries, faces
+                            fames peeling bind wary catch solomon, painting, they beats evil. Failing
+                            newer landscapes steal retinues vidi rays echoes sheltered evil. Veins
+                            concealed spouting obtaining delight wild. Venenatis failing wreaths shouted
+                            countries wild, privilege climbing.
+                            <p></p>
+                            <div class="highlight">
+                                <pre><code>$('selector').lobiPanel();</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Custom controls-->
+            <div>
+                <h3>Disable control buttons</h3>
+                <div class="bs-example">
+                    <div class="card lobipanel-2">
+                        <div class="card-header">
+                            <h4 class="card-title">Panel title</h4>
+                        </div>
+                        <div class="card-block">Lorem ipsum dolor sit amet concealed leaf shah proper council binary.
+                            Concealed assured affairs faces, finish easily glows shouted faint. Sentence
+                            islands spouting we unbeguiled, faces concealed. Diam rays countries, faces
+                            fames peeling bind wary catch solomon, painting, they beats evil. Failing
+                            newer landscapes steal retinues vidi rays echoes sheltered evil. Veins
+                            concealed spouting obtaining delight wild. Venenatis failing wreaths shouted
+                            countries wild, privilege climbing.
+                            <p></p>
+                            <div class="highlight">
+                                <pre><code>$('selector').lobiPanel({ reload: false, close: false, editTitle: false });</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Stateful-->
+            <div>
+                <h3>Stateful. <small>Saves its state in localStorage</small></h3>
+                <div class="bs-example">
+                    <div id="lobipanel-stateful" class="card lobipanel-3" data-inner-id="lobipanel-stateful">
+                        <div class="card-header">
+                            <h4 class="card-title">Panel title</h4>
+                        </div>
+                        <div class="card-block">Lorem ipsum dolor sit amet concealed leaf shah proper council binary.
+                            Concealed assured affairs faces, finish easily glows shouted faint. Sentence
+                            islands spouting we unbeguiled, faces concealed. Diam rays countries, faces
+                            fames peeling bind wary catch solomon, painting, they beats evil. Failing
+                            newer landscapes steal retinues vidi rays echoes sheltered evil. Veins
+                            concealed spouting obtaining delight wild. Venenatis failing wreaths shouted
+                            countries wild, privilege climbing.
+                            <p></p>
+                            <div class="highlight">
+                                <pre><code>$('selector').lobiPanel({ stateful: true });</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Constrain panel size-->
+            <div>
+                <h3>Constrain panel size</h3>
+                <p>Unpin the panel and try to resize it.</p>
+                <div class="bs-example">
+                    <div class="card lobipanel-4">
+                        <div class="card-header">
+                            <h4 class="card-title">Panel title</h4>
+                        </div>
+                        <div class="card-block">Lorem ipsum dolor sit amet concealed leaf shah proper council binary.
+                            Concealed assured affairs faces, finish easily glows shouted faint. Sentence
+                            islands spouting we unbeguiled, faces concealed. Diam rays countries, faces
+                            fames peeling bind wary catch solomon, painting, they beats evil. Failing
+                            newer landscapes steal retinues vidi rays echoes sheltered evil. Veins
+                            concealed spouting obtaining delight wild. Venenatis failing wreaths shouted
+                            countries wild, privilege climbing.
+                            <p></p>
+                            <div class="highlight">
+                                <pre><code>$('selector').lobiPanel({minWidth: 300, minHeight: 300, maxWidth: 600, maxHeight: 480 });</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Unpinned example-->
+            <div>
+                <h3>Unpinned example</h3>
+                <div class="bs-example">
+                    <div class="card lobipanel-9">
+                        <div class="card-header">
+                            <h4 class="card-title">Panel title (Unpinned)</h4>
+                        </div>
+                        <div class="card-block">Lorem ipsum dolor sit amet concealed leaf shah proper council binary.
+                            Concealed assured affairs faces, finish easily glows shouted faint. Sentence
+                            islands spouting we unbeguiled, faces concealed. Diam rays countries, faces
+                            fames peeling bind wary catch solomon, painting, they beats evil. Failing
+                            newer landscapes steal retinues vidi rays echoes sheltered evil. Veins
+                            concealed spouting obtaining delight wild. Venenatis failing wreaths shouted
+                            countries wild, privilege climbing.
+                            <p></p>
+                            <div class="highlight">
+                                <pre><code>$('selector').lobiPanel({state: 'unpinned'});</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Multiple lobiPanels-->
+            <div id="lobipanel-multiple">
+                <h3>Multiple panels with drag & drop</h3>
+                <p>Drag panels by clicking on the headers</p>
+                <div class="bs-example">
+                    <div class="row">
+                        <div class="lobipanel-parent-sortable col-6">
+                            <div class="card lobipanel-5">
+                                <div class="card-header">
+                                    <h4 class="card-title">Panel title 1</h4>
+                                </div>
+                                <div class="card-block">Lorem ipsum dolor sit amet concealed leaf shah proper council binary.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lobipanel-parent-sortable col-6">
+                            <div class="card lobipanel-6">
+                                <div class="card-header">
+                                    <h4 class="card-title">Panel title 2</h4>
+                                </div>
+                                <div class="card-block">Lorem ipsum dolor sit amet concealed leaf shah proper council binary.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="lobipanel-parent-sortable col-6">
+                            <div class="card lobipanel-7">
+                                <div class="card-header">
+                                    <h4 class="card-title">Panel title 3</h4>
+                                </div>
+                                <div class="card-block">Lorem ipsum dolor sit amet concealed leaf shah proper council binary.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lobipanel-parent-sortable col-6">
+                            <div class="card lobipanel-8">
+                                <div class="card-header">
+                                    <h4 class="card-title">Panel title 4</h4>
+                                </div>
+                                <div class="card-block">Lorem ipsum dolor sit amet concealed leaf shah proper council binary.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+        </div>
+    </div>
+</div>
+
+<script src="bower_components/tether/dist/js/tether.min.js"></script>
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
+<script src="bower_components/jquery-ui-touch-punch-improved/jquery.ui.touch-punch-improved.js"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<script src="dist/js/lobipanel.js"></script>
+
+<script src="lib/highlight/highlight.pack.js"></script>
+<script>
+    $(function(){
+        $('.lobipanel-1').lobiPanel();
+        $('.lobipanel-2').lobiPanel({
+            reload: false,
+            close: false,
+            editTitle: false
+        });
+        $('.lobipanel-3').lobiPanel({
+            stateful: true
+        });
+        $('.lobipanel-4').lobiPanel({
+            minWidth: 300,
+            minHeight: 300,
+            maxWidth: 600,
+            maxHeight: 480
+        });
+        $('.lobipanel-9').lobiPanel({
+            state: 'unpinned'
+        });
+        $('#lobipanel-multiple').find('.card').lobiPanel({
+            sortable: true
+        });
+    });
+</script>
+</body>
+</html>

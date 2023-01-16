@@ -1,0 +1,47 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+	<script type="text/javascript">
+window.onload = function () {
+	var chart = new CanvasJS.Chart("chartContainer",
+	{
+		title:{
+			text: "How my time is spent in a week?",
+			fontFamily: "arial black"
+		},
+                animationEnabled: true,
+		legend: {
+			verticalAlign: "bottom",
+			horizontalAlign: "center"
+		},
+		theme: "theme1",
+		data: [
+		{        
+			type: "pie",
+			indexLabelFontFamily: "Garamond",       
+			indexLabelFontSize: 20,
+			indexLabelFontWeight: "bold",
+			startAngle:0,
+			indexLabelFontColor: "MistyRose",       
+			indexLabelLineColor: "darkgrey", 
+			//indexLabelPlacement: "inside", 
+			toolTipContent: "{name} : {y} รายการ (#percent%)",
+			showInLegend: true,
+			indexLabel: "{name} : {y} รายการ (#percent%)", 
+			dataPoints: [
+				{  y: 2, name: "ตรวจสอบแล้ว"},
+				{  y: 17, name: "รอผล"},
+			]
+		}
+		]
+	});
+	chart.render();
+}
+	</script>
+	<script src="../../canvasjs.min.js"></script>
+	<title>CanvasJS Example</title>
+</head>
+<body>
+	<div id="chartContainer" style="height: 400px; width: 100%;"></div>
+</body>
+</html>

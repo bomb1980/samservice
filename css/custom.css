@@ -1,0 +1,67 @@
+.navbar-brand-logo {
+   height: 2.86rem;
+    margin-top: -.557rem;
+
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 768px) {
+    .example-title{
+      line-height: 100% !important;
+    }
+}
+@font-face {
+  font-family: "Prompt-Regular";
+  src: url(fonts/Prompt-Regular.ttf) format("truetype");
+}
+
+body {
+	font-family: Prompt-Regular !important;
+	color:#535a60 !important;
+}
+.form-control, .dropdown-item {
+	color: #535a60;
+}
+.navbar-default .navbar-toolbar .nav-link {
+    display: block;
+    color: #535a60;
+}
+.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+   font-family: Prompt-Regular !important;
+}
+.site-menu-category {
+	font-family: Prompt-Regular !important;
+	font-size: 17px !important;
+	color:#535a60 !important;
+}
+.site-menu-title {
+	font-family: Prompt-Regular !important;
+	font-size: 16px !important;
+	color:#535a60 !important;	
+	/*white-space:normal; */
+}
+.site-menu-title-overflow{
+	line-height:16px;
+	white-space:normal;
+	padding-top:5px;
+	padding-bottom:5px;
+}
+.info-wrap {
+    color:#535a60 !important;
+    text-align: left;
+}
+
+.table tfoot th, .table thead th, .table tbody tr {
+	color: #535a60;
+}
+
+.required .control-label:after {
+	content:"*";
+	color:red;
+  }
+ @media only screen and (min-width : 768px) {
+	.navbar-brand-logo{
+		width: 250px;
+		height: 60px;
+		margin-top: -20px;
+		margin-left: -15px;
+	}
+ }
