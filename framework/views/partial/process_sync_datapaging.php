@@ -10,7 +10,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   $start_time = microtime(true);
 
-
   $page = $_REQUEST['page'];
 
   $perpage = $_REQUEST['perpage'];

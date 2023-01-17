@@ -144,23 +144,50 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 
 	});
 
+
 	async function calltask() {
-		await callApi()
-		await sync_data() 
-    }
+		const [totalPage, limit, totalRow] = await callApi()
+
+		await sync_data(totalPage, limit, totalRow)
+	}
 	async function callApi() {
-		
+		/*
+		return new Promise(function(resolve, reject) {
+			resolve(["test1", "test2"]);
+		})*/
+
+		return new Promise(function(resolve, reject, totalRow) {
+
+			$.ajax({
+				url: "<?php echo Yii::$app->urlManager->createUrl("empdata/getapiinfomation"); ?>",
+				method: "POST",
+				cache: false,
+				data: {
+					'<?= Yii::$app->request->csrfParam ?>': '<?php echo Yii::$app->request->csrfToken; ?>',
+					'rand': '<?php echo time(); ?>',
+				},
+				success: function(data) {
+					//$(".sync_progress1").html(data);
+					let totalPage = data.totalPage;
+					let limit = data.limit;
+					let totalRow = data.totalRow;
+					resolve([totalPage, limit, totalRow]);
+				}
+			});
+
+		});
+
+
 	}
 
 
-	async function sync_data() {
-		
+	async function sync_data(totalPage, limit, totalRow) {
+
 		/*
 		var result = confirm("ระบบการอัพเดตข้อมูลอาจใช้เวลานาน ต้องการทำงานต่อหรือไม่ ?");
 		if (!result) {
 			return;
 		}*/
-
 
 		$.ajax({
 			url: "<?php echo Yii::$app->urlManager->createUrl("partial/sync_datapaging"); ?>",
@@ -169,6 +196,9 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 			data: {
 				'<?= Yii::$app->request->csrfParam ?>': '<?php echo Yii::$app->request->csrfToken; ?>',
 				'rand': '<?php echo time(); ?>',
+				'totalPage': totalPage,
+				'limit': limit,
+				'totalRow': totalRow
 			},
 			success: function(data) {
 				$(".sync_progress1").html(data);

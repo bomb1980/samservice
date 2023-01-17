@@ -50,6 +50,109 @@ class EmpdataController extends Controller
         }
     }
 
+    public function actionGetapiinfomation()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        error_reporting(E_ALL | E_STRICT);
+        try {
+
+            $url_gettoken = "https://dpis6uat.sso.go.th/oapi/login";
+
+            $url_gettoken = 'https://sso.dpis.go.th/oapi/login';
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => $url_gettoken,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_SSL_VERIFYHOST => 0,
+                CURLOPT_SSL_VERIFYPEER => 0,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => '{
+                "username":"niras_s@hotmail.com",
+                "password":"LcNRemVEmAbS4Cv"
+            }',
+                CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/json'
+                ),
+            ));
+            // UAT DJs4FkJcxzZUp9T
+            // PRD LcNRemVEmAbS4Cv
+
+            $response = curl_exec($curl);
+            if (curl_errno($curl)) {
+                return false;
+            }
+
+            curl_close($curl);
+            $result = json_decode($response, true);
+
+            if (json_last_error() === JSON_ERROR_NONE) {
+                if (array_key_exists("error", $result)) {
+                    $arrsms = array(
+                        'status' => 'error',
+                        'msg' => $result['error']['message'],
+                    );
+                    return $arrsms;
+                }
+                $accessToken = $result['accessToken'];
+                $encrypt_key = $result['encrypt_key'];
+            } else {
+                $arrsms = array(
+                    'status' => 'error',
+                    'msg' => "",
+                );
+                return $arrsms;
+            }
+
+            //echo $accessToken;
+            //exit;
+
+            $url = "https://dpis6uat.sso.go.th/oapi/open_api_users/callapi";
+            $url = "https://sso.dpis.go.th/oapi/open_api_users/callapi";
+            $header = array(
+                'Content-Type: application/x-www-form-urlencoded',
+                'Authorization: ' . $accessToken
+            );
+            $param = array(
+                'endpoint' => 'sso_personal',
+                'limit' => 1000,
+            );
+
+            $data_result = $this->calleservice($url, $header, $param);
+
+            if ($data_result['message'] != "success") {
+                $arrsms = array(
+                    'status' => 'error',
+                    'msg' => "",
+                );
+                return $arrsms;
+            }
+
+            $data = $data_result["data"];
+            $decrypt_data = $this->ssl_decrypt_api($data, $encrypt_key);
+            $js = json_decode($decrypt_data, true);
+
+            $totalPage = $data_result['totalPage'];
+            $limit = $data_result['limit'];
+            $totalRow = $data_result['totalRow'];
+
+            $arrsms = array(
+                'status' => 'success',
+                'totalPage' => $totalPage,
+                'limit' => $limit,
+                'totalRow' => $totalRow,
+            );
+            return $arrsms;
+        } catch (\Exception $e) {
+            return 'error ' . $e->getMessage();
+        }
+    }
+
+
     public function actionProcesssyndata()
     {
         $seltype = null;
@@ -149,6 +252,8 @@ class EmpdataController extends Controller
             );
             $param = array(
                 'endpoint' => 'sso_personal',
+                'limit' => 1000,
+                'page' => 1
             );
 
             $data_result = $this->calleservice($url, $header, $param);
@@ -164,6 +269,17 @@ class EmpdataController extends Controller
             $data = $data_result["data"];
             $decrypt_data = $this->ssl_decrypt_api($data, $encrypt_key);
             $js = json_decode($decrypt_data, true);
+
+            $log_path = Yii::$app->getRuntimePath() . '\logs\logAll_' . date('d-M-Y') . '.log'; 
+            $results = print_r($decrypt_data, true);
+             \app\components\CommonFnc::write_log($log_path, $results);exit;
+
+            echo count($js);
+            
+            exit;
+
+         
+
 
             $totalPage = $data_result['totalPage'];
 
@@ -186,6 +302,10 @@ class EmpdataController extends Controller
                     $merge = array_merge($merge, $next_js);
                 }
             }
+
+            //$log_path = Yii::$app->getRuntimePath() . '\logs\dasddsfdds' . date('d-M-Y') . '.txt'; 
+            //\app\components\CommonFnc::write_log($log_path, json_encode($merge));
+
             // $log_path = Yii::$app->getRuntimePath() . '\logs\log_' . date('d-M-Y') . '.log'; 
             // $results = print_r($merge, true);
             //  \app\components\CommonFnc::write_log($log_path, $results);
@@ -527,13 +647,13 @@ class EmpdataController extends Controller
                         $cmd = $conn->createCommand("BEGIN " . $sql . "; END;");
                         $govup = $cmd->execute();
                     }
-                    
+
                     $arrsms = array(
                         'status' => 'success',
                         'msg' => count($arrGov),
                     );
                 }
-                
+
                 if ($seltype == 2) {
                     $arrsplit = array_chunk($arrEmp, 100, false);
                     foreach ($arrsplit as $item) {
@@ -541,7 +661,7 @@ class EmpdataController extends Controller
                         $cmdemp = $connemp->createCommand("BEGIN " . $sql . "; END;");
                         $empup = $cmdemp->execute();
                     }
-                    
+
                     $arrsms = array(
                         'status' => 'success',
                         'msg' => count($arrEmp),

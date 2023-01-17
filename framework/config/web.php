@@ -3,8 +3,8 @@
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
-$dbhost = 'mysql:host=127.0.0.1;';
-// $dbhost = $params['data_ctrl']['dbhost'];
+//$dbhost = 'mysql:host=127.0.0.1;';
+$dbhost = $params['data_ctrl']['dbhost'];
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
@@ -56,40 +56,22 @@ $config = [
 			'class' => 'app\components\CustomWebUser',
         ],*/
         #'db' => $db,
-        // 'dbdpis' => [
-        //     'class' => 'yii\db\Connection',
-        //     'dsn' => $params['data_ctrl']['dbhostdpis'],
-        //     'username' => 'DPIS',
-        //     'password' => 'APP@dpis',
-        //     'attributes' => [
-        //         PDO::ATTR_TIMEOUT => 100000, 
-        //     ]
-        // ],
-        // 'dbdpisemp' => [
-        //     'class' => 'yii\db\Connection',
-        //     'dsn' => $params['data_ctrl']['dbhostdpis'],
-        //     'username' => 'DPISEMP1',
-        //     'password' => 'APP@dpisemp1',
-        //     'attributes' => [
-        //         PDO::ATTR_TIMEOUT => 100000, 
-        //     ]
-        // ],
         'dbdpis' => [
             'class' => 'yii\db\Connection',
-            'dsn' => $dbhost . 'dbname=dpis6agent',
-            'username' => 'root',
+            'dsn' => $params['data_ctrl']['dbhostdpis'],
+            'username' => 'DPIS',
             'password' => 'APP@dpis',
             'attributes' => [
-                PDO::ATTR_TIMEOUT => 100000, 
+                PDO::ATTR_TIMEOUT => 100000, // timeout value in seconds
             ]
         ],
         'dbdpisemp' => [
             'class' => 'yii\db\Connection',
-            'dsn' => $dbhost . 'dbname=dpis6agent',
+            'dsn' => $params['data_ctrl']['dbhostdpis'],
             'username' => 'DPISEMP1',
             'password' => 'APP@dpisemp1',
             'attributes' => [
-                PDO::ATTR_TIMEOUT => 100000, 
+                PDO::ATTR_TIMEOUT => 100000, // timeout value in seconds
             ]
         ],
         'db' => [

@@ -9,8 +9,8 @@ Yii::$app->session->remove('total_all');
 Yii::$app->session->remove('executionTimeAll');
 
 
-$perpage = 1000;
-$total = 10000;
+$perpage = $_POST['limit'];
+$total = $_POST['totalRow'];;
 
 $pageCount =  ceil($total / $perpage);
 
@@ -74,7 +74,7 @@ $pageCount =  ceil($total / $perpage);
 
 
     async function runSync() {
-        for (var i = 1; i < <?php echo $pageCount + 1; ?>; i++) {
+        for (var i = 1; i < <?php echo $pageCount + 1 ; ?>; i++) {
             if (i == 1) {
                 start = 0;
                 end = <?php echo $perpage ?>;

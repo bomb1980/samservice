@@ -15,7 +15,7 @@ class LoginController extends Controller
 
 	public function actionIndex()
 	{
-		// echo "punt";exit;
+		//echo "punt";exit;
 		/* 		$idplib = new idplib();
 		$idplib->getIdpinfo();
 		$idplib->setStateuser(); */
@@ -30,7 +30,6 @@ class LoginController extends Controller
 	}
 	public function actionAuth()
 	{
-		// echo Json::encode(array('status' => 'success', 'msg' => '',)); exit;
 		//echo Yii::$app->request->isAjax;
 		//exit;
 		//echo Yii::$app->getSecurity()->validatePassword('48630711', '$2y$13$O2QRcmrlnZBMtNYizasBOuY.b.iFWJoZrl0i5vZmBBlSxhJqc/hzu');exit;
@@ -48,7 +47,7 @@ class LoginController extends Controller
 			$common->uid = $uid;
 			$common->displayname = $displayname;
 			$common->ssobranch_code = $ssobranch_code;
-			$common->Check_mas_user();
+			$rows = $common->Check_mas_user();
 
 			$common->AddLoginSession();
 			$common->AddLoginLog("Login", "ok");
