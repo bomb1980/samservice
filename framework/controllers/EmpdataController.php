@@ -30,6 +30,229 @@ class EmpdataController extends Controller
         return $this->render('view');
     }
 
+    
+    // http://samservice/empdata/gogo
+    public function actionGogo()
+    {
+
+
+        
+        $con = Yii::$app->dbdpis;
+
+        $con2 = Yii::$app->dbdpisemp;
+ 
+
+        $arr = [
+            'per_cardno',
+            'per_name',
+            'per_surname',
+            'per_status',
+            'per_eng_name',
+            'per_eng_surname',
+            'per_startdate',
+            'per_occupydate',
+            'level_no',
+        ];
+
+        $sql = "SELECT * FROM per_personal ORDER BY per_id ASC";
+
+        $gogog = [1, 2];
+        
+        foreach( $gogog as $kg => $vg ) {
+
+            if( $vg == 1) {
+
+                $cmd = $con->createCommand( $sql );
+            }
+            else {
+
+                $cmd = $con2->createCommand( $sql );
+            }
+            
+
+            $keep[$vg] = [];
+            foreach( $cmd->queryAll() as $ka => $va ) {
+    
+    
+                $concat = '';
+                foreach( $arr as $kf => $vf ) {
+    
+                    $vf = strtoupper( $vf );
+    
+                    $concat .= $va[$vf] . '-';
+                }
+    
+                $keep[$vg][] = $concat;
+                $per_ids[$vg] = $va['PER_ID'];
+    
+            }
+
+        }
+
+
+        // arr();
+
+        $test = file_get_contents( 'dasddsfdds16-Jan-2023.txt' );
+        $nocard = 0;
+
+    
+        $sql = "SELECT level_no, level_name FROM per_level";
+        $cmd = $con->createCommand( $sql );
+        $levels = [];
+        foreach( $cmd->queryAll() as $ka => $va ) {
+            
+            $levels[$va['LEVEL_NAME']] = $va['LEVEL_NO'];
+        }
+
+
+        $arr = [
+            'per_cardno',
+            'per_name',
+            'per_surname',
+            'per_status',
+            'per_eng_name',
+            'per_eng_surname',
+            'per_startdate',
+            'per_occupydate',
+            
+        ];
+
+        $SqlUnion = [];
+
+        foreach( json_decode( $test ) as $ka => $va ) {
+
+            if( empty( $va->per_cardno ) ) {
+                
+                ++$nocard;
+                continue;
+            }
+            
+            $cards[$va->per_cardno] = 1;
+
+            if( in_array( $va->pertype_id, [5, 42, 43, 44])) {
+
+                $setType = 1;
+            }
+            else {
+                $setType = 2;
+            }
+
+            if( !isset( $per_ids[$setType] )  ) {
+
+                $per_ids[$setType] = 0;
+
+            }
+
+            if( !isset(  $levels[$va->levelname_th]  ) ) {
+                $levels[$va->levelname_th] = '-';
+            }
+
+            $concat = '';
+            foreach( $arr as $kf => $vf ) {
+
+                $concat .= $va->$vf . '-';
+            }
+
+            $concat .= $levels[$va->levelname_th] . '-';
+
+            if( in_array($concat, $keep[$setType] )) {
+                continue;
+            }
+
+
+            $SqlUnion[$setType][] = "
+                SELECT 
+                    '". $va->pertype_id ."' AS pertype_id,
+                    '". ++$per_ids[$setType] ."' AS per_id,
+                    '". $va->per_name ."' AS per_name,
+                    '". $va->per_cardno ."' AS per_cardno,
+                    '". $va->per_surname ."' AS per_surname,
+                    '". $va->per_eng_name ."' AS per_eng_name,
+                    '". $va->per_eng_surname ."' AS per_eng_surname,
+                    '". $va->birth_date ."' AS per_birthdate,
+                    '". $va->per_startdate ."' AS per_startdate,
+                    '". $va->per_occupydate ."' AS per_occupydate,
+                    '". $va->per_status ."' AS per_status,
+                    '". $levels[$va->levelname_th] ."' AS level_no
+                FROM dual
+            ";
+
+            foreach( $SqlUnion as $ks => $vs ) {
+
+                if( count( $vs ) == 1000 ) {
+
+    
+                    $sql = "
+                        MERGE INTO per_personal d
+                        USING ( 
+                            ". implode( ' UNION ', $vs )."
+                        ) s ON ( 1 = 0 )
+                        WHEN NOT MATCHED THEN
+                            INSERT  ( level_no, level_no_salary,   per_type, per_id, per_name, per_cardno, per_surname, per_eng_name, per_eng_surname, per_birthdate, per_startdate, per_occupydate, per_status ) VALUES
+                            ( s.level_no, 'C4', s.pertype_id, s.per_id, s.per_name, s.per_cardno, s.per_surname, s.per_eng_name, s.per_eng_surname, s.per_birthdate, s.per_startdate, s.per_occupydate, s.per_status )
+                       
+                    ";
+    
+
+                    if( $ks == 1 ) {
+                        $cmd = $con->createCommand( $sql );
+                    }
+                    else {
+
+                        $cmd = $con2->createCommand( $sql );  
+                    }
+                    
+                    $cmd->execute();
+
+                    $SqlUnion[$ks] = [];
+                }
+            }
+        }
+
+
+        foreach( $SqlUnion as $ks => $vs ) {
+
+            if( count( $vs ) > 0 ) {
+
+
+                $sql = "
+                    MERGE INTO per_personal d
+                    USING ( 
+                        ". implode( ' UNION ', $vs )."
+                    ) s ON ( 1 = 0 )
+                    WHEN NOT MATCHED THEN
+                        INSERT  ( level_no, level_no_salary,   per_type, per_id, per_name, per_cardno, per_surname, per_eng_name, per_eng_surname, per_birthdate, per_startdate, per_occupydate, per_status ) VALUES
+                        ( s.level_no, 'C4', s.pertype_id, s.per_id, s.per_name, s.per_cardno, s.per_surname, s.per_eng_name, s.per_eng_surname, s.per_birthdate, s.per_startdate, s.per_occupydate, s.per_status )
+                   
+                ";
+
+
+                if( $ks == 1 ) {
+                    $cmd = $con->createCommand( $sql );
+                }
+                else {
+
+                    $cmd = $con2->createCommand( $sql );  
+                }
+                
+                $cmd->execute();
+                
+                $SqlUnion[$ks] = [];
+            }
+        }
+
+        $keep = [];
+     
+        $levels = [];
+
+
+        echo count($cards); 
+        echo '<br>';
+
+        echo $nocard;
+    }
+
+
 
     public function actionSelect()
     {
@@ -174,13 +397,7 @@ class EmpdataController extends Controller
             $conn = Yii::$app->dbdpis;
             $connemp = Yii::$app->dbdpisemp;
 
-            /*
-            $SQL = "SELECT * FROM PER_PERSONAL";
-            $command = $conn->createCommand($SQL);
-            //$command->bindValue($key, $value);
-            $rows = $command->queryAll();
-            var_dump($rows);
-            exit;*/
+           
 
 
             ini_set('memory_limit', '2048M');
@@ -303,12 +520,7 @@ class EmpdataController extends Controller
                 }
             }
 
-            //$log_path = Yii::$app->getRuntimePath() . '\logs\dasddsfdds' . date('d-M-Y') . '.txt'; 
-            //\app\components\CommonFnc::write_log($log_path, json_encode($merge));
-
-            // $log_path = Yii::$app->getRuntimePath() . '\logs\log_' . date('d-M-Y') . '.log'; 
-            // $results = print_r($merge, true);
-            //  \app\components\CommonFnc::write_log($log_path, $results);
+          
 
 
             $per_id = "";
@@ -519,117 +731,19 @@ class EmpdataController extends Controller
 
                             $resid =  $this->isValidNationalId(substr($per_cardno, 0, 13));
 
-                            /*
-                            $log_path = Yii::$app->getRuntimePath() . '\logs\logemp_' . date('d-M-Y') . '.txt';
-                            $results = 'พนักงาน '  . $per_id . $per_name . " " . $per_surname . " " . 'ผล ' . $intup . " " . $resid;
-                            \app\components\CommonFnc::write_log($log_path, $results);*/
+                           
 
                             if ($intup == 0) {
-                                /*
-                                $sql = "UPDATE PER_PERSONAL SET 
-                                PER_NAME=:PER_NAME ,PER_SURNAME=:PER_SURNAME ,
-                                PER_ENG_NAME=:PER_ENG_NAME ,PER_ENG_SURNAME=:PER_ENG_SURNAME, 
-                                PER_CARDNO=:PER_CARDNO,
-                                PER_BIRTHDATE=:PER_BIRTHDATE, 
-                                PER_STARTDATE=:PER_STARTDATE, PER_OCCUPYDATE=:PER_OCCUPYDATE, 
-                                PER_STATUS=:PER_STATUS 
-                                WHERE PER_NAME=:PER_NAME AND PER_SURNAME=:PER_SURNAME ";
-                                $cmdemp = $connemp->createCommand($sql);
-                                //$cmdemp->bindValue(":PN_CODE", $PN_);
-                                $cmdemp->bindValue(":PER_NAME", $per_name);
-                                $cmdemp->bindValue(":PER_SURNAME", $per_surname);
-                                $cmdemp->bindValue(":PER_ENG_NAME", $per_eng_name);
-                                $cmdemp->bindValue(":PER_ENG_SURNAME", $per_eng_surname);
-                                $cmdemp->bindValue(":PER_CARDNO", $per_cardno);
-                                $cmdemp->bindValue(":PER_BIRTHDATE", $birth_date);
-                                $cmdemp->bindValue(":PER_STARTDATE", $per_startdate);
-                                $cmdemp->bindValue(":PER_OCCUPYDATE", $per_occupydate);
-                                $cmdemp->bindValue(":PER_STATUS", $per_status);
-                                
-                                $intup = $cmdemp->execute();*/
+                               
                             }
                             break;
                     }
 
-                    /*
-                    $sql = "SELECT * FROM PER_PERSONAL WHERE PER_CARDNO=:PER_CARDNO ";
-                    $command = $conn->createCommand($sql);
-                    $command->bindValue(":PER_CARDNO", $per_cardno);
-                    $rows = $command->queryAll();
-
-                    if (count($rows) == 0) {
-                        //ถ้าไม่พบใน db ข้าราชการให้มาหาใน db พนักงาน
-                        $command = $connemp->createCommand($sql);
-                        $command->bindValue(":PER_CARDNO", $per_cardno);
-                        $rowsemp = $command->queryAll();
-                        if (count($rowsemp) > 0) {
-                            //update db พนักงาน
-                            $sql = "UPDATE PER_PERSONAL SET 
-                            PER_NAME=:PER_NAME ,PER_SURNAME=:PER_SURNAME ,
-                            PER_ENG_NAME=:PER_ENG_NAME ,PER_ENG_SURNAME=:PER_ENG_SURNAME, 
-                            PER_BIRTHDATE=:PER_BIRTHDATE, 
-                            PER_STARTDATE=:PER_STARTDATE, PER_OCCUPYDATE=:PER_OCCUPYDATE, 
-                            PER_STATUS=:PER_STATUS 
-                            WHERE PER_CARDNO=:PER_CARDNO ";
-                            $cmdemp = $connemp->createCommand($sql);
-                            //$cmdemp->bindValue(":PN_CODE", $PN_);
-                            $cmdemp->bindValue(":PER_NAME", $per_name);
-                            $cmdemp->bindValue(":PER_SURNAME", $per_surname);
-                            $cmdemp->bindValue(":PER_ENG_NAME", $per_eng_name);
-                            $cmdemp->bindValue(":PER_ENG_SURNAME", $per_eng_surname);
-                            $cmdemp->bindValue(":PER_BIRTHDATE", $birth_date);
-                            $cmdemp->bindValue(":PER_STARTDATE", $per_startdate);
-                            $cmdemp->bindValue(":PER_OCCUPYDATE", $per_occupydate);
-                            $cmdemp->bindValue(":PER_STATUS", $per_status);
-                            $cmdemp->bindValue(":PER_CARDNO", $per_cardno);
-                            //$cmdemp->execute();
-                        } else {
-                            $noemp = true;
-                        }
-                    } else {
-                        //update db ข้าราชการ
-                        $sql = "UPDATE PER_PERSONAL SET 
-                        PER_NAME=:PER_NAME ,PER_SURNAME=:PER_SURNAME ,
-                        PER_ENG_NAME=:PER_ENG_NAME ,PER_ENG_SURNAME=:PER_ENG_SURNAME, 
-                        PER_BIRTHDATE=:PER_BIRTHDATE, 
-                        PER_STARTDATE=:PER_STARTDATE, PER_OCCUPYDATE=:PER_OCCUPYDATE, 
-                        PER_STATUS=:PER_STATUS 
-                        WHERE PER_CARDNO=:PER_CARDNO ";
-                        $cmd = $conn->createCommand($sql);
-                        //$cmd->bindValue(":PN_CODE", $this->cover);
-                        $cmd->bindValue(":PER_NAME", $per_name);
-                        $cmd->bindValue(":PER_SURNAME", $per_surname);
-                        $cmd->bindValue(":PER_ENG_NAME", $per_eng_name);
-                        $cmd->bindValue(":PER_ENG_SURNAME", $per_eng_surname);
-                        $cmd->bindValue(":PER_BIRTHDATE", $birth_date);
-                        $cmd->bindValue(":PER_STARTDATE", $per_startdate);
-                        $cmd->bindValue(":PER_OCCUPYDATE", $per_occupydate);
-                        $cmd->bindValue(":PER_STATUS", $per_status);
-                        $cmd->bindValue(":PER_CARDNO", $per_cardno);
-                        //$cmd->execute();
-                    }
-
-                    if ($noemp) {
-                        //เพิ่มพนักงานเข้า DB ตามประเภท
-                        echo $per_cardno . '<br>';
-                        switch ($pertype_id) {
-                            case 5:
-                            case 42:
-                            case 43:
-                                //echo "the value is either 1 or 2";
-                                break;
-                            default:
-                                break;
-                        }
-                    }*/
-
-                    //var_dump($rows);
-                    //exit;
+                   
                     $noemp = false;
                 }
 
-                //$cmd = $conn->createCommand($sql);
-                //$intup = $cmd->execute();
+                
 
                 $List = implode(';', $arrNoGov);
                 $log_path = Yii::$app->getRuntimePath() . '\logs\NoGov' . date('d-M-Y') . '.txt';
