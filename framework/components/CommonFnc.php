@@ -345,7 +345,7 @@ class CommonFnc
 		else return "$strDay $strMonthThai $strYear";
 	}
 
-	public function calctime($seconds = 0)
+	public static function calctime($seconds = 0)
 	{
 		$interval = date_diff(date_create("@0"), date_create("@$seconds"));
 

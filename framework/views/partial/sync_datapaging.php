@@ -102,7 +102,7 @@ $pageCount =  ceil($total / $perpage);
         }
 
         $.ajax({
-            url: "<?php echo Yii::$app->urlManager->createUrl('partial/checker_sync_datapagingall', array('rand' => session_id() . time())); ?>",
+            url: "<?php echo yii\helpers\Url::toRoute(['partial/checker_sync_datapagingall', 'rand' => session_id() . time() ]); ?>",
             cache: false,
             success: function(data) {
                 $("#message").html(data.message);

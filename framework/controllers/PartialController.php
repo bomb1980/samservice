@@ -80,6 +80,25 @@ class PartialController extends Controller
 
     public function actionProcess_sync_datapaging()
     {
+
+        set_time_limit(0);
+
+        Yii::$app->session->remove('progress');
+        Yii::$app->session->remove('executionTime');
+        Yii::$app->session->remove('total_user');
+
+        $start_time = microtime(true);
+
+        $start = $_REQUEST['start'];
+        $end = $_REQUEST['end'];
+        $perpage = $_REQUEST['perpage'];
+        $total = $_REQUEST['total'];
+
+        if (!isset(Yii::$app->session['firstTime'])) {
+            Yii::$app->session['firstTime'] = $start_time;
+            Yii::$app->session['total_all'] = (int)$total;
+        }
+
         $page = null;
         if (!empty($_REQUEST['page'])) $page = $_REQUEST['page'];
 
@@ -87,7 +106,7 @@ class PartialController extends Controller
             $page = 1;
         }
 
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        //Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         error_reporting(E_ALL | E_STRICT);
         try {
 
@@ -212,6 +231,9 @@ class PartialController extends Controller
 
                 $cmd = $connemp->createCommand($SQL);
                 $rowsEmp = $cmd->queryAll();
+
+                $i = 1;
+                $subtotal = ($end - $start);
 
                 foreach ($js as $key => $value) {
                     //echo $value["per_id"] . "\n";
@@ -414,17 +436,39 @@ class PartialController extends Controller
                     $empup = $cmdemp->execute();
                 }
 
+                $percent = intval($i / $subtotal * 100);
+
+                // Put the progress percentage and message to array.
+                $arr_content['percent'] = $percent;
+                $arr_content['message'] = $i . "/" . $subtotal . " row(s) processed.";
+
+                $progress = json_encode($arr_content);
+
+                Yii::$app->session['progress'] = $progress;
+
+                if ($percent == 100) {
+                    $end_time = microtime(true);
+                    $executionTime = $end_time - $start_time;
+                    Yii::$app->session['executionTime'] = $executionTime;
+                    Yii::$app->session['total_user'] = $subtotal;
+                }
+
+                // Sleep one second so we can see the delay
+                //sleep(1);
+                $i++;
+
                 $arrsms = array(
                     'status' => 'success',
                     'msg' => count($arrEmp),
                 );
-                return $arrsms;
+                //return $arrsms;
+
             } else {
                 $arrsms = array(
                     'status' => 'error',
                     'msg' => "",
                 );
-                return $arrsms;
+                //return $arrsms;
             }
 
 
@@ -438,10 +482,23 @@ class PartialController extends Controller
                 'limit' => $limit,
                 'totalRow' => $totalRow,
             );
-            return $arrsms;
+           // return $arrsms;
         } catch (\Exception $e) {
             return 'error ' . $e->getMessage();
         }
+
+        $end_time = microtime(true);
+        $executionTime = $end_time - $start_time;
+
+        if (round($executionTime) > 0) {
+            $strTime = \app\components\CommonFnc::calctime(round($executionTime));
+        } else {
+            $strTime = $executionTime . " millisecond";
+        }
+        echo "จำนวนปรับปรุง : " . number_format(($end - $start)) . " เร็คคอร์ด , ใช้เวลา {$strTime}";
+
+        $executionTimeAll =  $end_time - Yii::$app->session['firstTime'];
+        Yii::$app->session['executionTimeAll'] = $executionTimeAll;
 
         //return $this->renderPartial('process_sync_datapaging');
     }

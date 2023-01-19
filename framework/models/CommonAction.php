@@ -576,8 +576,8 @@ class CommonAction
 			  `log_type`,
 			  `log_description`,
 			  `log_createby`,
-			  `log_ipaddress`,
-			  log_session_id
+			  `log_ipaddress`
+			   /*,log_session_id */
 			)
 			VALUES
 			  (
@@ -585,8 +585,8 @@ class CommonAction
 				:log_type,
 				:log_description,
 				:log_createby,
-				:log_ipaddress,
-				:log_session_id
+				:log_ipaddress
+				/*,:log_session_id */
 			  );";
 
 			$command = $connlog->createCommand($sql);
@@ -594,7 +594,7 @@ class CommonAction
 			$command->bindValue(":log_description", $description);
 			$command->bindValue(":log_createby", $log_user);
 			$command->bindValue(":log_ipaddress", Yii::$app->getRequest()->getUserIP());
-			$command->bindValue(":log_session_id", Yii::$app->session->getId());
+			//$command->bindValue(":log_session_id", Yii::$app->session->getId());
 			$command->execute();
 			$log_id = $connlog->getLastInsertID();
 

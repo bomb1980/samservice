@@ -12,7 +12,7 @@ if (isset(Yii::$app->session['progress'])) {
 
         $execution_time = Yii::$app->session['executionTimeAll'];
         if ( round(Yii::$app->session['executionTimeAll']) > 0){
-            $strTime = Yii::$app->CommonFnc->calctime( round(Yii::$app->session['executionTimeAll']) );
+            $strTime = \app\components\CommonFnc::calctime( round(Yii::$app->session['executionTimeAll']) );
         }else{
             $strTime = $execution_time . " millisecond";
         }
