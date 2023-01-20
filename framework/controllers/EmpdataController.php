@@ -209,6 +209,8 @@ class EmpdataController extends Controller
                 }
     
                 $decrypt_data = $this->ssl_decrypt_api( $data_result["data"], $encrypt_key);
+
+
                 $js = json_decode($decrypt_data);
 
 
@@ -223,6 +225,8 @@ class EmpdataController extends Controller
                 echo count($js);
                 echo '<br>';
                 file_put_contents( $save_file, $decrypt_data );
+
+
                 foreach( $js as $ka => $va ) {
 
                     if( empty( $va->per_cardno ) ) {
@@ -314,8 +318,6 @@ class EmpdataController extends Controller
                         }
                     }
                 }
-        
-           
             }
 
 
@@ -352,35 +354,12 @@ class EmpdataController extends Controller
                 }
             }
 
-
-            
             $keep = [];
          
             $levels = [];
-            // $totalPage = $data_result['totalPage'];
-            // $limit = $data_result['limit'];
-            // $totalRow = $data_result['totalRow'];
-
-            exit;
-
+        
         }
-
-
-
-
-
-
-
-      
-
-
-        // echo count($cards); 
-        // echo '<br>';
-
-        // echo $nocard;
     }
-
-
 
     public function actionSelect()
     {
