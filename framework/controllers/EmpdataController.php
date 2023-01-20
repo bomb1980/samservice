@@ -48,7 +48,7 @@ class EmpdataController extends Controller
             'per_eng_surname',
             'per_startdate',
             'per_occupydate',
-            'level_no',
+           
         ];
 
         
@@ -265,7 +265,7 @@ class EmpdataController extends Controller
                     $concat .= $va->$vf . '-';
                 }
     
-                $concat .= $levels[$va->levelname_th] . '-';
+                // $concat .= $levels[$va->levelname_th] . '-';
     
                 if( in_array($concat, $keep[$setType] )) {
                     continue;
