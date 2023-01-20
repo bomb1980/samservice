@@ -302,10 +302,11 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 		var data = new FormData();
 		data.append('<?= Yii::$app->request->csrfParam ?>', '<?= Yii::$app->request->getCsrfToken() ?>');
 		data.append('seltype', seltype);
+		// url: "<?php echo Yii::$app->urlManager->createUrl("empdata/processsyndata"); ?>",
 
 
 		$.ajax({
-				url: "<?php echo Yii::$app->urlManager->createUrl("empdata/processsyndata"); ?>",
+				url: "<?php echo Yii::$app->urlManager->createUrl("empdata/gogo"); ?>",
 				method: "POST",
 				cache: false,
 				processData: false,
@@ -320,7 +321,9 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 				console.log(data);
 				if (data.status == 'success') {
 					$("#btnaddall").prop("disabled", false);
-					alert('ปรับปรุงข้อมูลจำนวน ' + data.msg.toLocaleString() + ' ราย เรียบร้อยแล้ว');
+
+					$('#imgprocessall').replaceWith(data.msg);
+					// alert('ปรับปรุงข้อมูลจำนวน ' + data.msg.toLocaleString() + ' ราย เรียบร้อยแล้ว');
 				} else {
 					alert(data.msg);
 					$("#btnaddall").prop("disabled", false);
