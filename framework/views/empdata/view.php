@@ -54,95 +54,165 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 
 	<div class="page-content">
 		<!-- Panel jvectormap -->
-		<div class="panel">
-			<div class="panel-body container-fluid">
-				<div class="row row-lg">
 
-					<div class="col-xs-12 col-sm-12 pl-0 pr-0">
-						<div class="row">
-							<div class="col-xs-12 col-sm-12 col-md-12 col">
-								<div class="panel panel-line">
+		<div class="panel-body container-fluid">
 
-									<div id="divlist" class="panel-body">
-										<div class="rows" style="border-bottom: 2px solid #ebebeb;">
-											<div class="col-xl-6 col-lg-12">
-												<div class="card">
+			<div class="row">
+				<div class="col-md-12">
 
-													<div class="form-group row pl-5 required">
-														<label class="col-md-4 col-form-label control-label">รหัสบัตรประชาชน</label>
-														<div class="col-md-8">
-															<input type="text" class="form-control" id="line_message" name="line_message">
-														</div>
-													</div>
+					<button type="button" id="btnaddall" name="btnaddall" class="btn-primary btn waves-effect waves-classic" onclick="ajax_savepermission();">ปรับปรุงข้อมูลทั้งหมด</button>
+					<img id="imgprocessall" src="<?php echo Yii::$app->request->baseUrl; ?>/images/common/loading232.gif" style="display: none;" alt="อยู่ระหว่างการประมวลผล">
+					<div class="load-result"></div>
 
-													<div class="form-group row pl-5 pt-10">
-														<div class="col-md-8 form-inline">
+				</div>
 
-															<button type="button" id="btnadd" name="btnadd" class="btn-primary btn waves-effect waves-classic" onclick="">ปรับปรุงข้อมูล</button>
-															<img id="imgprocess" src="<?php echo Yii::$app->request->baseUrl; ?>/images/common/loading232.gif" style="display: none;" alt="อยู่ระหว่างการประมวลผล">
+			</div>
 
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-										<div class="rows">
-											<div class="col-xl-6 col-lg-12">
-												<div class="card">
-													<div class="form-group row pl-5 required">
-														<label class="col-md-4 col-form-label control-label">ประเภทเจ้าหน้าที่</label>
-														<div class="col-md-8">
+			<div class="row mt-15">
+				<div class="col-md-6">
+					<div class="row required">
+						<label class="col-md-4 col-form-label control-label">รหัสบัตรประชาชน</label>
+						<div class="col-md-8">
+							<input type="text" class="form-control" id="per_cardno" name="per_cardno">
+						</div>
+					</div>
 
-															<select class="form-control" id="seltype" name="seltype">
-
-																<option value="1">ข้าราชการ</option>
-																<option value="2">พนักงาน</option>
-
-															</select>
-														</div>
-													</div>
-
-													<div class="form-group row pl-5 pt-10">
-														<div class="col-md-8 form-inline">
-
-															<button type="button" id="btnaddall" name="btnaddall" class="btn-primary btn waves-effect waves-classic" onclick="ajax_savepermission();">ปรับปรุงข้อมูลทั้งหมด</button>
-															<img id="imgprocessall" src="<?php echo Yii::$app->request->baseUrl; ?>/images/common/loading232.gif" style="display: none;" alt="อยู่ระหว่างการประมวลผล">
-
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-										<div class="rows">
-											<div class="sync_progress1 text-center">
-
-											</div>
-										</div>
+				</div>
 
 
-									</div>
-								</div>
-							</div>
+				<div class="col-md-6">
+					<div class="row required">
+						<label class="col-md-4 col-form-label control-label">ประเภทเจ้าหน้าที่</label>
+						<div class="col-md-8">
+
+							<select class="form-control" id="seltype" name="seltype">
+
+								<option value="1">ข้าราชการ</option>
+								<option value="2">พนักงาน</option>
+
+							</select>
 						</div>
 					</div>
 
 				</div>
 			</div>
+
+			
+			<table class="table table-dark table-striped mt-15" id="Datatables">
+				<thead>
+					<tr>
+
+					<?php
+
+						foreach( $columns as $kc => $vc ) {
+
+							echo '<th class="text-center">'. $vc['label'] .'</th>';
+						}
+						?>
+						 
+					</tr>
+				</thead>
+			</table>
+
 		</div>
-		<!-- End Panel jvectormap -->
+
 	</div>
 </div>
 <!-- End Page -->
 
 
+<script src="/js/datatables.net/jquery.dataTables.js"></script>
+
+<script src="/js/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+
+<script src="/js/datatables.net-fixedheader/dataTables.fixedHeader.js"></script>
+<script src="/js/datatables.net-fixedcolumns/dataTables.fixedColumns.js"></script>
+<script src="/js/datatables.net-rowgroup/dataTables.rowGroup.js"></script>
+<script src="/js/datatables.net-scroller/dataTables.scroller.js"></script>
+<script src="/js/datatables.net-responsive/dataTables.responsive.js"></script>
+<script src="/js/datatables.net-responsive-bs4/responsive.bootstrap4.js"></script>
+
+<script src="/js/datatables.net-buttons/dataTables.buttons.js"></script>
+<script src="/js/datatables.net-buttons/buttons.html5.js"></script>
+<script src="/js/datatables.net-buttons/buttons.flash.js"></script>
+<script src="/js/datatables.net-buttons/buttons.print.js"></script>
+<script src="/js/datatables.net-buttons/buttons.colVis.js"></script>
+<script src="/js/datatables.net-buttons-bs4/buttons.bootstrap4.js"></script>
 
 
 <script type="text/javascript">
 	jQuery(document).ready(function($) {
 
-		calltask();
+		call_datatable('');
+		
+		$( '#seltype').change(function() {
+			call_datatable('');
+
+		});
+		$( '#per_cardno').keyup(function() {
+			call_datatable('');
+
+		});
+
+		
 
 	});
+
+	function call_datatable(search) {
+
+		postDatas = {};
+		postDatas.token = 'pP63DE5y2z53FHqvtOW4slL0AsUfnfAX8beGLuPj';
+
+		postDatas.seltype = $("#seltype").val();
+		postDatas.per_cardno = $("#per_cardno").val();
+
+		$('#Datatables').DataTable().destroy();
+		var table = $('#Datatables').DataTable({
+			language: {
+				url: '/js/datatable-thai.json',
+			},
+			serverSide: true,
+			processing: true,
+			dom: 'rtp<"bottom"i>',
+			ajax: {
+				url: '/api',
+				type: 'GET',
+				data: postDatas,
+				headers: {
+					'Authorization': 'Bearer dNyCr0GdC0jZfNih9bHrIuPjxUW2Xctn6nbZIm8B'
+				}
+			},
+			columns: [ 
+
+				<?php
+
+                    forEach( $columns as $kc => $vc ) {
+
+                    $className = 'text-center';
+                    if( isset( $vc['className'] ) ) {
+                        $className = $vc['className'];
+                    }
+
+                    echo '{
+                        data: \''. $vc['name'] .'\',
+                        name: \''. $vc['name'] .'\',
+                        className: "'. $className .'",
+                        orderable: true,
+                    },';
+                    }
+                    ?>
+			],
+			
+			paging: true,
+			pageLength: 10,
+			ordering: false,
+			drawCallback: function(settings) {
+				var pagination = $(this).closest('.dataTables_wrapper').find('.dataTables_paginate');
+				pagination.toggle(this.api().page.info().pages > 1);
+			}
+		});
+		// table.search(search).draw();
+	}
 
 
 	async function calltask() {
@@ -151,10 +221,7 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 		await sync_data(totalPage, limit, totalRow)
 	}
 	async function callApi() {
-		/*
-		return new Promise(function(resolve, reject) {
-			resolve(["test1", "test2"]);
-		})*/
+
 
 		return new Promise(function(resolve, reject, totalRow) {
 
@@ -259,7 +326,7 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 		var file_data = $('#menuimg').prop('files')[0]; //console.log(file_data);return;
 
 		formData.append('id', <?php //echo $id; 
-								?>);
+						?>);
 		formData.append('menuimg', file_data);
 		formData.append('menu_name', menu_name);
 		formData.append('menu_json', menu_json);
@@ -315,6 +382,7 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 				data: data,
 				beforeSend: function() {
 					$('#imgprocessall').show();
+					$('.load-result').html('');
 				},
 			})
 			.done(function(data) {
@@ -322,7 +390,11 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 				if (data.status == 'success') {
 					$("#btnaddall").prop("disabled", false);
 
-					$('#imgprocessall').replaceWith(data.msg);
+					$('#imgprocessall').hide();
+
+					$('.load-result').html(data.msg);
+					call_datatable('');
+
 					// alert('ปรับปรุงข้อมูลจำนวน ' + data.msg.toLocaleString() + ' ราย เรียบร้อยแล้ว');
 				} else {
 					alert(data.msg);
@@ -339,7 +411,5 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 				$('#imgprocessall').hide();
 				$("#btnaddall").prop("disabled", false);
 			});
-
-
 	}
 </script>

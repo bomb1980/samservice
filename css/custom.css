@@ -1,67 +1,116 @@
 .navbar-brand-logo {
-   height: 2.86rem;
-    margin-top: -.557rem;
+	height: 2.86rem;
+	margin-top: -.557rem;
 
 }
+
 @media only screen and (min-device-width : 320px) and (max-device-width : 768px) {
-    .example-title{
-      line-height: 100% !important;
-    }
+	.example-title {
+		line-height: 100% !important;
+	}
 }
+
 @font-face {
-  font-family: "Prompt-Regular";
-  src: url(fonts/Prompt-Regular.ttf) format("truetype");
+	font-family: "Prompt-Regular";
+	src: url(fonts/Prompt-Regular.ttf) format("truetype");
 }
 
 body {
 	font-family: Prompt-Regular !important;
-	color:#535a60 !important;
+	color: #535a60 !important;
 }
-.form-control, .dropdown-item {
+
+.form-control,
+.dropdown-item {
+	color: #535a60;
+	border: solid 1px #939292;
+}
+
+.navbar-default .navbar-toolbar .nav-link {
+	display: block;
 	color: #535a60;
 }
-.navbar-default .navbar-toolbar .nav-link {
-    display: block;
-    color: #535a60;
+
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: Prompt-Regular !important;
 }
-.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
-   font-family: Prompt-Regular !important;
-}
+
 .site-menu-category {
 	font-family: Prompt-Regular !important;
 	font-size: 17px !important;
-	color:#535a60 !important;
+	color: #535a60 !important;
 }
+
 .site-menu-title {
 	font-family: Prompt-Regular !important;
 	font-size: 16px !important;
-	color:#535a60 !important;	
+	color: #535a60 !important;
 	/*white-space:normal; */
 }
-.site-menu-title-overflow{
-	line-height:16px;
-	white-space:normal;
-	padding-top:5px;
-	padding-bottom:5px;
-}
-.info-wrap {
-    color:#535a60 !important;
-    text-align: left;
+
+.site-menu-title-overflow {
+	line-height: 16px;
+	white-space: normal;
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
 
-.table tfoot th, .table thead th, .table tbody tr {
-	color: #535a60;
+.info-wrap {
+	color: #535a60 !important;
+	text-align: left;
+}
+
+.table tfoot th,
+.table thead th,
+.table tbody tr {
+	color: #ffffff;
 }
 
 .required .control-label:after {
-	content:"*";
-	color:red;
-  }
- @media only screen and (min-width : 768px) {
-	.navbar-brand-logo{
+	content: "*";
+	color: red;
+}
+
+@media only screen and (min-width : 768px) {
+	.navbar-brand-logo {
 		width: 250px;
 		height: 60px;
 		margin-top: -20px;
 		margin-left: -15px;
 	}
- }
+}
+
+.form-control {
+	box-sizing: border-box;
+	height: 2.573rem;
+	font-weight: 300;
+	border-color: #CCC;
+	box-shadow: none;
+	transition: box-shadow .25s linear, border .25s linear, color .25s linear, background-color .25s linear;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+}
+
+
+.container-fluid {
+	border: solid 1px #cccccc;
+}
+
+.page-content {
+	padding: 0;
+}
+
+.mt-15 {
+	margin-top: 15px !important;
+}

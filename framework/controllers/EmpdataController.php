@@ -4,7 +4,7 @@ namespace app\controllers;
 
 use Yii;
 use yii\web\Controller;
-
+// use yii\helpers\Url;
 
 use app\components\UserController;
 
@@ -20,17 +20,91 @@ class EmpdataController extends Controller
         }
     }
 
-    public function actionIndex()
-    {
-        //return $this->render('index');
-    }
+    
 
     public function actionSyndata()
     {
-        return $this->render('view');
+ 
+     
+        $datas['columns'] = [
+            [
+                'name' => 'PER_CARDNO',
+                'label' => 'เลขบัตร',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'PER_NAME',
+                'label' => 'ชื่อ',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'PER_SURNAME',
+                'label' => 'นามสกุล',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'PER_STATUS',
+                'label' => 'สถานะ',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'PER_ENG_NAME',
+                'label' => 'ชื่ออังกฤษ',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'PER_ENG_SURNAME',
+                'label' => 'นามสกุลอังกฤษ',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'PER_STARTDATE',
+                'label' => 'เริ่มงานเมื่อ',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'PER_OCCUPYDATE',
+                'label' => 'PER_OCCUPYDATE',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'LEVEL_NO',
+                'label' => 'ระดับ',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+           
+        ];
+
+         
+        // arr($columns);
+        return $this->render('view', $datas );
     }
 
-    
+    function ssl_decrypt_api($string, $skey)
+    {
+        $output = false;
+        if ($skey != '') {
+
+            $encrypt_method = "AES-256-CBC";
+            $secret_key = base64_encode(md5($skey));
+            $secret_iv = md5(base64_encode(md5($skey)));
+            $key = hash('sha256', $secret_key);
+            $iv = substr(hash('sha256', $secret_iv), 0, 16);
+            $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $iv);
+        }
+
+        return $output;
+    }
+
     // http://samservice/empdata/gogo
     public function actionGogo()
     {
@@ -48,10 +122,8 @@ class EmpdataController extends Controller
             'per_eng_surname',
             'per_startdate',
             'per_occupydate',
-           
         ];
 
-        
         $sql = "
             SELECT 
                 per_cardno,
@@ -66,64 +138,49 @@ class EmpdataController extends Controller
                 per_id
             FROM per_personal 
             ORDER BY per_id ASC
+            
         ";
 
         $gogog = [1, 2];
-        
-        foreach( $gogog as $kg => $vg ) {
+
+        foreach ($gogog as $kg => $vg) {
 
 
-            if( $vg == 1) {
+            if ($vg == 1) {
 
-                $cmd = $con->createCommand( $sql );
+                $cmd = $con->createCommand($sql);
+            } else {
+
+                $cmd = $con2->createCommand($sql);
             }
-            else {
 
-                $cmd = $con2->createCommand( $sql );
-            }
-            
             $keep[$vg] = [];
-            foreach( $cmd->queryAll() as $ka => $va ) {
+            foreach ($cmd->queryAll() as $ka => $va) {
 
                 $concat = '';
-                foreach( $arr as $kf => $vf ) {
-    
-                    $vf = strtoupper( $vf );
-    
+                foreach ($arr as $kf => $vf) {
+
+                    $vf = strtoupper($vf);
+
                     $concat .= $va[$vf] . '-';
                 }
-    
+
                 $keep[$vg][] = $concat;
                 $per_ids[$vg] = $va['PER_ID'];
-    
             }
-
         }
 
 
         $nocard = 0;
 
         $sql = "SELECT level_no, level_name FROM per_level";
-        $cmd = $con->createCommand( $sql );
+        $cmd = $con->createCommand($sql);
         $levels = [];
-        foreach( $cmd->queryAll() as $ka => $va ) {
-            
+        foreach ($cmd->queryAll() as $ka => $va) {
+
             $levels[$va['LEVEL_NAME']] = $va['LEVEL_NO'];
         }
 
-        $arr = [
-            'per_cardno',
-            'per_name',
-            'per_surname',
-            'per_status',
-            'per_eng_name',
-            'per_eng_surname',
-            'per_startdate',
-            'per_occupydate',
-            
-        ];
-
-        
         $url_gettoken = 'https://sso.dpis.go.th/oapi/login';
         $curl = curl_init();
         curl_setopt_array($curl, array(
@@ -145,7 +202,7 @@ class EmpdataController extends Controller
                 'Content-Type: application/json'
             ),
         ));
-       
+
 
         $response = curl_exec($curl);
         if (curl_errno($curl)) {
@@ -169,10 +226,7 @@ class EmpdataController extends Controller
             }
             $accessToken = $result['accessToken'];
             $encrypt_key = $result['encrypt_key'];
-
-        } 
-        
-        else {
+        } else {
             $arrsms = array(
                 'status' => 'error',
                 'msg' => "",
@@ -181,7 +235,6 @@ class EmpdataController extends Controller
         }
 
 
-        // $url = "https://dpis6uat.sso.go.th/oapi/open_api_users/callapi";
         $url = "https://sso.dpis.go.th/oapi/open_api_users/callapi";
         $header = array(
             'Content-Type: application/x-www-form-urlencoded',
@@ -189,7 +242,7 @@ class EmpdataController extends Controller
         );
 
         $SqlUnion = [];
-        for( $i = 1; $i <= 40; $i++) {
+        for ($i = 1; $i <= 40; $i++) {
 
             $param = array(
                 'endpoint' => 'sso_personal',
@@ -197,7 +250,7 @@ class EmpdataController extends Controller
                 'page' => $i
             );
 
-            $data_result = $this->calleservice( $url, $header, $param );
+            $data_result = $this->calleservice($url, $header, $param);
 
             if ($data_result['message'] != "success") {
                 $arrsms = array(
@@ -207,117 +260,122 @@ class EmpdataController extends Controller
                 continue;
             }
 
-            $decrypt_data = $this->ssl_decrypt_api( $data_result["data"], $encrypt_key);
-
+            $decrypt_data = $this->ssl_decrypt_api($data_result["data"], $encrypt_key);
 
             $js = json_decode($decrypt_data);
 
-
             $cJs = count($js);
-            if( $cJs == 0 ) {
+            if ($cJs == 0) {
 
                 break;
-
             }
 
-            $save_file = 'save_file/'. $i .'.txt';
+            $dir_name = 'save_file';
 
-            $mymess[] = 'บันทึกไฟล์ '. $save_file .' จำนวน '. $cJs .' ';
+            if (!is_dir($dir_name)) {
+                mkdir($dir_name);
+            }
+
+            $save_file = $dir_name . '/' . $i . '.txt';
+
+            if (file_exists($save_file)) {
+
+                if (file_get_contents($save_file) ==  $data_result["data"] ) {
+
+                    continue;
+                }
+            }
+
+            $mymess[] = 'บันทึกไฟล์ ' . $save_file . ' จำนวน ' . $cJs . ' ';
+
+            file_put_contents($save_file, $data_result["data"]);
+
+            foreach ($js as $ka => $va) {
+
+                // $mymess[] = 'ปรับปรุงข้อมูลคุณ ' . $va->per_name . 'เลขที่บัตรปชช ' . $va->per_cardno . ' เข้าระบบ';
 
 
-            //  '<br>';
-            //  count($js);
-            //  '<br>';
-            file_put_contents( $save_file, $decrypt_data );
+                if (empty($va->per_cardno)) {
 
-
-            foreach( $js as $ka => $va ) {
-
-                if( empty( $va->per_cardno ) ) {
-                    
                     ++$nocard;
                     continue;
                 }
-                
+
                 $cards[$va->per_cardno] = 1;
-    
-                if( in_array( $va->pertype_id, [5, 42, 43, 44])) {
-    
+
+                if (in_array($va->pertype_id, [5, 42, 43, 44])) {
+
                     $setType = 1;
-                }
-                else {
+                } else {
                     $setType = 2;
                 }
-    
-                if( !isset( $per_ids[$setType] )  ) {
-    
+
+                if (!isset($per_ids[$setType])) {
+
                     $per_ids[$setType] = 0;
-    
                 }
-    
-                if( !isset(  $levels[$va->levelname_th]  ) ) {
+
+                if (!isset($levels[$va->levelname_th])) {
                     $levels[$va->levelname_th] = '-';
                 }
-    
+
                 $concat = '';
-                foreach( $arr as $kf => $vf ) {
-    
+                foreach ($arr as $kf => $vf) {
+
                     $concat .= $va->$vf . '-';
                 }
-    
-                // $concat .= $levels[$va->levelname_th] . '-';
-    
-                if( in_array($concat, $keep[$setType] )) {
+
+
+                if (in_array($concat, $keep[$setType])) {
                     continue;
                 }
-    
-    
+
+                ++$per_ids[$setType];
+                $new_id =  $per_ids[$setType];
+
+                // echo 'dsadsfddss'; exit;
                 $SqlUnion[$setType][] = "
                     SELECT 
-                        '". $va->pertype_id ."' AS pertype_id,
-                        '". ++$per_ids[$setType] ."' AS per_id,
-                        '". $va->per_name ."' AS per_name,
-                        '". $va->per_cardno ."' AS per_cardno,
-                        '". $va->per_surname ."' AS per_surname,
-                        '". $va->per_eng_name ."' AS per_eng_name,
-                        '". $va->per_eng_surname ."' AS per_eng_surname,
-                        '". $va->birth_date ."' AS per_birthdate,
-                        '". $va->per_startdate ."' AS per_startdate,
-                        '". $va->per_occupydate ."' AS per_occupydate,
-                        '". $va->per_status ."' AS per_status,
-                        '". $levels[$va->levelname_th] ."' AS level_no
+                        '" . $va->pertype_id . "' AS pertype_id,
+                        '" . $new_id . "' AS per_id,
+                        '" . $va->per_name . "' AS per_name,
+                        '" . $va->per_cardno . "' AS per_cardno,
+                        '" . $va->per_surname . "' AS per_surname,
+                        '" . $va->per_eng_name . "' AS per_eng_name,
+                        '" . $va->per_eng_surname . "' AS per_eng_surname,
+                        '" . $va->birth_date . "' AS per_birthdate,
+                        '" . $va->per_startdate . "' AS per_startdate,
+                        '" . $va->per_occupydate . "' AS per_occupydate,
+                        '" . $va->per_status . "' AS per_status,
+                        '" . $levels[$va->levelname_th] . "' AS level_no
                     FROM dual
                 ";
-    
-                foreach( $SqlUnion as $ks => $vs ) {
-    
-                    if( count( $vs ) == 1000 ) {
-    
+
+                foreach ($SqlUnion as $ks => $vs) {
+
+                    if (count($vs) == 1000) {
+
                         $sql = "
                             MERGE INTO per_personal d
                             USING ( 
-                                ". implode( ' UNION ', $vs )."
+                                " . implode(' UNION ', $vs) . "
                             ) s ON ( 1 = 0 )
                             WHEN NOT MATCHED THEN
                                 INSERT  ( level_no, level_no_salary, per_type, per_id, per_name, per_cardno, per_surname, per_eng_name, per_eng_surname, per_birthdate, per_startdate, per_occupydate, per_status,
-                                ot_code, pn_code, org_id, pos_id, poem_id, per_orgmgt, per_salary, per_mgtsalary, per_spsalary, per_gender, mr_code, per_offno, per_taxno, per_blood, re_code, per_retiredate, per_posdate, per_saldate, pn_code_f, per_fathername, per_fathersurname, pn_code_m, per_mothername, per_mothersurname, per_add1, per_add2, pv_code, mov_code, per_ordain, per_soldier, per_member, update_user, update_date, department_id, approve_per_id, replace_per_id, absent_flag, poems_id, per_hip_flag, per_cert_occ, per_nickname, per_home_tel, per_office_tel, per_fax, per_mobile, per_email, per_file_no, per_bank_account, per_id_ref, per_id_ass_ref, per_contact_person, per_remark, per_start_org, per_cooperative, per_cooperative_no, per_memberdate, per_seq_no, pay_id, es_code, pl_name_work, org_name_work, per_docno, per_docdate, per_effectivedate, per_pos_reason, per_pos_year, per_pos_doctype, per_pos_docno, per_pos_org, per_ordain_detail, per_pos_orgmgt, per_pos_docdate, per_pos_desc, per_pos_remark, per_book_no, per_book_date, per_contact_count, per_disability, pot_id, per_union, per_uniondate, per_job, org_id_1, org_id_2, org_id_3, org_id_4, org_id_5, per_union2, per_uniondate2, per_union3, per_uniondate3, per_union4, per_uniondate4, per_union5, per_uniondate5, per_set_ass, per_audit_flag, per_probation_flag, department_id_ass, per_birth_place, per_scar, per_renew, per_leveldate, per_postdate, per_ot_flag
-                                
-                                
+                                ot_code, pn_code, org_id, pos_id, poem_id, per_orgmgt, per_salary, per_mgtsalary, per_spsalary, per_gender, mr_code, per_offno, per_taxno, per_blood, re_code, per_retiredate, per_posdate, per_saldate, pn_code_f, per_fathername, per_fathersurname, pn_code_m, per_mothername, per_mothersurname, per_add1, per_add2, pv_code, mov_code, per_ordain, per_soldier, per_member, update_user, update_date, department_id, approve_per_id, replace_per_id, absent_flag, poems_id, per_hip_flag, per_cert_occ, per_nickname, per_home_tel, per_office_tel, per_fax, per_mobile, per_email, per_file_no, per_bank_account, per_id_ref, per_id_ass_ref, per_contact_person, per_remark, per_start_org, per_cooperative, per_cooperative_no, per_memberdate, per_seq_no, pay_id, es_code, pl_name_work, org_name_work, per_docno, per_docdate, per_effectivedate, per_pos_reason, per_pos_year, per_pos_doctype, per_pos_docno, per_pos_org, per_ordain_detail, per_pos_orgmgt, per_pos_docdate, per_pos_desc, per_pos_remark, per_book_no, per_book_date, per_contact_count, per_disability, pot_id, per_union, per_uniondate, per_job, org_id_1, org_id_2, org_id_3, org_id_4, org_id_5, per_union2, per_uniondate2, per_union3, per_uniondate3, per_union4, per_uniondate4, per_union5, per_uniondate5, per_set_ass, per_audit_flag, per_probation_flag, department_id_ass, per_birth_place, per_scar, per_renew, per_leveldate, per_postdate, per_ot_flag  
                             ) VALUES
                                 ( s.level_no, 'C4', s.pertype_id, s.per_id, s.per_name, s.per_cardno, s.per_surname, s.per_eng_name, s.per_eng_surname, s.per_birthdate, s.per_startdate, s.per_occupydate, s.per_status, '11', '004', '13950.00', '17.00', NULL, '0.00', '28100.00', '0.00', '0.00', '2.00', '1 ', NULL, NULL, NULL, NULL, '2036-10-01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '21345     ', '0.00', '0.00', '0.00', '7827.00', '2020-05-16 13:24:23', '3062.00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'sakawduan.b@sso.go.th', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0.00', NULL, NULL, '4009.00', '17.00', '02', NULL, NULL, '9282/2565', '2022-07-12', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1.00', NULL, '0.00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0.00', NULL, '0.00', NULL, '0.00', NULL, '0.00', NULL, '1.00', '0.00', '0.00', '3062.00', NULL, NULL, NULL, NULL, NULL, NULL )
-                           
                         ";
-        
-                        if( $ks == 1 ) {
-                            $cmd = $con->createCommand( $sql );
+
+                        if ($ks == 1) {
+                            $cmd = $con->createCommand($sql);
+                        } else {
+
+                            $cmd = $con2->createCommand($sql);
                         }
-                        else {
-    
-                            $cmd = $con2->createCommand( $sql );  
-                        }
-                        
+
                         $cmd->execute();
-    
+
                         $SqlUnion[$ks] = [];
                     }
                 }
@@ -325,14 +383,14 @@ class EmpdataController extends Controller
         }
 
 
-        foreach( $SqlUnion as $ks => $vs ) {
-    
-            if( count( $vs ) > 0 ) {
+        foreach ($SqlUnion as $ks => $vs) {
+
+            if (count($vs) > 0) {
 
                 $sql = "
                     MERGE INTO per_personal d
                     USING ( 
-                        ". implode( ' UNION ', $vs )."
+                        " . implode(' UNION ', $vs) . "
                     ) s ON ( 1 = 0 )
                     WHEN NOT MATCHED THEN
                         INSERT  ( level_no, level_no_salary, per_type, per_id, per_name, per_cardno, per_surname, per_eng_name, per_eng_surname, per_birthdate, per_startdate, per_occupydate, per_status,
@@ -344,14 +402,13 @@ class EmpdataController extends Controller
                    
                 ";
 
-                if( $ks == 1 ) {
-                    $cmd = $con->createCommand( $sql );
-                }
-                else {
+                if ($ks == 1) {
+                    $cmd = $con->createCommand($sql);
+                } else {
 
-                    $cmd = $con2->createCommand( $sql );  
+                    $cmd = $con2->createCommand($sql);
                 }
-                
+
                 $cmd->execute();
 
                 $SqlUnion[$ks] = [];
@@ -359,15 +416,15 @@ class EmpdataController extends Controller
         }
 
         $keep = [];
-     
-        $levels = [];
-    
-        $return['msg'] = 9999;
-        if( !empty( $mymess ) ) {
 
-            $return['msg'] = implode( '<br>', $mymess );
+        $levels = [];
+
+        $return['msg'] = 'ไม่มีการปรับปรุงข้อมูลใดๆ';
+        if (!empty($mymess)) {
+
+            $return['msg'] = implode('<br>', $mymess);
         }
-    
+
 
 
         $return['status'] = 'success';
@@ -518,7 +575,7 @@ class EmpdataController extends Controller
             $conn = Yii::$app->dbdpis;
             $connemp = Yii::$app->dbdpisemp;
 
-           
+
 
 
             ini_set('memory_limit', '2048M');
@@ -611,15 +668,16 @@ class EmpdataController extends Controller
             $decrypt_data = $this->ssl_decrypt_api($data, $encrypt_key);
             $js = json_decode($decrypt_data, true);
 
-            $log_path = Yii::$app->getRuntimePath() . '\logs\logAll_' . date('d-M-Y') . '.log'; 
+            $log_path = Yii::$app->getRuntimePath() . '\logs\logAll_' . date('d-M-Y') . '.log';
             $results = print_r($decrypt_data, true);
-             \app\components\CommonFnc::write_log($log_path, $results);exit;
-
-            echo count($js);
-            
+            \app\components\CommonFnc::write_log($log_path, $results);
             exit;
 
-         
+            echo count($js);
+
+            exit;
+
+
 
 
             $totalPage = $data_result['totalPage'];
@@ -644,7 +702,7 @@ class EmpdataController extends Controller
                 }
             }
 
-          
+
 
 
             $per_id = "";
@@ -855,19 +913,18 @@ class EmpdataController extends Controller
 
                             $resid =  $this->isValidNationalId(substr($per_cardno, 0, 13));
 
-                           
+
 
                             if ($intup == 0) {
-                               
                             }
                             break;
                     }
 
-                   
+
                     $noemp = false;
                 }
 
-                
+
 
                 $List = implode(';', $arrNoGov);
                 $log_path = Yii::$app->getRuntimePath() . '\logs\NoGov' . date('d-M-Y') . '.txt';
@@ -924,21 +981,7 @@ class EmpdataController extends Controller
         }
     }
 
-    function ssl_decrypt_api($string, $skey)
-    {
-        $output = false;
-        if ($skey != '') {
-            $encrypt_method = "AES-256-CBC";
-            $secret_key = base64_encode(md5($skey));
-            $secret_iv = md5(base64_encode(md5($skey)));
-            $key = hash('sha256', $secret_key);
-            $iv = substr(hash('sha256', $secret_iv), 0, 16);
-            $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $iv);
-            return $output;
-        } else {
-            return $output;
-        }
-    }
+
 
     function callsso_personal()
     {

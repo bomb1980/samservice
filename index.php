@@ -14,6 +14,52 @@ function arr( $arr = [], $exit = true ) {
 
 } 
 
+//
+//
+function genCond_($sql, $replace = [], $con, $bindValue = [] )
+{
+
+	$defConditions = array('WHERE', 'HAVING', 'AND');
+
+	$keep = array();
+	foreach ($defConditions as $kr => $vr) {
+		$keep['[' . $vr . ']'] = '';
+	}
+
+	foreach ($replace as $kr => $vr) {
+
+		if (in_array($kr, $defConditions)) {
+
+			if (!empty($vr)) {
+				$keep['[' . $kr . ']'] = $kr . " " . implode(' AND ', $vr);
+			} else {
+
+				$keep['[' . $kr . ']'] = '';
+			}
+		} else {
+			$keep['[' . $kr . ']'] = $vr;
+		}
+	}
+
+	$sql = str_replace(array_keys($keep), $keep, $sql);
+
+	
+      $cmd = $con->createCommand($sql);
+
+      foreach( $bindValue as $kb => $vb ) {
+
+          $cmd->bindValue( $kb, $vb);
+      }
+
+
+
+
+      return $cmd;
+
+
+}
+
+
 require __DIR__ . '/framework/vendor/autoload.php';
 require __DIR__ . '/framework/vendor/yiisoft/yii2/Yii.php';
 
