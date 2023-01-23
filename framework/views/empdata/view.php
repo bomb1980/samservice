@@ -175,7 +175,7 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 			processing: true,
 			dom: 'rtp<"bottom"i>',
 			ajax: {
-				url: '/api',
+				url: '<?php echo Yii::$app->urlManager->createUrl("api"); ?>',
 				type: 'GET',
 				data: postDatas,
 				headers: {
