@@ -1,0 +1,17 @@
+{
+    "sProcessing": "กำลังดำเนินการ...",
+    "sLengthMenu": "",
+    "sZeroRecords": "ไม่พบข้อมูล",
+    "sInfo": "ทั้งหมด _TOTAL_ รายการ",
+    "sInfoEmpty": "ทั้งหมด 0 รายการ",
+    "sInfoFiltered": "(กรองข้อมูล _MAX_ ทุกแถว)",
+    "sInfoPostFix": "",
+    "sSearch": "ค้นหา:",
+    "sUrl": "",
+    "oPaginate": {
+        "sFirst": "เริ่มต้น",
+        "sPrevious": "ก่อนหน้า",
+        "sNext": "ถัดไป",
+        "sLast": "สุดท้าย"
+    }
+}

@@ -121,23 +121,23 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 <!-- End Page -->
 
 
-<script src="/js/datatables.net/jquery.dataTables.js"></script>
+<script src="<?php echo $themesurl; ?>/js/datatables.net/jquery.dataTables.js"></script>
 
-<script src="/js/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+<script src="<?php echo $themesurl; ?>/js/datatables.net-bs4/dataTables.bootstrap4.js"></script>
 
-<script src="/js/datatables.net-fixedheader/dataTables.fixedHeader.js"></script>
-<script src="/js/datatables.net-fixedcolumns/dataTables.fixedColumns.js"></script>
-<script src="/js/datatables.net-rowgroup/dataTables.rowGroup.js"></script>
-<script src="/js/datatables.net-scroller/dataTables.scroller.js"></script>
-<script src="/js/datatables.net-responsive/dataTables.responsive.js"></script>
-<script src="/js/datatables.net-responsive-bs4/responsive.bootstrap4.js"></script>
+<script src="<?php echo $themesurl; ?>/js/datatables.net-fixedheader/dataTables.fixedHeader.js"></script>
+<script src="<?php echo $themesurl; ?>/js/datatables.net-fixedcolumns/dataTables.fixedColumns.js"></script>
+<script src="<?php echo $themesurl; ?>/js/datatables.net-rowgroup/dataTables.rowGroup.js"></script>
+<script src="<?php echo $themesurl; ?>/js/datatables.net-scroller/dataTables.scroller.js"></script>
+<script src="<?php echo $themesurl; ?>/js/datatables.net-responsive/dataTables.responsive.js"></script>
+<script src="<?php echo $themesurl; ?>/js/datatables.net-responsive-bs4/responsive.bootstrap4.js"></script>
 
-<script src="/js/datatables.net-buttons/dataTables.buttons.js"></script>
-<script src="/js/datatables.net-buttons/buttons.html5.js"></script>
-<script src="/js/datatables.net-buttons/buttons.flash.js"></script>
-<script src="/js/datatables.net-buttons/buttons.print.js"></script>
-<script src="/js/datatables.net-buttons/buttons.colVis.js"></script>
-<script src="/js/datatables.net-buttons-bs4/buttons.bootstrap4.js"></script>
+<script src="<?php echo $themesurl; ?>/js/datatables.net-buttons/dataTables.buttons.js"></script>
+<script src="<?php echo $themesurl; ?>/js/datatables.net-buttons/buttons.html5.js"></script>
+<script src="<?php echo $themesurl; ?>/js/datatables.net-buttons/buttons.flash.js"></script>
+<script src="<?php echo $themesurl; ?>/js/datatables.net-buttons/buttons.print.js"></script>
+<script src="<?php echo $themesurl; ?>/js/datatables.net-buttons/buttons.colVis.js"></script>
+<script src="<?php echo $themesurl; ?>/js/datatables.net-buttons-bs4/buttons.bootstrap4.js"></script>
 
 
 <script type="text/javascript">
