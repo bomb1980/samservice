@@ -98,7 +98,7 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 			</div>
 
 			
-			<table class="table table-dark table-striped mt-15" id="Datatables">
+			<table class="table table-hover dataTable table-striped w-full no-footer dtr-inline mt-15" id="Datatables">
 				<thead>
 					<tr>
 
