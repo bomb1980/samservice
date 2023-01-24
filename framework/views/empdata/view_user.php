@@ -43,11 +43,11 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 <div class="page">
 
 	<div class="page-header">
-		<h1 class="page-title">อัพเดตข้อมูลเจ้าหน้าที่</h1>
+		<h1 class="page-title">จัดการสิทธิ์ผู้ใช้งาน</h1>
 		<div class="page-header-actions">
 			<ol class="breadcrumb">
 				<li class="breadcrumb-item"><a href="<?php echo Yii::$app->urlManager->createUrl(""); ?>">หน้าแรก</a></li>
-				<li class="breadcrumb-item atcitve">ปรับปรุง</li>
+				<li class="breadcrumb-item atcitve">แอดมิน</li>
 			</ol>
 		</div>
 	</div>
@@ -57,44 +57,30 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 
 		<div class="panel-body container-fluid">
 
+
+
 			<div class="row">
-				<div class="col-md-12">
-
-					<button type="button" id="btnaddall" name="btnaddall" class="btn-primary btn waves-effect waves-classic" onclick="ajax_savepermission();">ปรับปรุงข้อมูลทั้งหมด</button>
-					<img id="imgprocessall" src="<?php echo Yii::$app->request->baseUrl; ?>/images/common/loading232.gif" style="display: none;" alt="อยู่ระหว่างการประมวลผล">
-					<div class="load-result"></div>
-
-				</div>
-
-			</div>
-
-			<div class="row mt-15">
 				<div class="col-md-6">
 					<div class="row required">
-						<label class="col-md-4 col-form-label control-label">รหัสบัตรประชาชน</label>
+
 						<div class="col-md-8">
-							<input type="text" class="form-control" id="per_cardno" name="per_cardno">
+							<div class="input-group">
+								<input type="text" name="FSearch1" id="FSearch1" class="form-control" placeholder="Login หรือ ชื่อ-นามสกุล" maxlength="20" style="width: 200px">
+								<span class="input-group-append">
+									<button type="button" class="btn btn-primary waves-effect waves-classic" onclick="checkFields();" title="ค้นหา"><i class="icon wb-search" aria-hidden="true"></i></button>
+									<button type="button" class="btn btn-primary waves-effect waves-classic" onclick="sync_data();" title="ปรับปรุงข้อมูล"><i class="icon md-refresh-sync" aria-hidden="true"></i></button>
+
+
+								</span>
+
+							</div>
 						</div>
 					</div>
 
 				</div>
 
 
-				<div class="col-md-6">
-					<div class="row required">
-						<label class="col-md-4 col-form-label control-label">ประเภทเจ้าหน้าที่</label>
-						<div class="col-md-8">
 
-							<select class="form-control" id="seltype" name="seltype">
-
-								<option value="1">ข้าราชการ</option>
-								<option value="2">พนักงาน</option>
-
-							</select>
-						</div>
-					</div>
-
-				</div>
 			</div>
 
 
@@ -150,60 +136,7 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 		});
 	});
 
-	function ajax_savepermission() {
 
-		$("#btnaddall").prop("disabled", true);
-
-		var result = confirm("ต้องการนำอัพเดตข้อมูลเจ้าหน้าที่ ?");
-		if (!result) {
-			$("#btnaddall").prop("disabled", false);
-			return;
-		}
-
-		var seltype = $("#seltype").val();
-
-		var data = new FormData();
-		data.append('<?= Yii::$app->request->csrfParam ?>', '<?= Yii::$app->request->getCsrfToken() ?>');
-		data.append('seltype', seltype);
-
-		$.ajax({
-				url: "empdata/gogo",
-				method: "POST",
-				cache: false,
-				processData: false,
-				contentType: false,
-				dataType: "json",
-				data: data,
-				beforeSend: function() {
-					$('#imgprocessall').show();
-					$('.load-result').html('');
-				},
-			})
-			.done(function(data) {
-				console.log(data);
-				if (data.status == 'success') {
-
-					$("#btnaddall").prop("disabled", false);
-
-					$('#imgprocessall').hide();
-
-					$('.load-result').html(data.msg);
-					call_datatable('');
-
-				} else {
-					alert(data.msg);
-					$("#btnaddall").prop("disabled", false);
-				}
-
-			})
-			.fail(function(jqXHR, status, error) {
-			 
-			})
-			.always(function() {
-				$('#imgprocessall').hide();
-				$("#btnaddall").prop("disabled", false);
-			});
-	}
 
 	function call_datatable(search) {
 
@@ -222,7 +155,7 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 			processing: true,
 			dom: 'rtp<"bottom"i>',
 			ajax: {
-				url: 'api',
+				url: 'api/getuser',
 				type: 'GET',
 				data: postDatas,
 				headers: {
@@ -254,8 +187,36 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 			pageLength: 10,
 			ordering: false,
 			drawCallback: function(settings) {
-				var pagination = $(this).closest('.dataTables_wrapper').find('.dataTables_paginate');
-				pagination.toggle(this.api().page.info().pages > 1);
+				var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch_work_status'));
+				elems.forEach(function(el) {
+					//var init = new Switchery(el);
+					var init = new Switchery(el, {
+						secondaryColor: '#ff4c52'
+					});
+					el.onchange = function() {
+						var status = 0;
+						if ($(this).is(':checked')) {
+							status = 1;
+						} else {
+							status = 0;
+						}
+
+						$.ajax({
+							url: "<?php echo Yii::$app->urlManager->createAbsoluteUrl("admin/updateuserworkstatus"); ?>",
+							method: "POST",
+							data: {
+								id: $(this).data("id"),
+								old_status: $(this).data("status"),
+								status: status,
+								'<?= Yii::$app->request->csrfParam ?>': '<?= Yii::$app->request->getCsrfToken() ?>',
+							},
+							success: function(data) {}
+						});
+					};
+				});
+				$('.grid-error').html('');
+				// pageinfo = dataTable.page.info();
+				//console.log(pageinfo.start);
 			}
 		});
 		// table.search(search).draw();

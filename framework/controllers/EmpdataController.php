@@ -21,11 +21,62 @@ class EmpdataController extends Controller
     }
 
     
+    public function actionUser_permission()
+    {
 
+        $datas['columns'] = [
+
+            [
+                'name' => 'uid',
+                'label' => 'ชื่อ Login',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'displayname',
+                'label' => 'ชื่อ-นามสกุล',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'ssobranch_code',
+                'label' => 'รหัสหน่วยงาน',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'branch_name',
+                'label' => 'ชื่อหน่วยงาน',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            
+            [
+                'name' => 'btn1',
+                'label' => 'ยกเลิกสิทธิ์',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'btn',
+                'label' => 'แก้ไข',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+   
+
+        ];
+
+        $datas['tableUrl'] = '';
+
+        return $this->render('view_user', $datas);
+    }
+    
     public function actionSyndata()
     {
- 
-     
+
+        // arr( Yii::$app->params['prg_ctrl'] );
+
         $datas['columns'] = [
             [
                 'name' => 'PER_CARDNO',
@@ -81,13 +132,100 @@ class EmpdataController extends Controller
                 'className' => "text-center",
                 'orderable' => false
             ],
-           
+
         ];
 
-         
+
         // arr($columns);
-        return $this->render('view', $datas );
+        return $this->render('view', $datas);
     }
+
+    
+    public function actionTest()
+    {
+
+        //localhost
+        // /samservice/empdata/gogo 
+        // url: "/samservice/empdata/gogo",
+
+        // /empdata/gogo 
+        // url: "/empdata/gogo",
+        echo Yii::$app->urlManager->createUrl("");
+
+
+        exit;
+        $con1 = Yii::$app->dbdpis;
+        $con2 = Yii::$app->dbdpisemp;
+
+        $sql = "
+            SELECT
+                per_cardno,
+                per_name,
+                per_surname,
+                per_status,
+                per_eng_name,
+                per_eng_surname,
+                per_startdate,
+                per_occupydate,
+                level_no,
+                per_id
+            FROM per_personal 
+            
+            ORDER BY per_id ASC
+            OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY
+        ";
+
+        $sql1 = $con1->createCommand($sql);
+        $sql2 = $con2->createCommand($sql);
+
+        // $command = $con1->createCommand($sql);
+        // $command->bindValue(':id', $_GET['id']);
+        $post = $sql1->queryAll();
+
+        // $ddsfa = $post->queryAll();
+        arr( $post, 0 );
+
+
+        // arr( $post );
+
+
+
+        exit;
+
+
+
+       
+
+       
+
+
+       $gogo = $sql1->union($sql2);
+
+       echo $gogo->sql;
+
+     
+
+        $ddsfa = $gogo->queryAll();
+        arr( $ddsfa, 0 );
+        // $ddsfa = $sql2->queryAll();
+        // arr( $ddsfa, 0 );
+
+
+        // $mydb = new \yii\db\Query();
+
+        // $command  =  $con1
+        //     ->select(['per_name'])
+        //     ->from('per_personal')
+        //     ->limit(10)
+        //     ->createCommand();
+
+        // echo $command->sql;
+
+        
+        // arr( $command->queryAll( ), 0 );
+    }
+
+
 
     function ssl_decrypt_api($string, $skey)
     {
@@ -280,7 +418,7 @@ class EmpdataController extends Controller
 
             if (file_exists($save_file)) {
 
-                if (file_get_contents($save_file) ==  $data_result["data"] ) {
+                if (file_get_contents($save_file) ==  $data_result["data"]) {
 
                     continue;
                 }
@@ -981,7 +1119,7 @@ class EmpdataController extends Controller
         }
     }
 
-public function actionProcesssyndata()
+    public function actionProcesssyndata()
     {
         $seltype = null;
         if (!empty($_REQUEST['seltype'])) $seltype = $_REQUEST['seltype'];
@@ -1002,7 +1140,7 @@ public function actionProcesssyndata()
             $conn = Yii::$app->dbdpis;
             $connemp = Yii::$app->dbdpisemp;
 
-           
+
 
 
             ini_set('memory_limit', '2048M');
@@ -1104,7 +1242,7 @@ public function actionProcesssyndata()
             
             exit;*/
 
-         
+
 
 
             $totalPage = $data_result['totalPage'];
@@ -1129,13 +1267,14 @@ public function actionProcesssyndata()
                 }
             }
 
-          
-            $log_path = Yii::$app->getRuntimePath() . '\logs\logAll_' . date('d-M-Y') . '.txt'; 
+
+            $log_path = Yii::$app->getRuntimePath() . '\logs\logAll_' . date('d-M-Y') . '.txt';
             $results = print_r($merge, true);
-            \app\components\CommonFnc::write_log($log_path, $results);exit;
+            \app\components\CommonFnc::write_log($log_path, $results);
+            exit;
 
             echo count($js);
-            
+
             exit;
 
 
@@ -1349,19 +1488,18 @@ public function actionProcesssyndata()
 
                             $resid =  $this->isValidNationalId(substr($per_cardno, 0, 13));
 
-                           
+
 
                             if ($intup == 0) {
-                               
                             }
                             break;
                     }
 
-                   
+
                     $noemp = false;
                 }
 
-                
+
 
                 $List = implode(';', $arrNoGov);
                 $log_path = Yii::$app->getRuntimePath() . '\logs\NoGov' . date('d-M-Y') . '.txt';
