@@ -62,40 +62,56 @@ class lkup_user
 
 	public static function getUsername($username = null)
 	{
+
+
 		//$sql="select id, username, userpass, displayname, userlevel_id, status from mas_user where username='".$username."' and status=1";	   
 		//$rows =Yii::$app->db->createCommand($sql)->queryAll();
 		$local = Yii::$app->params['auth']['local'];
-
-		if ($local) {
-			$sql = "SELECT mas_local_user.`id`, mas_local_user.`uid`, mas_local_user.`userpass`, mas_local_user.`displayname`, mas_local_user.`ssobranch_code`, mas_local_user.`status`, mas_ssobranch.`name`, mas_ssobranch.`ssobranch_type_id`
-			FROM
-		  	mas_user
-		  	INNER JOIN mas_ssobranch
-			ON (
-				mas_local_user.ssobranch_code = mas_ssobranch.ssobranch_code
-			) WHERE uid=:uid /*AND mas_local_user.status=1*/
-		";
-		//ใช้ตารางเดิมไปก่อน
-		$sql = "SELECT mas_user.`id`, mas_user.`uid`, mas_user.`password`, mas_user.`displayname`, mas_user.`ssobranch_code`, mas_user.`status`, mas_ssobranch.`name`, mas_ssobranch.`ssobranch_type_id`
-			FROM
-		  	mas_user
-		  	INNER JOIN mas_ssobranch
-			ON (
-			  mas_user.ssobranch_code = mas_ssobranch.ssobranch_code
-			) WHERE uid=:uid /*AND mas_user.status=1*/
-		";
+		
+		// if ($local) {
+		if (false) {
+			// arr('dsafffdsdasf');
+			$sql = "
+					SELECT 
+						mas_local_user.id, 
+						mas_local_user.uid, 
+						mas_local_user.userpass, 
+						mas_local_user.displayname, 
+						mas_local_user.ssobranch_code, 
+						mas_local_user.status, 
+						mas_ssobranch.name, 
+						mas_ssobranch.ssobranch_type_id
+					FROM mas_user INNER JOIN mas_ssobranch ON mas_local_user.ssobranch_code = mas_ssobranch.ssobranch_code
+					WHERE uid=:uid 
+			";
+			//ใช้ตารางเดิมไปก่อน
+			$sql = "SELECT mas_user.id, mas_user.uid, mas_user.password, mas_user.displayname, mas_user.ssobranch_code, mas_user.status, mas_ssobranch.name, mas_ssobranch.ssobranch_type_id
+				FROM
+				mas_user
+				INNER JOIN mas_ssobranch
+				ON (
+				mas_user.ssobranch_code = mas_ssobranch.ssobranch_code
+				) WHERE uid=:uid /*AND mas_user.status=1*/
+			";
 		} else {
-			$sql = "SELECT mas_user.`id`, mas_user.`uid`, mas_user.`password`, mas_user.`displayname`, mas_user.`ssobranch_code`, mas_user.`status`, mas_ssobranch.`name`, mas_ssobranch.`ssobranch_type_id`
-			FROM
-		  	mas_user
-		  	INNER JOIN mas_ssobranch
-			ON (
-			  mas_user.ssobranch_code = mas_ssobranch.ssobranch_code
-			) WHERE uid=:uid /*AND mas_user.status=1*/
-		";
+			$sql = "
+				SELECT 
+					mas_user.id, 
+					mas_user.uid, 
+					mas_user.password, 
+					mas_user.displayname, 
+					mas_user.ssobranch_code, 
+					mas_user.status, 
+					mas_ssobranch.name, 
+					mas_ssobranch.ssobranch_type_id
+				FROM mas_user INNER JOIN mas_ssobranch ON mas_user.ssobranch_code = mas_ssobranch.ssobranch_code  
+				WHERE uid = :uid
+			";
 		}
 
 		$rows = Yii::$app->db->createCommand($sql)->bindValue('uid', $username)->queryAll(); 
+
+		// arr( $rows );
 		return $rows;
 	}
 
@@ -119,7 +135,7 @@ class lkup_user
 		//$sql="select id, username, userpass, displayname, userlevel_id, status from mas_user where id='".$id."' and status=1";	
 		//$rows =Yii::$app->db->createCommand($sql)->queryAll();
 
-		$sql = "SELECT mas_user.`id`, mas_user.`uid`, mas_user.`password`, mas_user.`displayname`, mas_user.`ssobranch_code`, mas_user.`status`, mas_ssobranch.`name`, mas_ssobranch.`ssobranch_type_id`
+		$sql = "SELECT mas_user.id, mas_user.uid, mas_user.password, mas_user.displayname, mas_user.ssobranch_code, mas_user.status, mas_ssobranch.name, mas_ssobranch.ssobranch_type_id
 			FROM
 		  	mas_user
 		  	INNER JOIN mas_ssobranch
