@@ -285,10 +285,23 @@ class EmpdataController extends Controller
                 $new_id =  $per_ids[$setType];
 
                 // echo 'dsadsfddss'; exit;
+				$sql = "SELECT PER_PERSONAL_SEQ.nextval FROM DUAL";
+				if ($setType == 1) {
+                            $cmd = $con->createCommand($sql);
+                        } else {
+
+                            $cmd = $con2->createCommand($sql);
+                        }
+        foreach ($cmd->queryAll() as $ka => $vz) {
+
+          echo   $per_id = $vz['NEXTVAL'];exit;
+
+        }
+
                 $SqlUnion[$setType][] = "
                     SELECT 
                         '" . $va->pertype_id . "' AS pertype_id,
-                        '" . $new_id . "' AS per_id,
+                        '" .  $per_id . "'  AS per_id,
                         '" . $va->per_name . "' AS per_name,
                         '" . $va->per_cardno . "' AS per_cardno,
                         '" . $va->per_surname . "' AS per_surname,
@@ -304,7 +317,7 @@ class EmpdataController extends Controller
 
                 foreach ($SqlUnion as $ks => $vs) {
 
-                    if (count($vs) == 1000) {
+                    if (count($vs) == 1) {
 
                         $sql = "
                             MERGE INTO per_personal d
@@ -315,7 +328,7 @@ class EmpdataController extends Controller
                                 INSERT  ( level_no, level_no_salary, per_type, per_id, per_name, per_cardno, per_surname, per_eng_name, per_eng_surname, per_birthdate, per_startdate, per_occupydate, per_status,
                                 ot_code, pn_code, org_id, pos_id, poem_id, per_orgmgt, per_salary, per_mgtsalary, per_spsalary, per_gender, mr_code, per_offno, per_taxno, per_blood, re_code, per_retiredate, per_posdate, per_saldate, pn_code_f, per_fathername, per_fathersurname, pn_code_m, per_mothername, per_mothersurname, per_add1, per_add2, pv_code, mov_code, per_ordain, per_soldier, per_member, update_user, update_date, department_id, approve_per_id, replace_per_id, absent_flag, poems_id, per_hip_flag, per_cert_occ, per_nickname, per_home_tel, per_office_tel, per_fax, per_mobile, per_email, per_file_no, per_bank_account, per_id_ref, per_id_ass_ref, per_contact_person, per_remark, per_start_org, per_cooperative, per_cooperative_no, per_memberdate, per_seq_no, pay_id, es_code, pl_name_work, org_name_work, per_docno, per_docdate, per_effectivedate, per_pos_reason, per_pos_year, per_pos_doctype, per_pos_docno, per_pos_org, per_ordain_detail, per_pos_orgmgt, per_pos_docdate, per_pos_desc, per_pos_remark, per_book_no, per_book_date, per_contact_count, per_disability, pot_id, per_union, per_uniondate, per_job, org_id_1, org_id_2, org_id_3, org_id_4, org_id_5, per_union2, per_uniondate2, per_union3, per_uniondate3, per_union4, per_uniondate4, per_union5, per_uniondate5, per_set_ass, per_audit_flag, per_probation_flag, department_id_ass, per_birth_place, per_scar, per_renew, per_leveldate, per_postdate, per_ot_flag  
                             ) VALUES
-                                ( s.level_no, 'C4', s.pertype_id, s.per_id, s.per_name, s.per_cardno, s.per_surname, s.per_eng_name, s.per_eng_surname, s.per_birthdate, s.per_startdate, s.per_occupydate, s.per_status, '11', '004', '13950.00', '17.00', NULL, '0.00', '28100.00', '0.00', '0.00', '2.00', '1 ', NULL, NULL, NULL, NULL, '2036-10-01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '21345     ', '0.00', '0.00', '0.00', '7827.00', '2020-05-16 13:24:23', '3062.00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'sakawduan.b@sso.go.th', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0.00', NULL, NULL, '4009.00', '17.00', '02', NULL, NULL, '9282/2565', '2022-07-12', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1.00', NULL, '0.00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0.00', NULL, '0.00', NULL, '0.00', NULL, '0.00', NULL, '1.00', '0.00', '0.00', '3062.00', NULL, NULL, NULL, NULL, NULL, NULL )
+                                ( s.level_no, 'C4', 1, s.per_id, s.per_name, s.per_cardno, s.per_surname, s.per_eng_name, s.per_eng_surname, s.per_birthdate, s.per_startdate, s.per_occupydate, s.per_status, '11', '004', '13950.00', '17.00', NULL, '0.00', '28100.00', '0.00', '0.00', '2.00', '1 ', NULL, NULL, NULL, NULL, '2036-10-01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '21345     ', '0.00', '0.00', '0.00', '7827.00', '2020-05-16 13:24:23', '3062.00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'sakawduan.b@sso.go.th', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0.00', NULL, NULL, '4009.00', '17.00', '02', NULL, NULL, '9282/2565', '2022-07-12', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1.00', NULL, '0.00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0.00', NULL, '0.00', NULL, '0.00', NULL, '0.00', NULL, '1.00', '0.00', '0.00', '3062.00', NULL, NULL, NULL, NULL, NULL, NULL )
                         ";
 
                         if ($ks == 1) {
@@ -327,7 +340,7 @@ class EmpdataController extends Controller
 
                         $cmd->execute();
 
-                        $SqlUnion[$ks] = [];
+                        $SqlUnion[$ks] = [];echo "wr"; exit;
                     }
                 }
             }
