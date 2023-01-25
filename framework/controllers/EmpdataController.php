@@ -55,7 +55,7 @@ class EmpdataController extends Controller
 
         $gogog = [1, 2];
 
-        foreach ($gogog as $kg => $vg) { 
+        foreach ($gogog as $kg => $vg) {
 
             if ($vg == 1) {
 
@@ -64,8 +64,8 @@ class EmpdataController extends Controller
 
                 $cmd = $con2->createCommand($sql);
             }
-    
-    
+
+
             $per_ids[$vg] = 0;
             foreach ($cmd->queryAll() as $ka => $va) {
                 $per_ids[$vg] = $va['MAX_ID'];
@@ -94,27 +94,27 @@ class EmpdataController extends Controller
 
         foreach ($gogog as $kg => $vg) {
 
-            // if ($vg == 1) {
+            if ($vg == 1) {
 
-            //     $cmd = $con->createCommand($sql);
-            // } else {
+                $cmd = $con->createCommand($sql);
+            } else {
 
-            //     $cmd = $con2->createCommand($sql);
-            // }
+                $cmd = $con2->createCommand($sql);
+            }
 
-            // foreach ($cmd->queryAll() as $ka => $va) {
+            foreach ($cmd->queryAll() as $ka => $va) {
 
-            //     $concat = '';
-            //     foreach ($arr as $kf => $vf) {
+                $concat = '';
+                foreach ($arr as $kf => $vf) {
 
-            //         $vf = strtoupper($vf);
+                    $vf = strtoupper($vf);
 
-            //         $concat .= $va[$vf] . '-';
-            //     }
+                    $concat .= $va[$vf] . '-';
+                }
 
-            //     $keep[$vg][] = $concat;
-            //     $per_ids[$vg] = $va['PER_ID'];
-            // }
+                $keep[$vg][] = $concat;
+                $per_ids[$vg] = $va['PER_ID'];
+            }
         }
 
 
@@ -233,7 +233,7 @@ class EmpdataController extends Controller
 
                 if (file_get_contents($save_file) ==  $data_result["data"]) {
 
-                    continue;
+                    //continue;
                 }
             }
 
@@ -261,10 +261,10 @@ class EmpdataController extends Controller
                     $setType = 2;
                 }
 
-                if (!isset($per_ids[$setType])) {
+                /*  if (!isset($per_ids[$setType])) {
 
                     $per_ids[$setType] = 0;
-                }
+                }*/
 
                 if (!isset($levels[$va->levelname_th])) {
                     $levels[$va->levelname_th] = '-';
@@ -281,27 +281,34 @@ class EmpdataController extends Controller
                     continue;
                 }
 
-                ++$per_ids[$setType];
-                $new_id =  $per_ids[$setType];
+                /*  ++$per_ids[$setType];
+                $new_id =  $per_ids[$setType];*/
 
                 // echo 'dsadsfddss'; exit;
-				$sql = "SELECT PER_PERSONAL_SEQ.nextval FROM DUAL";
-				if ($setType == 1) {
-                            $cmd = $con->createCommand($sql);
-                        } else {
 
-                            $cmd = $con2->createCommand($sql);
-                        }
-        foreach ($cmd->queryAll() as $ka => $vz) {
+                //$sql = "SELECT PER_PERSONAL_SEQ.nextval FROM DUAL";
 
-          echo   $per_id = $vz['NEXTVAL'];exit;
+                if (isset($per_ids[$setType])) {
+                    echo $per_ids[$setType] += 1;
+                } else {
+                    $sql = "SELECT max(per_id) as MAXID  FROM PER_PERSONAL";
+                    if ($setType == 1) {
+                        $cmd = $con->createCommand($sql);
+                    } else {
 
-        }
+                        $cmd = $con2->createCommand($sql);
+                    }
+                    foreach ($cmd->queryAll() as $ka => $vz) {
+
+                        echo $per_ids[$setType] = $vz['MAXID'] + 1;
+                    }
+                }
+
 
                 $SqlUnion[$setType][] = "
                     SELECT 
                         '" . $va->pertype_id . "' AS pertype_id,
-                        '" .  $per_id . "'  AS per_id,
+                        9999  AS per_id,
                         '" . $va->per_name . "' AS per_name,
                         '" . $va->per_cardno . "' AS per_cardno,
                         '" . $va->per_surname . "' AS per_surname,
@@ -318,7 +325,7 @@ class EmpdataController extends Controller
                 foreach ($SqlUnion as $ks => $vs) {
 
                     if (count($vs) == 1) {
-
+                        /*
                         $sql = "
                             MERGE INTO per_personal d
                             USING ( 
@@ -330,7 +337,15 @@ class EmpdataController extends Controller
                             ) VALUES
                                 ( s.level_no, 'C4', 1, s.per_id, s.per_name, s.per_cardno, s.per_surname, s.per_eng_name, s.per_eng_surname, s.per_birthdate, s.per_startdate, s.per_occupydate, s.per_status, '11', '004', '13950.00', '17.00', NULL, '0.00', '28100.00', '0.00', '0.00', '2.00', '1 ', NULL, NULL, NULL, NULL, '2036-10-01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '21345     ', '0.00', '0.00', '0.00', '7827.00', '2020-05-16 13:24:23', '3062.00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'sakawduan.b@sso.go.th', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0.00', NULL, NULL, '4009.00', '17.00', '02', NULL, NULL, '9282/2565', '2022-07-12', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1.00', NULL, '0.00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0.00', NULL, '0.00', NULL, '0.00', NULL, '0.00', NULL, '1.00', '0.00', '0.00', '3062.00', NULL, NULL, NULL, NULL, NULL, NULL )
                         ";
+						*/
+                        $sql = "
 
+						 INSERT into per_personal (per_id, per_type,ot_code,pn_code,per_name,per_surname,per_eng_name,per_eng_surname,org_id,pos_id,poem_id,level_no,per_orgmgt,per_salary,per_mgtsalary,per_spsalary,per_gender,mr_code,per_cardno,per_offno,per_taxno,per_blood,re_code,per_birthdate,per_retiredate,per_startdate,per_occupydate,per_posdate,per_saldate,pn_code_f,per_fathername,per_fathersurname,pn_code_m,per_mothername,per_mothersurname,per_add1,per_add2,pv_code,mov_code,per_ordain,per_soldier,per_member,per_status,update_user,update_date,department_id,approve_per_id,replace_per_id,absent_flag,poems_id,per_hip_flag,per_cert_occ,level_no_salary,per_nickname,per_home_tel,per_office_tel,per_fax,per_mobile,per_email,per_file_no,per_bank_account,per_id_ref,per_id_ass_ref,per_contact_person,per_remark,per_start_org,per_cooperative,per_cooperative_no,per_memberdate,per_seq_no,pay_id,es_code,pl_name_work,org_name_work,per_docno,per_docdate,per_effectivedate,per_pos_reason,per_pos_year,per_pos_doctype,per_pos_docno,per_pos_org,per_ordain_detail,per_pos_orgmgt,per_pos_docdate,per_pos_desc,per_pos_remark,per_book_no,per_book_date,per_contact_count,per_disability,pot_id,per_union,per_uniondate,per_job,org_id_1,org_id_2,org_id_3,org_id_4,org_id_5,per_union2,per_uniondate2,per_union3,per_uniondate3,per_union4,per_uniondate4,per_union5,per_uniondate5,per_set_ass,per_audit_flag,per_probation_flag,department_id_ass,per_birth_place,per_scar,per_renew,per_leveldate,per_postdate,per_ot_flag) 
+						 values ( '" . $per_ids[$ks] . "', 1,'09','004','AAA','ทัศนสุวรรณ','sanit','thatsanasuwan',11545,2670,null,'S2',0,32140,0,0,2,'1 ','3720400644876',null,null,null,null,'1966-01-07 ','2026-10-01 ','1995-07-14 ','1995-07-14 ',null,null,null,null,null,null,null,null,null,null,null,'21345 ',0,0,0,1,7827,'2021-01-15 14:14:59',3062,null,null,null,null,null,null,'s4',null,null,null,null,null,'sanit.t@sso.go.th',null,null,null,null,null,null,null,0,null,null,3571,3804,'02',null,null,'1788/2565','2022-05-09',null,null,null,null,null,null,null,null,null,null,null,null,null,null,1,null,0,null,null,null,null,null,null,null,0,null,0,null,0,null,0,null,1,0,0,3062,null,null,0,null,null,null)
+
+						";
+                        //echo $sql;
+                        //echo $ks;exit;
                         if ($ks == 1) {
                             $cmd = $con->createCommand($sql);
                         } else {
@@ -340,44 +355,46 @@ class EmpdataController extends Controller
 
                         $cmd->execute();
 
-                        $SqlUnion[$ks] = [];echo "wr"; exit;
+                        $SqlUnion[$ks] = [];
+                        // echo "wr";
+                        // exit;
                     }
                 }
             }
         }
 
 
-        foreach ($SqlUnion as $ks => $vs) {
+        // foreach ($SqlUnion as $ks => $vs) {
 
-            if (count($vs) > 0) {
+        //     if (count($vs) > 0) {
 
-                $sql = "
-                    MERGE INTO per_personal d
-                    USING ( 
-                        " . implode(' UNION ', $vs) . "
-                    ) s ON ( 1 = 0 )
-                    WHEN NOT MATCHED THEN
-                        INSERT  ( level_no, level_no_salary, per_type, per_id, per_name, per_cardno, per_surname, per_eng_name, per_eng_surname, per_birthdate, per_startdate, per_occupydate, per_status,
-                        ot_code, pn_code, org_id, pos_id, poem_id, per_orgmgt, per_salary, per_mgtsalary, per_spsalary, per_gender, mr_code, per_offno, per_taxno, per_blood, re_code, per_retiredate, per_posdate, per_saldate, pn_code_f, per_fathername, per_fathersurname, pn_code_m, per_mothername, per_mothersurname, per_add1, per_add2, pv_code, mov_code, per_ordain, per_soldier, per_member, update_user, update_date, department_id, approve_per_id, replace_per_id, absent_flag, poems_id, per_hip_flag, per_cert_occ, per_nickname, per_home_tel, per_office_tel, per_fax, per_mobile, per_email, per_file_no, per_bank_account, per_id_ref, per_id_ass_ref, per_contact_person, per_remark, per_start_org, per_cooperative, per_cooperative_no, per_memberdate, per_seq_no, pay_id, es_code, pl_name_work, org_name_work, per_docno, per_docdate, per_effectivedate, per_pos_reason, per_pos_year, per_pos_doctype, per_pos_docno, per_pos_org, per_ordain_detail, per_pos_orgmgt, per_pos_docdate, per_pos_desc, per_pos_remark, per_book_no, per_book_date, per_contact_count, per_disability, pot_id, per_union, per_uniondate, per_job, org_id_1, org_id_2, org_id_3, org_id_4, org_id_5, per_union2, per_uniondate2, per_union3, per_uniondate3, per_union4, per_uniondate4, per_union5, per_uniondate5, per_set_ass, per_audit_flag, per_probation_flag, department_id_ass, per_birth_place, per_scar, per_renew, per_leveldate, per_postdate, per_ot_flag
+        //         $sql = "
+        //             MERGE INTO per_personal d
+        //             USING ( 
+        //                 " . implode(' UNION ', $vs) . "
+        //             ) s ON ( 1 = 0 )
+        //             WHEN NOT MATCHED THEN
+        //                 INSERT  ( level_no, level_no_salary, per_type, per_id, per_name, per_cardno, per_surname, per_eng_name, per_eng_surname, per_birthdate, per_startdate, per_occupydate, per_status,
+        //                 ot_code, pn_code, org_id, pos_id, poem_id, per_orgmgt, per_salary, per_mgtsalary, per_spsalary, per_gender, mr_code, per_offno, per_taxno, per_blood, re_code, per_retiredate, per_posdate, per_saldate, pn_code_f, per_fathername, per_fathersurname, pn_code_m, per_mothername, per_mothersurname, per_add1, per_add2, pv_code, mov_code, per_ordain, per_soldier, per_member, update_user, update_date, department_id, approve_per_id, replace_per_id, absent_flag, poems_id, per_hip_flag, per_cert_occ, per_nickname, per_home_tel, per_office_tel, per_fax, per_mobile, per_email, per_file_no, per_bank_account, per_id_ref, per_id_ass_ref, per_contact_person, per_remark, per_start_org, per_cooperative, per_cooperative_no, per_memberdate, per_seq_no, pay_id, es_code, pl_name_work, org_name_work, per_docno, per_docdate, per_effectivedate, per_pos_reason, per_pos_year, per_pos_doctype, per_pos_docno, per_pos_org, per_ordain_detail, per_pos_orgmgt, per_pos_docdate, per_pos_desc, per_pos_remark, per_book_no, per_book_date, per_contact_count, per_disability, pot_id, per_union, per_uniondate, per_job, org_id_1, org_id_2, org_id_3, org_id_4, org_id_5, per_union2, per_uniondate2, per_union3, per_uniondate3, per_union4, per_uniondate4, per_union5, per_uniondate5, per_set_ass, per_audit_flag, per_probation_flag, department_id_ass, per_birth_place, per_scar, per_renew, per_leveldate, per_postdate, per_ot_flag
                         
                         
-                    ) VALUES
-                        ( s.level_no, 'C4', s.pertype_id, s.per_id, s.per_name, s.per_cardno, s.per_surname, s.per_eng_name, s.per_eng_surname, s.per_birthdate, s.per_startdate, s.per_occupydate, s.per_status, '11', '004', '13950.00', '17.00', NULL, '0.00', '28100.00', '0.00', '0.00', '2.00', '1 ', NULL, NULL, NULL, NULL, '2036-10-01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '21345     ', '0.00', '0.00', '0.00', '7827.00', '2020-05-16 13:24:23', '3062.00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'sakawduan.b@sso.go.th', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0.00', NULL, NULL, '4009.00', '17.00', '02', NULL, NULL, '9282/2565', '2022-07-12', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1.00', NULL, '0.00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0.00', NULL, '0.00', NULL, '0.00', NULL, '0.00', NULL, '1.00', '0.00', '0.00', '3062.00', NULL, NULL, NULL, NULL, NULL, NULL )
+        //             ) VALUES
+        //                 ( s.level_no, 'C4', s.pertype_id, s.per_id, s.per_name, s.per_cardno, s.per_surname, s.per_eng_name, s.per_eng_surname, s.per_birthdate, s.per_startdate, s.per_occupydate, s.per_status, '11', '004', '13950.00', '17.00', NULL, '0.00', '28100.00', '0.00', '0.00', '2.00', '1 ', NULL, NULL, NULL, NULL, '2036-10-01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '21345     ', '0.00', '0.00', '0.00', '7827.00', '2020-05-16 13:24:23', '3062.00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'sakawduan.b@sso.go.th', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0.00', NULL, NULL, '4009.00', '17.00', '02', NULL, NULL, '9282/2565', '2022-07-12', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1.00', NULL, '0.00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0.00', NULL, '0.00', NULL, '0.00', NULL, '0.00', NULL, '1.00', '0.00', '0.00', '3062.00', NULL, NULL, NULL, NULL, NULL, NULL )
                    
-                ";
+        //         ";
 
-                if ($ks == 1) {
-                    $cmd = $con->createCommand($sql);
-                } else {
+        //         if ($ks == 1) {
+        //             $cmd = $con->createCommand($sql);
+        //         } else {
 
-                    $cmd = $con2->createCommand($sql);
-                }
+        //             $cmd = $con2->createCommand($sql);
+        //         }
 
-                $cmd->execute();
+        //         $cmd->execute();
 
-                $SqlUnion[$ks] = [];
-            }
-        }
+        //         $SqlUnion[$ks] = [];
+        //     }
+        // }
 
         $keep = [];
 
@@ -423,7 +440,7 @@ class EmpdataController extends Controller
                 'className' => "text-center",
                 'orderable' => false
             ],
-            
+
             [
                 'name' => 'btn1',
                 'label' => 'ยกเลิกสิทธิ์',
@@ -442,7 +459,7 @@ class EmpdataController extends Controller
 
         return $this->render('view_user', $datas);
     }
-    
+
     public function actionSyndata()
     {
 
@@ -511,7 +528,7 @@ class EmpdataController extends Controller
         return $this->render('view', $datas);
     }
 
-    
+
     public function actionTest()
     {
 
@@ -554,7 +571,7 @@ class EmpdataController extends Controller
         $post = $sql1->queryAll();
 
         // $ddsfa = $post->queryAll();
-        arr( $post, 0 );
+        arr($post, 0);
 
 
         // arr( $post );
@@ -565,19 +582,19 @@ class EmpdataController extends Controller
 
 
 
-       
-
-       
 
 
-       $gogo = $sql1->union($sql2);
 
-       echo $gogo->sql;
 
-     
+
+        $gogo = $sql1->union($sql2);
+
+        echo $gogo->sql;
+
+
 
         $ddsfa = $gogo->queryAll();
-        arr( $ddsfa, 0 );
+        arr($ddsfa, 0);
         // $ddsfa = $sql2->queryAll();
         // arr( $ddsfa, 0 );
 
@@ -592,7 +609,7 @@ class EmpdataController extends Controller
 
         // echo $command->sql;
 
-        
+
         // arr( $command->queryAll( ), 0 );
     }
 
@@ -614,7 +631,7 @@ class EmpdataController extends Controller
         return $output;
     }
 
-    
+
 
     public function actionSelect()
     {
