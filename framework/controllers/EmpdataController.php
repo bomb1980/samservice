@@ -20,232 +20,14 @@ class EmpdataController extends Controller
         }
     }
 
-    
-    public function actionUser_permission()
-    {
-
-        $datas['columns'] = [
-
-            [
-                'name' => 'uid',
-                'label' => 'ชื่อ Login',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'displayname',
-                'label' => 'ชื่อ-นามสกุล',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'ssobranch_code',
-                'label' => 'รหัสหน่วยงาน',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'branch_name',
-                'label' => 'ชื่อหน่วยงาน',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            
-            [
-                'name' => 'btn1',
-                'label' => 'ยกเลิกสิทธิ์',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'btn',
-                'label' => 'แก้ไข',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-   
-
-        ];
-
-        $datas['tableUrl'] = '';
-
-        return $this->render('view_user', $datas);
-    }
-    
-    public function actionSyndata()
-    {
-
-        // arr( Yii::$app->params['prg_ctrl'] );
-
-        $datas['columns'] = [
-            [
-                'name' => 'PER_CARDNO',
-                'label' => 'เลขบัตร',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'PER_NAME',
-                'label' => 'ชื่อ',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'PER_SURNAME',
-                'label' => 'นามสกุล',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'PER_STATUS',
-                'label' => 'สถานะ',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'PER_ENG_NAME',
-                'label' => 'ชื่ออังกฤษ',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'PER_ENG_SURNAME',
-                'label' => 'นามสกุลอังกฤษ',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'PER_STARTDATE',
-                'label' => 'เริ่มงานเมื่อ',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'PER_OCCUPYDATE',
-                'label' => 'PER_OCCUPYDATE',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'LEVEL_NO',
-                'label' => 'ระดับ',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-
-        ];
-
-
-        // arr($columns);
-        return $this->render('view', $datas);
-    }
-
-    
-    public function actionTest()
-    {
-
-        //localhost
-        // /samservice/empdata/gogo 
-        // url: "/samservice/empdata/gogo",
-
-        // /empdata/gogo 
-        // url: "/empdata/gogo",
-        echo Yii::$app->urlManager->createUrl("");
-
-
-        exit;
-        $con1 = Yii::$app->dbdpis;
-        $con2 = Yii::$app->dbdpisemp;
-
-        $sql = "
-            SELECT
-                per_cardno,
-                per_name,
-                per_surname,
-                per_status,
-                per_eng_name,
-                per_eng_surname,
-                per_startdate,
-                per_occupydate,
-                level_no,
-                per_id
-            FROM per_personal 
-            
-            ORDER BY per_id ASC
-            OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY
-        ";
-
-        $sql1 = $con1->createCommand($sql);
-        $sql2 = $con2->createCommand($sql);
-
-        // $command = $con1->createCommand($sql);
-        // $command->bindValue(':id', $_GET['id']);
-        $post = $sql1->queryAll();
-
-        // $ddsfa = $post->queryAll();
-        arr( $post, 0 );
-
-
-        // arr( $post );
-
-
-
-        exit;
-
-
-
-       
-
-       
-
-
-       $gogo = $sql1->union($sql2);
-
-       echo $gogo->sql;
-
-     
-
-        $ddsfa = $gogo->queryAll();
-        arr( $ddsfa, 0 );
-        // $ddsfa = $sql2->queryAll();
-        // arr( $ddsfa, 0 );
-
-
-        // $mydb = new \yii\db\Query();
-
-        // $command  =  $con1
-        //     ->select(['per_name'])
-        //     ->from('per_personal')
-        //     ->limit(10)
-        //     ->createCommand();
-
-        // echo $command->sql;
-
-        
-        // arr( $command->queryAll( ), 0 );
-    }
-
-
-
-    function ssl_decrypt_api($string, $skey)
-    {
-        $output = false;
-        if ($skey != '') {
-
-            $encrypt_method = "AES-256-CBC";
-            $secret_key = base64_encode(md5($skey));
-            $secret_iv = md5(base64_encode(md5($skey)));
-            $key = hash('sha256', $secret_key);
-            $iv = substr(hash('sha256', $secret_iv), 0, 16);
-            $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $iv);
-        }
-
-        return $output;
-    }
 
     // http://samservice/empdata/gogo
     public function actionGogo()
     {
+
+        ini_set("default_socket_timeout", 20000);
+        ini_set('memory_limit', '2048M');
+        set_time_limit(0);
 
         $con = Yii::$app->dbdpis;
 
@@ -262,6 +44,36 @@ class EmpdataController extends Controller
             'per_occupydate',
         ];
 
+
+        $sql = "
+            SELECT 
+                MAX( per_id ) as max_id
+            FROM per_personal 
+            ORDER BY per_id DESC
+            
+        ";
+
+        $gogog = [1, 2];
+
+        foreach ($gogog as $kg => $vg) { 
+
+            if ($vg == 1) {
+
+                $cmd = $con->createCommand($sql);
+            } else {
+
+                $cmd = $con2->createCommand($sql);
+            }
+    
+    
+            $per_ids[$vg] = 0;
+            foreach ($cmd->queryAll() as $ka => $va) {
+                $per_ids[$vg] = $va['MAX_ID'];
+            }
+
+            $keep[$vg] = [];
+        }
+
         $sql = "
             SELECT 
                 per_cardno,
@@ -276,37 +88,38 @@ class EmpdataController extends Controller
                 per_id
             FROM per_personal 
             ORDER BY per_id ASC
-            
         ";
 
         $gogog = [1, 2];
 
         foreach ($gogog as $kg => $vg) {
 
+            // if ($vg == 1) {
 
-            if ($vg == 1) {
+            //     $cmd = $con->createCommand($sql);
+            // } else {
 
-                $cmd = $con->createCommand($sql);
-            } else {
+            //     $cmd = $con2->createCommand($sql);
+            // }
 
-                $cmd = $con2->createCommand($sql);
-            }
+            // foreach ($cmd->queryAll() as $ka => $va) {
 
-            $keep[$vg] = [];
-            foreach ($cmd->queryAll() as $ka => $va) {
+            //     $concat = '';
+            //     foreach ($arr as $kf => $vf) {
 
-                $concat = '';
-                foreach ($arr as $kf => $vf) {
+            //         $vf = strtoupper($vf);
 
-                    $vf = strtoupper($vf);
+            //         $concat .= $va[$vf] . '-';
+            //     }
 
-                    $concat .= $va[$vf] . '-';
-                }
-
-                $keep[$vg][] = $concat;
-                $per_ids[$vg] = $va['PER_ID'];
-            }
+            //     $keep[$vg][] = $concat;
+            //     $per_ids[$vg] = $va['PER_ID'];
+            // }
         }
+
+
+        // arr( $per_ids, 1 );
+
 
 
         $nocard = 0;
@@ -563,12 +376,232 @@ class EmpdataController extends Controller
             $return['msg'] = implode('<br>', $mymess);
         }
 
-
-
         $return['status'] = 'success';
 
         echo json_encode($return);
     }
+
+    public function actionUser_permission()
+    {
+
+        $datas['columns'] = [
+
+            [
+                'name' => 'uid',
+                'label' => 'ชื่อ Login',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'displayname',
+                'label' => 'ชื่อ-นามสกุล',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'ssobranch_code',
+                'label' => 'รหัสหน่วยงาน',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'branch_name',
+                'label' => 'ชื่อหน่วยงาน',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            
+            [
+                'name' => 'btn1',
+                'label' => 'ยกเลิกสิทธิ์',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'btn',
+                'label' => 'แก้ไข',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+        ];
+
+        $datas['tableUrl'] = '';
+
+        return $this->render('view_user', $datas);
+    }
+    
+    public function actionSyndata()
+    {
+
+        // arr( Yii::$app->params['prg_ctrl'] );
+
+        $datas['columns'] = [
+            [
+                'name' => 'PER_CARDNO',
+                'label' => 'เลขบัตร',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'PER_NAME',
+                'label' => 'ชื่อ',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'PER_SURNAME',
+                'label' => 'นามสกุล',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'PER_STATUS',
+                'label' => 'สถานะ',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'PER_ENG_NAME',
+                'label' => 'ชื่ออังกฤษ',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'PER_ENG_SURNAME',
+                'label' => 'นามสกุลอังกฤษ',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'PER_STARTDATE',
+                'label' => 'เริ่มงานเมื่อ',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'PER_OCCUPYDATE',
+                'label' => 'PER_OCCUPYDATE',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'LEVEL_NO',
+                'label' => 'ระดับ',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+
+        ];
+
+
+        // arr($columns);
+        return $this->render('view', $datas);
+    }
+
+    
+    public function actionTest()
+    {
+
+        //localhost
+        // /samservice/empdata/gogo 
+        // url: "/samservice/empdata/gogo",
+
+        // /empdata/gogo 
+        // url: "/empdata/gogo",
+        echo Yii::$app->urlManager->createUrl("");
+
+
+        exit;
+        $con1 = Yii::$app->dbdpis;
+        $con2 = Yii::$app->dbdpisemp;
+
+        $sql = "
+            SELECT
+                per_cardno,
+                per_name,
+                per_surname,
+                per_status,
+                per_eng_name,
+                per_eng_surname,
+                per_startdate,
+                per_occupydate,
+                level_no,
+                per_id
+            FROM per_personal 
+            
+            ORDER BY per_id ASC
+            OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY
+        ";
+
+        $sql1 = $con1->createCommand($sql);
+        $sql2 = $con2->createCommand($sql);
+
+        // $command = $con1->createCommand($sql);
+        // $command->bindValue(':id', $_GET['id']);
+        $post = $sql1->queryAll();
+
+        // $ddsfa = $post->queryAll();
+        arr( $post, 0 );
+
+
+        // arr( $post );
+
+
+
+        exit;
+
+
+
+       
+
+       
+
+
+       $gogo = $sql1->union($sql2);
+
+       echo $gogo->sql;
+
+     
+
+        $ddsfa = $gogo->queryAll();
+        arr( $ddsfa, 0 );
+        // $ddsfa = $sql2->queryAll();
+        // arr( $ddsfa, 0 );
+
+
+        // $mydb = new \yii\db\Query();
+
+        // $command  =  $con1
+        //     ->select(['per_name'])
+        //     ->from('per_personal')
+        //     ->limit(10)
+        //     ->createCommand();
+
+        // echo $command->sql;
+
+        
+        // arr( $command->queryAll( ), 0 );
+    }
+
+
+
+    function ssl_decrypt_api($string, $skey)
+    {
+        $output = false;
+        if ($skey != '') {
+
+            $encrypt_method = "AES-256-CBC";
+            $secret_key = base64_encode(md5($skey));
+            $secret_iv = md5(base64_encode(md5($skey)));
+            $key = hash('sha256', $secret_key);
+            $iv = substr(hash('sha256', $secret_iv), 0, 16);
+            $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $iv);
+        }
+
+        return $output;
+    }
+
+    
 
     public function actionSelect()
     {
