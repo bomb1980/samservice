@@ -74,25 +74,29 @@ class EmpdataController extends Controller
             $keep[$vg] = [];
         }
 
-        $sql = "
-            SELECT 
-                per_cardno,
-                per_name,
-                per_surname,
-                per_status,
-                per_eng_name,
-                per_eng_surname,
-                per_startdate,
-                per_occupydate,
-                level_no,
-                per_id
-            FROM per_personal 
-            ORDER BY per_id ASC
-        ";
+       
 
         $gogog = [1, 2];
 
+        $orgs = [];
+
         foreach ($gogog as $kg => $vg) {
+
+            $sql = "
+                SELECT 
+                    per_cardno,
+                    per_name,
+                    per_surname,
+                    per_status,
+                    per_eng_name,
+                    per_eng_surname,
+                    per_startdate,
+                    per_occupydate,
+                    level_no,
+                    per_id
+                FROM per_personal 
+                ORDER BY per_id ASC
+            ";
 
             if ($vg == 1) {
 
@@ -115,10 +119,27 @@ class EmpdataController extends Controller
                 $keep[$vg][] = $concat;
                 // $per_ids[$vg] = $va['PER_ID'];
             }
+
+
+            $sql = "SELECT * FROM per_org_ass";
+            // $cmd = $con->createCommand($sql);
+
+            if ($vg == 1) {
+
+                $cmd = $con->createCommand($sql);
+            } else {
+
+                $cmd = $con2->createCommand($sql);
+            }
+            $orgs[$vg] = [];
+            foreach ($cmd->queryAll() as $ka => $va) {
+
+                $orgs[$vg][$va['ORG_NAME']] = $va['ORG_ID'];
+            }
         }
 
 
-        // arr( $per_ids, 1 );
+        // arr( $orgs, 0 );
 
 
 
@@ -140,13 +161,7 @@ class EmpdataController extends Controller
             $otcods[$va['OT_NAME']] = $va['OT_CODE'];
         }
 
-        $sql = "SELECT * FROM per_org_ass";
-        $cmd = $con->createCommand($sql);
-        $orgs = [];
-        foreach ($cmd->queryAll() as $ka => $va) {
 
-            $orgs[$va['ORG_NAME']] = $va['ORG_ID'];
-        }
 
         $genders['นาย'] = 1;
         $genders['นาง'] = 2;
@@ -262,7 +277,7 @@ class EmpdataController extends Controller
             file_put_contents($save_file, $data_result["data"]);
 
             foreach ($js as $ka => $va) {
-              
+
                 if (empty($va->per_cardno)) {
 
                     ++$nocard;
@@ -278,15 +293,14 @@ class EmpdataController extends Controller
                     $setType = 2;
                 }
 
-                if($setType == 1) {
+                if ($setType == 1) {
 
                     if (!isset($levels[$va->levelname_th])) {
                         $levels[$va->levelname_th] = 'O1';
                     }
-                }
-                else {
+                } else {
 
-                    
+
                     if (!isset($levels[$va->levelname_th])) {
                         $levels[$va->levelname_th] = NULL;
                     }
@@ -309,73 +323,47 @@ class EmpdataController extends Controller
                 } else {
 
                     $per_ids[$setType] = 1;
-                  
                 }
 
-                if( !isset($genders[$va->prename_th])  ) {
+                if (!isset($genders[$va->prename_th])) {
                     $genders[$va->prename_th] = 1;
                 }
 
-                if( !isset($otcods[$va->pertype])  ) {
+                if (!isset($otcods[$va->pertype])) {
                     $otcods[$va->pertype] = '01';
                 }
 
-                if( !isset($orgs[$va->organize_th_ass])  ) {
+                if (!isset( $orgs[$setType][$va->organize_th_ass] )) {
                     // $orgs[$va->organize_th_ass] = 13791;
                     continue;
-                    $SqlUnion[$setType][] = "
-                    SELECT 
-                        '" . $va->pertype_id . "' AS pertype_id,
-                        ". $per_ids[$setType] ."  AS per_id,
-                        '" . $va->per_name . "' AS per_name,
-                        '" . $va->per_cardno . "' AS per_cardno,
-                        '" . $va->per_surname . "' AS per_surname,
-                        '" . $va->per_eng_name . "' AS per_eng_name,
-                        '" . $va->per_eng_surname . "' AS per_eng_surname,
-                        '" . $va->birth_date . "' AS per_birthdate,
-                        '" . $va->per_startdate . "' AS per_startdate,
-                        '" . $va->per_occupydate . "' AS per_occupydate,
-                        '" . $va->per_status . "' AS per_status,
-                        '" . $levels[$va->levelname_th] . "' AS level_no,
-                        '" . $genders[$va->prename_th] . "' AS genders,
-                        '" . $otcods[$va->pertype] . "' AS otcode,
-                        NULL AS org
-                    FROM dual
-                ";
-                }
-                else {
+                   
+                } else {
 
                     $SqlUnion[$setType][] = "
-                    SELECT 
-                        '" . $va->pertype_id . "' AS pertype_id,
-                        ". $per_ids[$setType] ."  AS per_id,
-                        '" . $va->per_name . "' AS per_name,
-                        '" . $va->per_cardno . "' AS per_cardno,
-                        '" . $va->per_surname . "' AS per_surname,
-                        '" . $va->per_eng_name . "' AS per_eng_name,
-                        '" . $va->per_eng_surname . "' AS per_eng_surname,
-                        '" . $va->birth_date . "' AS per_birthdate,
-                        '" . $va->per_startdate . "' AS per_startdate,
-                        '" . $va->per_occupydate . "' AS per_occupydate,
-                        '" . $va->per_status . "' AS per_status,
-                        '" . $levels[$va->levelname_th] . "' AS level_no,
-                        '" . $genders[$va->prename_th] . "' AS genders,
-                        '" . $otcods[$va->pertype] . "' AS otcode,
-                        " . $orgs[$va->organize_th_ass] . " AS org
-                    FROM dual
-                ";
+                        SELECT 
+                            '" . $va->pertype_id . "' AS pertype_id,
+                            " . $per_ids[$setType] . "  AS per_id,
+                            '" . $va->per_name . "' AS per_name,
+                            '" . $va->per_cardno . "' AS per_cardno,
+                            '" . $va->per_surname . "' AS per_surname,
+                            '" . $va->per_eng_name . "' AS per_eng_name,
+                            '" . $va->per_eng_surname . "' AS per_eng_surname,
+                            '" . $va->birth_date . "' AS per_birthdate,
+                            '" . $va->per_startdate . "' AS per_startdate,
+                            '" . $va->per_occupydate . "' AS per_occupydate,
+                            '" . $va->per_status . "' AS per_status,
+                            '" . $levels[$va->levelname_th] . "' AS level_no,
+                            '" . $genders[$va->prename_th] . "' AS genders,
+                            '" . $otcods[$va->pertype] . "' AS otcode,
+                            " . $orgs[$setType][$va->organize_th_ass] . " AS org
+                        FROM dual
+                    ";
                 }
 
-                
-                // $gender = $genders[$va->prename_th];
-
-                // $genders['นางสาว']
-
-                
 
                 foreach ($SqlUnion as $ks => $vs) {
 
-                    if (count($vs) == 1) {
+                    if (count($vs) == 5) {
 
 
                         $sql = "
@@ -386,9 +374,9 @@ class EmpdataController extends Controller
                             WHEN NOT MATCHED THEN
                             INSERT  ( 
                                 per_occupydate, per_startdate, per_birthdate, per_eng_surname, per_eng_name, per_surname, per_cardno, per_name, level_no_salary, level_no, per_id, per_type, ot_code, pn_code, org_id, pos_id, poem_id, per_orgmgt, per_salary, per_mgtsalary, per_spsalary, per_gender, mr_code, per_offno, per_taxno, per_blood, re_code, per_retiredate, per_posdate, per_saldate, pn_code_f, per_fathername, per_fathersurname, pn_code_m, per_mothername, per_mothersurname, per_add1, per_add2, pv_code, mov_code, per_ordain, per_soldier, per_member, per_status, update_user, update_date, department_id, approve_per_id, replace_per_id, absent_flag, poems_id, per_hip_flag, per_cert_occ, per_nickname, per_home_tel, per_office_tel, per_fax, per_mobile, per_email, per_file_no, per_bank_account, per_id_ref, per_id_ass_ref, per_contact_person, per_remark, per_start_org, per_cooperative, per_cooperative_no, per_memberdate, per_seq_no, pay_id, es_code, pl_name_work, org_name_work, per_docno, per_docdate, per_effectivedate, per_pos_reason, per_pos_year, per_pos_doctype, per_pos_docno, per_pos_org, per_ordain_detail, per_pos_orgmgt, per_pos_docdate, per_pos_desc, per_pos_remark, per_book_no, per_book_date, per_contact_count, per_disability, pot_id, per_union, per_uniondate, per_job, org_id_1, org_id_2, org_id_3, org_id_4, org_id_5, per_union2, per_uniondate2, per_union3, per_uniondate3, per_union4, per_uniondate4, per_union5, per_uniondate5, per_set_ass, per_audit_flag, per_probation_flag, department_id_ass, per_birth_place, per_scar, per_renew, per_leveldate, per_postdate, per_ot_flag) 
-                            values ( s.per_occupydate, s.per_startdate, s.per_birthdate, s.per_eng_surname, s.per_eng_name, s.per_surname, s.per_cardno, s.per_name, s.level_no, s.level_no, s.per_id, 1, s.otcode, '004', 13450, 2670, null,  0, 0, 0, 0, s.genders,1, null, null, null, null, '-', null, null, null, null, null, null, null, null, null, null, null, '11894', 0, 0, 0, s.per_status, " . Yii::$app->user->getId() . ", TO_CHAR(CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS'), 3062, null, null, null, null, null, null, null, null, null, null, null, '-', null, null, null, null, null, null, null, 0, null, null, 3571, 3804, '02', null, null, '-', '-', null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1, null, 0, null, null, null, null, null, null, null, 0, null, 0, null, 0, null, 0, null, 1, 0, 0, 3062, null, null, 0, null, null, null )
+                            values ( s.per_occupydate, s.per_startdate, s.per_birthdate, s.per_eng_surname, s.per_eng_name, s.per_surname, s.per_cardno, s.per_name, s.level_no, s.level_no, s.per_id, 1, s.otcode, '004', s.org, 2670, null,  0, 0, 0, 0, s.genders,1, null, null, null, null, '-', null, null, null, null, null, null, null, null, null, null, null, '11894', 0, 0, 0, s.per_status, " . Yii::$app->user->getId() . ", TO_CHAR(CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS'), 3062, null, null, null, null, null, null, null, null, null, null, null, '-', null, null, null, null, null, null, null, 0, null, null, 3571, 3804, '02', null, null, '-', '-', null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1, null, 0, null, null, null, null, null, null, null, 0, null, 0, null, 0, null, 0, null, 1, 0, 0, 3062, null, null, 0, null, null, null )
                         ";
-                       
+
                         if ($ks == 1) {
                             $cmd = $con->createCommand($sql);
                         } else {
@@ -406,7 +394,7 @@ class EmpdataController extends Controller
             }
         }
 
-   
+
 
         $keep = [];
 
