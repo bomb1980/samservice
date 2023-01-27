@@ -33,6 +33,8 @@ class EmpdataController extends Controller
 
         $con2 = Yii::$app->dbdpisemp;
 
+
+
         $arr = [
             'per_cardno',
             'per_name',
@@ -45,17 +47,31 @@ class EmpdataController extends Controller
         ];
 
 
-        $sql = "
+
+
+        $gogog = [1, 2];
+
+        foreach ($gogog as $kg => $vg) {
+
+            $sql = "DELETE  FROM PER_PERSONAL WHERE BOMB  = 1  ";
+
+            if ($vg == 1) {
+
+                $cmd = $con->createCommand($sql);
+            } else {
+
+                $cmd = $con2->createCommand($sql);
+            }
+            //$cmd->execute();
+
+
+            $sql = "
             SELECT 
                 MAX( per_id ) as max_id
             FROM per_personal 
             ORDER BY per_id DESC
             
         ";
-
-        $gogog = [1, 2];
-
-        foreach ($gogog as $kg => $vg) {
 
             if ($vg == 1) {
 
@@ -74,7 +90,7 @@ class EmpdataController extends Controller
             $keep[$vg] = [];
         }
 
-       
+
 
         $gogog = [1, 2];
 
@@ -106,18 +122,30 @@ class EmpdataController extends Controller
                 $cmd = $con2->createCommand($sql);
             }
 
+
+            $old_level_nos[$vg] = [];
+
             foreach ($cmd->queryAll() as $ka => $va) {
+
+
+                // arr($va);
 
                 $concat = '';
                 foreach ($arr as $kf => $vf) {
 
                     $vf = strtoupper($vf);
 
-                    $concat .= $va[$vf] . '-';
+                    $concat .= trim($va[$vf]) . '-';
                 }
+
+                // if( $va['PER_CARDNO'] == '5939900016532') {
+                //     arr($concat, 0);
+                // }
 
                 $keep[$vg][$concat] = 1;
                 // $per_ids[$vg] = $va['PER_ID'];
+
+                $old_level_nos[$vg][$va['PER_CARDNO']] = $va['LEVEL_NO'];
             }
 
 
@@ -139,7 +167,7 @@ class EmpdataController extends Controller
         }
 
 
-        // arr( $orgs, 0 );
+        // arr( $old_level_nos );
 
 
 
@@ -296,7 +324,15 @@ class EmpdataController extends Controller
                 if ($setType == 1) {
 
                     if (!isset($levels[$va->levelname_th])) {
-                        $levels[$va->levelname_th] = 'O1';
+
+                        if (isset($old_level_nos[$setType][$va->per_cardno])) {
+
+                            $levels[$va->levelname_th] = $old_level_nos[$setType][$va->per_cardno];
+                        } else {
+
+
+                            $levels[$va->levelname_th] = 'O1';
+                        }
                     }
                 } else {
 
@@ -314,16 +350,16 @@ class EmpdataController extends Controller
                 }
 
 
-                if (  isset( $keep[$setType][$concat] ) ) {
+                // if( $va->per_cardno == '5939900016532') {
+                //     arr($concat);
+                // }
+
+
+                if (isset($keep[$setType][$concat])) {
                     continue;
                 }
 
-                if (isset($per_ids[$setType])) {
-                    $per_ids[$setType] += 1;
-                } else {
 
-                    $per_ids[$setType] = 1;
-                }
 
                 if (!isset($genders[$va->prename_th])) {
                     $genders[$va->prename_th] = 1;
@@ -333,11 +369,17 @@ class EmpdataController extends Controller
                     $otcods[$va->pertype] = '01';
                 }
 
-                if (!isset( $orgs[$setType][$va->organize_th_ass] )) {
+                if (!isset($orgs[$setType][$va->organize_th_ass])) {
                     // $orgs[$va->organize_th_ass] = 13791;
                     continue;
-                   
                 } else {
+
+                    if (isset($per_ids[$setType])) {
+                        $per_ids[$setType] += 1;
+                    } else {
+
+                        $per_ids[$setType] = 1;
+                    }
 
                     $SqlUnion[$setType][] = "
                         SELECT 
@@ -396,7 +438,7 @@ class EmpdataController extends Controller
 
         foreach ($SqlUnion as $ks => $vs) {
 
-            if (count($vs) > 0 ) {
+            if (count($vs) > 0) {
 
 
                 $sql = "
