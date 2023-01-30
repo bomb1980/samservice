@@ -31,6 +31,20 @@ class CronempController extends Controller
 	}
 
 
+	function getEncrypter($code = NULL, $type = 'encrypt')
+	{
+
+		$encrypter = new Encrypter('1234567812345678', 'AES-128-CBC');
+
+		if ($type == 'encrypt') {
+
+			return $encrypter->encrypt($code);
+		}
+
+		return $encrypter->decrypt($code);
+	}
+
+
 
 	// http://samservice/cronemp/
 	public function actionIndex()
@@ -41,25 +55,46 @@ class CronempController extends Controller
 		if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
 
 
-			// arr($matches);
 
-			// $request = Yii::$app->request;
-			$uid = $matches[1];
-			
-			// $request->get("uid"); //'ksukrit'
+			$simple_string = "ksukrit";
 
-			// $password = $request->get("password","sukrit6290" );
+			$ciphering = "AES-128-CTR";
+
+			$iv_length = openssl_cipher_iv_length($ciphering);
+			$options = 0;
+
+			$encryption_iv = '1234567891011121';
+
+			$encryption_key = "GeeksforGeeks";
+
+			$encryption = openssl_encrypt(
+				$simple_string,
+				$ciphering,
+				$encryption_key,
+				$options,
+				$encryption_iv
+			);
+
+			$encryption = $matches[1];
+
+			$decryption_iv = '1234567891011121';
+
+			$decryption_key = "GeeksforGeeks";
+
+			$uid = openssl_decrypt(
+				$encryption,
+				$ciphering,
+				$decryption_key,
+				$options,
+				$decryption_iv
+			);
+
 
 			$MasUser = MasUser::find()
 				->where(['uid' => $uid])
 				->one();
 
 			if ($MasUser) {
-
-				// if (password_verify($password, $MasUser->password)) {
-
-
-				// }
 
 				echo PerPersonal1::getFromApi($MasUser->id);
 				exit;
@@ -74,6 +109,50 @@ class CronempController extends Controller
 		$datas['msg'] = 'ไม่สำเร็จ';
 
 		echo json_encode($datas);
+
+		exit;
+
+
+
+
+
+		// echo "Decrypted String: " . $decryption;
+
+
+		exit;
+
+		$secretKey = 'bombja';
+
+		$data = 'ksukrit';
+
+
+		echo Yii::$app->security->encryptByKey($data, $secretKey);
+
+		//   $this->private_info = utf8_encode(Yii::app()->getSecurityManager()->encrypt($this->private_info));
+		exit;
+
+		header('Content-Type: text/html; charset=utf-8');
+
+
+		echo $encryptedData = Yii::$app->security->encryptByKey($data, $secretKey);
+
+		// echo 'dafadfsads';
+		exit;
+
+		// header('Content-Type: text/html; charset=utf-8');
+
+
+		echo $encryptedData = Yii::$app->getSecurity()->encryptByPassword($data, $secretKey);
+
+
+
+		// echo 'dasadfasdf';
+
+		echo '<br>';
+
+
+		echo $data = Yii::$app->getSecurity()->decryptByPassword($encryptedData, $secretKey);
+
 
 		exit;
 	}
