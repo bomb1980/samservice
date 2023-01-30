@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\components\CommonFnc;
 use app\models\MasUser;
 use Yii;
 use yii\web\Controller;
@@ -12,6 +13,17 @@ use app\models\PerPersonal1;
 class CronempController extends Controller
 {
 
+
+	function actionGogo()
+	{
+
+		echo $getEncrypter = CommonFnc::getEncrypter( 'aaaaaaaaaa', $type = 'encrtyp' );
+
+
+		echo CommonFnc::getEncrypter( $getEncrypter, $type = 'encdadfdsfdsfrtyp' );
+
+
+	}
 
 	function getAuthorizationHeader()
 	{
@@ -31,128 +43,40 @@ class CronempController extends Controller
 	}
 
 
-	function getEncrypter($code = NULL, $type = 'encrypt')
-	{
-
-		$encrypter = new Encrypter('1234567812345678', 'AES-128-CBC');
-
-		if ($type == 'encrypt') {
-
-			return $encrypter->encrypt($code);
-		}
-
-		return $encrypter->decrypt($code);
-	}
-
-
-
 	// http://samservice/cronemp/
 	public function actionIndex()
 	{
 
-		$headers = $this->getAuthorizationHeader();
+		if ( 0 ) {
+			
+			$simple_string = "ksukrit";
+			$encryption = CommonFnc::getEncrypter( $simple_string );
+			
+			
+			// $this->getEncrypter( $simple_string );
+
+			arr($encryption);
+		} 
+
+
+		$headers = CommonFnc::getAuthorizationHeader();
 
 		if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
 
-
-
-			$simple_string = "ksukrit";
-
-			$ciphering = "AES-128-CTR";
-
-			$iv_length = openssl_cipher_iv_length($ciphering);
-			$options = 0;
-
-			$encryption_iv = '1234567891011121';
-
-			$encryption_key = "GeeksforGeeks";
-
-			$encryption = openssl_encrypt(
-				$simple_string,
-				$ciphering,
-				$encryption_key,
-				$options,
-				$encryption_iv
-			);
-
-			$encryption = $matches[1];
-
-			$decryption_iv = '1234567891011121';
-
-			$decryption_key = "GeeksforGeeks";
-
-			$uid = openssl_decrypt(
-				$encryption,
-				$ciphering,
-				$decryption_key,
-				$options,
-				$decryption_iv
-			);
-
-
 			$MasUser = MasUser::find()
-				->where(['uid' => $uid])
+				->where(['uid' => CommonFnc::getEncrypter( $matches[1], 'dadfsdfs' )])
 				->one();
 
 			if ($MasUser) {
-
 				echo PerPersonal1::getFromApi($MasUser->id);
 				exit;
 			}
-
-
-
-			//   return $matches[1];
 		}
 
 		$datas['status'] = 'fail';
 		$datas['msg'] = 'ไม่สำเร็จ';
 
 		echo json_encode($datas);
-
-		exit;
-
-
-
-
-
-		// echo "Decrypted String: " . $decryption;
-
-
-		exit;
-
-		$secretKey = 'bombja';
-
-		$data = 'ksukrit';
-
-
-		echo Yii::$app->security->encryptByKey($data, $secretKey);
-
-		//   $this->private_info = utf8_encode(Yii::app()->getSecurityManager()->encrypt($this->private_info));
-		exit;
-
-		header('Content-Type: text/html; charset=utf-8');
-
-
-		echo $encryptedData = Yii::$app->security->encryptByKey($data, $secretKey);
-
-		// echo 'dafadfsads';
-		exit;
-
-		// header('Content-Type: text/html; charset=utf-8');
-
-
-		echo $encryptedData = Yii::$app->getSecurity()->encryptByPassword($data, $secretKey);
-
-
-
-		// echo 'dasadfasdf';
-
-		echo '<br>';
-
-
-		echo $data = Yii::$app->getSecurity()->decryptByPassword($encryptedData, $secretKey);
-
 
 		exit;
 	}

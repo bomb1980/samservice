@@ -13,14 +13,8 @@ use Yii;
 class PerPersonal1 extends \yii\db\ActiveRecord
 {
 
-    public static function test()
-    {
 
-        return 'dasffdsdfsafd';
-
-    }
-
-    public static function getFromApi( $user_id = 1)
+    public static function getFromApi($user_id = 1)
     {
 
         ini_set("default_socket_timeout", 20000);
@@ -41,9 +35,6 @@ class PerPersonal1 extends \yii\db\ActiveRecord
             'per_startdate',
             'per_occupydate',
         ];
-
-
-
 
         $gogog = [1, 2];
 
@@ -158,10 +149,6 @@ class PerPersonal1 extends \yii\db\ActiveRecord
             }
         }
 
-
-
-
-
         $nocard = 0;
 
         $sql = "SELECT level_no, level_name FROM per_level";
@@ -256,6 +243,8 @@ class PerPersonal1 extends \yii\db\ActiveRecord
         );
 
         $SqlUnion = [];
+
+        $file_pass = 0;
         for ($i = 1; $i <= 50; $i++) {
 
             $param = array(
@@ -297,9 +286,19 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
                 if (file_get_contents($save_file) ==  $data_result["data"]) {
 
-                    //continue;
+                    // continue;
                 }
             }
+
+            ++$file_pass;
+
+
+
+
+
+
+
+
 
             $mymess[] = 'บันทึกไฟล์ ' . $save_file . ' จำนวน ' . $cJs . ' ';
 
@@ -486,7 +485,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
         echo json_encode($return);
     }
-    
+
 
     public static function calleservice($url, $header, $param)
     {
@@ -532,7 +531,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
     }
 
 
-    
+
 
     public static  function ssl_decrypt_api($string, $skey)
     {

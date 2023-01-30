@@ -7,6 +7,56 @@ use yii\base\Component;
 class CommonFnc 
 {
 
+	public static function getAuthorizationHeader()
+	{
+
+		$headers = null;
+
+		if (function_exists('apache_request_headers')) {
+			$requestHeaders = apache_request_headers();
+			// Server-side fix for bug in old Android versions (a nice side-effect of this fix means we don't care about capitalization for Authorization)
+			$requestHeaders = array_combine(array_map('ucwords', array_keys($requestHeaders)), array_values($requestHeaders));
+			//print_r($requestHeaders);
+			if (isset($requestHeaders['Authorization'])) {
+				$headers = trim($requestHeaders['Authorization']);
+			}
+		}
+		return $headers;
+	}
+
+	public  static function getEncrypter($string = NULL, $type = 'encrtyp' )
+	{
+		$ciphering = "AES-128-CTR";
+
+		$options = 0;
+
+		$encryption_iv = '1234567891011121';
+
+		$encryption_key = "GeeksforGeeks";
+
+
+		if( $type != 'encrtyp' ) {
+
+			return openssl_decrypt(
+				$string,
+				$ciphering,
+				$encryption_key,
+				$options,
+				$encryption_iv
+			);
+	
+		}
+
+		return openssl_encrypt(
+			$string,
+			$ciphering,
+			$encryption_key,
+			$options,
+			$encryption_iv
+		);
+	
+	}
+
 
 	//Common Function /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Common Function /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
