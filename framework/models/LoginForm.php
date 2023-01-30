@@ -74,9 +74,17 @@ class LoginForm extends Model
 
         //$this->password  = Yii::$app->getSecurity()->generatePasswordHash($this->password);
 
-        if ($this->validate()) {          
-            return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600 * 24 * 30 : 0);
-        }
+        // if ($this->_user === false) {
+        //     $this->_user = User::findByUsername($this->username);
+        // }
+
+        // return $this->_user;
+
+        // arr(Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600 * 24 * 30 : 0));
+
+        return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600 * 24 * 30 : 0);
+        // if ($this->validate()) {          
+        // }
 
         return false;
     }
@@ -88,6 +96,8 @@ class LoginForm extends Model
      */
     public function getUser()
     {
+
+        // arr($this->username);
         if ($this->_user === false) {
             $this->_user = User::findByUsername($this->username);
         }
