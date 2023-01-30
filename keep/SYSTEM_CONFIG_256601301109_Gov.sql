@@ -1,0 +1,106 @@
+INSERT INTO DPISEMP1.SYSTEM_CONFIG (CONFIG_ID,CONFIG_NAME,CONFIG_VALUE,CONFIG_REMARK) VALUES
+	 (70,'PRINT_KP7',NULL,'พิมพ์  ทั้งฉบับในหน้าจอข้อมูลบุคคล'),
+	 (71,'KPI_SCORE_DECIMAL',NULL,'คะแนนผลการประเมินการปฏิบัติราชการมีทศนิยม'),
+	 (72,'PRINT_KP7_USER',NULL,'พิมพ์ผู้บันทึกข้อมูลในช่องเอกสารอ้างอิงของ  ทั้งฉบับ'),
+	 (74,'SHOW_TIME_P0101',NULL,'แสดงเวลาทวีคูณในข้อมูลบุคคลหน้าแรก'),
+	 (75,'SHOW_POSDATE_P0101',NULL,'แสดงวันที่เข้าสู่ระดับก่อนปัจจุบันในข้อมูลบุคคลหน้าแรก'),
+	 (76,'SALARYHIS_DISPLAY','1','รูปแบบหนังสือแจ้งผลการเลื่อนเงินเดือน'),
+	 (77,'KPI_SELF_EVALUATE',NULL,'การประเมินตนเอง (สมรรถนะ)'),
+	 (78,'EDIT_ABSENT_DAY','Y','แก้ไขจำนวนวันลา'),
+	 (79,'CMD_DATE_DISPLAY','1','การแสดงผลวันที่ (บัญชีแนบท้ายคำสั่ง)'),
+	 (80,'SLIP_FORMAT',NULL,'สลิปเงินเดือน');
+INSERT INTO DPISEMP1.SYSTEM_CONFIG (CONFIG_ID,CONFIG_NAME,CONFIG_VALUE,CONFIG_REMARK) VALUES
+	 (85,'IS_ACCEPT_CONFIG','0','แสดงช่องยอมรับผลการประเมิน 0 =ไม่แสดง 1=แสดง'),
+	 (86,'ORG_SHORT_NAME','Y','แสดงชื่อย่อส่วนราชการในใบลา'),
+	 (87,'CH_SCORE_DAY','Y','ไม่แสดงวันที่ในแบบสรุปผลการประเมินการปฏิบัติราชการ'),
+	 (88,'IS_OPEN_TIMEATT_ES','CLOSE','กำหนดการเปิดใช้งานระบบลงเวลา OPEN=เปิดใช้งานระบบลงเวลา CLOSE=ปิดการใช้งานระบบลงเวลา'),
+	 (81,'SLIP_LOGO','0','ตำแหน่งโลโก้บนสลิปเงินเดือน (PDF)'),
+	 (82,'P_ESIGN_ATT','Y','N = ไม่ใช้ Y= ใช้'),
+	 (83,'P_ESIGN_OT','N','N = ไม่ใช้ Y= ใช้'),
+	 (84,'SHOW_GENERAL','Y','แสดงข้อมูลทั่วไป(ใช้เฉพาะข้าราชการ) N =ไม่แสดง Y=แสดง'),
+	 (73,'dpisdb_port','1521','DB Server Port'),
+	 (1,'LANGUAGE_SET','TH','กำหนดภาษาสำหรับเว็บไซท์');
+INSERT INTO DPISEMP1.SYSTEM_CONFIG (CONFIG_ID,CONFIG_NAME,CONFIG_VALUE,CONFIG_REMARK) VALUES
+	 (2,'BACKOFFICE_MENU_DEPTH','4','ระดับชั้นของเมนูหลังร้าน'),
+	 (3,'MAIN_MENU_DEPTH','2','ระดับชั้นของเมนูหน้าร้าน'),
+	 (4,'DOCUMENT_GROUP_DEPTH','2','ระดับชั้นของกลุ่มข้อมูล'),
+	 (5,'DPISDB','oci8','ประเภทฐานข้อมูล'),
+	 (6,'dpisdb_host','172.20.91.17','DB Server IP'),
+	 (7,'dpisdb_name','dpis','DB Name'),
+	 (8,'dpisdb_user','dpisemp1','DB User'),
+	 (9,'dpisdb_pwd','APP@dpisemp1','DB Password'),
+	 (10,'data_per_page','30','จำนวนเรคอร์ดต่อหน้า'),
+	 (11,'WEIGHT_KPI','80','% ผลการประเมินของข้าราชการ - ผลสำเร็จของงาน');
+INSERT INTO DPISEMP1.SYSTEM_CONFIG (CONFIG_ID,CONFIG_NAME,CONFIG_VALUE,CONFIG_REMARK) VALUES
+	 (12,'WEIGHT_COMPETENCE','20','% ผลการประเมินของข้าราชการ - สมรรถนะ'),
+	 (13,'WEIGHT_OTHER',NULL,'% ผลการประเมินของข้าราชการ - อื่น ๆ'),
+	 (14,'COMPETENCY_SCALE','2','มาตรวัดการประเมินสมรรถนะ'),
+	 (15,'ATTDB','oci8','ประเภทฐานข้อมูลเครื่องบันทึกเวลา'),
+	 (16,'attdb_host','localhost','Time DB Server IP'),
+	 (17,'attdb_name','dpis','Time DB Name'),
+	 (18,'attdb_user','dpis','Time DB User'),
+	 (19,'attdb_pwd','dpis','Time DB Password'),
+	 (20,'RPT_N','N','พระราชบัญญัติระเบียบข้าราชการพลเรือน พ.ศ. 2551'),
+	 (21,'DPIS35DB','oci8','ประเภทฐานข้อมูลที่ต้องการถ่ายโอน');
+INSERT INTO DPISEMP1.SYSTEM_CONFIG (CONFIG_ID,CONFIG_NAME,CONFIG_VALUE,CONFIG_REMARK) VALUES
+	 (22,'dpis35db_host','localhost','Convert DB Server IP'),
+	 (23,'dpis35db_name','dpis','Convert DB Name'),
+	 (24,'dpis35db_user','dpis','Convert DB User'),
+	 (25,'dpis35db_pwd','dpis','Convert DB Password'),
+	 (29,'CARD_NO_DISPLAY','1','การแสดงผลเลขประจำตัวประชาชน'),
+	 (30,'BUTTON_DISPLAY','1','การแสดงผลปุ่มกด'),
+	 (31,'PER_ORDER_BY','2','การเรียงข้อมูลบุคคล'),
+	 (32,'PAYMENT_FLAG',NULL,'ถือจ่าย'),
+	 (33,'WEIGHT_KPI_E',NULL,'% ผลการประเมินของพนักงานราชการทั่วไป - ผลสำเร็จของงาน'),
+	 (34,'WEIGHT_COMPETENCE_E',NULL,'% ผลการประเมินของพนักงานราชการทั่วไป - สมรรถนะ');
+INSERT INTO DPISEMP1.SYSTEM_CONFIG (CONFIG_ID,CONFIG_NAME,CONFIG_VALUE,CONFIG_REMARK) VALUES
+	 (35,'WEIGHT_KPI_S',NULL,'% ผลการประเมินของพนักงานราชการพิเศษ - ผลสำเร็จของงาน'),
+	 (36,'WEIGHT_COMPETENCE_S',NULL,'% ผลการประเมินของพนักงานราชการพิเศษ - สมรรถนะ'),
+	 (37,'PRINT_FONT','3','รูปแบบอักษรในการพิมพ์รายงาน'),
+	 (38,'ATTACH_FILE','2','การจัดเก็บไฟล์แนบ'),
+	 (39,'EMPSER_SCORE_METHOD',NULL,'การคำนวณคะแนนผลการปฏิบัติราชการ'),
+	 (40,'ORG_SETLEVEL','2','ต่ำกว่าสำนักกอง'),
+	 (41,'COMPETENCY_METHOD',NULL,'วิธีการประเมิน'),
+	 (42,'MENU_TYPE','1','รูปแบบเมนู'),
+	 (43,'DATE_DISPLAY','1','การแสดงผลวันที่'),
+	 (44,'POSITION_NO_CHAR',NULL,'เลขที่ตำแหน่งมีตัวอักษร');
+INSERT INTO DPISEMP1.SYSTEM_CONFIG (CONFIG_ID,CONFIG_NAME,CONFIG_VALUE,CONFIG_REMARK) VALUES
+	 (45,'NUMBER_DISPLAY','1','การแสดงผลตัวเลข'),
+	 (46,'password_age','0','อายุรหัสผ่าน 0= ไม่จำกัดอายุ'),
+	 (48,'maxsize_up_file','5','ขนาดไฟล์สูงสุดที่อัพโหลดได้'),
+	 (58,'SLIP_DISPLAY','1','รูปแบบสลิปเงินเดือน'),
+	 (49,'E_SIGN','||2||','ลายเซ็นอิเล็คทรอนิกส์'),
+	 (50,'KPI_BUDGET_YEAR',NULL,'ปีงบประมาณสำหรับประเมินผล'),
+	 (51,'KPI_CYCLE','1','รอบการประเมินผล'),
+	 (52,'KPI_PER_REVIEW',NULL,'พิมพ์ผู้ให้ข้อมูล'),
+	 (53,'CARD_NO_FILL',NULL,'ต้องป้อนเลขประจำตัวประชาชน'),
+	 (54,'start_age',NULL,'อายุที่ใช้บรรจุไม่เกิน');
+INSERT INTO DPISEMP1.SYSTEM_CONFIG (CONFIG_ID,CONFIG_NAME,CONFIG_VALUE,CONFIG_REMARK) VALUES
+	 (55,'NOT_LEVEL_NO_O4',NULL,'ไม่มีตำแหน่งระดับทักษะพิเศษ'),
+	 (56,'KPI_SCORE_CONFIRM','1','ตรวจสอบการให้คะแนนผลการประเมิน'),
+	 (57,'SAME_ASSESS_LEVEL',NULL,'ใช้ระดับผลการประเมินย่อยเหมือนกัน'),
+	 (59,'FILE_PATH_DISPLAY',NULL,'พาธเครื่องที่เก็บไฟล์'),
+	 (60,'AUTOMAIL_ABSENT_FLAG',NULL,'ส่งอีเมล์ในระบบการลา'),
+	 (61,'IMG_PATH_DISPLAY',NULL,'พาธเครื่องที่เก็บรูปภาพ'),
+	 (62,'xlsFmtTitle_color','8^000000','การแสดงสีอักษรใน excel แบบ Title 1'),
+	 (63,'xlsFmtTitle_bgcolor','9^FFFFFF','การแสดงสีพี้นใน excel แบบ Title 1'),
+	 (64,'xlsFmtSubTitle_color','8^000000','การแสดงสีตัวอักษรใน excel แบบ Title 2'),
+	 (65,'xlsFmtSubTitle_bgcolor','9^FFFFFF','การแสดงสีพี้นใน excel แบบ Title 2');
+INSERT INTO DPISEMP1.SYSTEM_CONFIG (CONFIG_ID,CONFIG_NAME,CONFIG_VALUE,CONFIG_REMARK) VALUES
+	 (66,'xlsFmtTableHeader_color','8^000000','การแสดงสีตัวอักษรหัวตาราง excel'),
+	 (67,'xlsFmtTableHeader_bgcolor','29^FF8080','การแสดงสีพี้นหัวตาราง excel'),
+	 (68,'xlsFmtTableDetail_color','8^000000','การแสดงสีตัวอักษรในตาราง excel'),
+	 (69,'xlsFmtTableDetail_bgcolor','9^FFFFFF','การแสดงสีพี้นในตาราง excel'),
+	 (89,'P_EXPIATE','N','N-ไม่ต้องชดเชยเวลา, Y-ชดเชยเวลา'),
+	 (90,'EXTRA_ABSEN_DAY','Y','ได้รับสิทธิพิเศษวันลาสะสม จังหวัดชายแดนใต้'),
+	 (97,'ADD_PAPER_BUREAU','N','อนุญาตให้กลุ่ม Bureau เพิ่มรายการประกาศ ที่หน้าแรก'),
+	 (98,'CH_SHOW_POH_DATE','N','แสดงวันที่ลงนามในประวัติการดำรงตำแหน่ง'),
+	 (99,'CH_LAST_DOCDATE','N','เเสดงวันที่หลังลายเซ็น ที่หนังสื้อเเจ้งผลเลื่อนเงินเดือน'),
+	 (100,'ABS_SCOP','N','ลาเฉพาะพื้นที่พิเศษ');
+INSERT INTO DPISEMP1.SYSTEM_CONFIG (CONFIG_ID,CONFIG_NAME,CONFIG_VALUE,CONFIG_REMARK) VALUES
+	 (91,'NUMBER_OF_DAY','10','จำนวนวัน'),
+	 (92,'NUMBER_OF_TIME','10','จำนวนครั้ง'),
+	 (93,'NUMBER_OF_LATE','10','จำนวนครั้งที่สาย'),
+	 (94,'GMIS_START_TIME_PROCESS',NULL,'วัน-เวลาที่เริ่มประมวลผล  GMIS'),
+	 (95,'GMIS_END_TIME_PROCESS',NULL,'วัน-เวลาที่ประมวลผลสำเร็จ GMIS'),
+	 (96,'GMIS_STATUS_PROCESS',NULL,'สถานะการทำงาน GMIS');

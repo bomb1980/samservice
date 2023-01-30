@@ -1,0 +1,4 @@
+INSERT INTO DPISEMP1.PER_ABILITYGRP (AL_CODE,AL_NAME,AL_ACTIVE,UPDATE_USER,UPDATE_DATE,AL_SEQ_NO,AL_OTHERNAME) VALUES
+	 ('011       ','คอมพิวเตอร์',1,1,'2003-07-31 13:58:41',NULL,NULL),
+	 ('012       ','การสื่อสารภาษาอังกฤษ',1,1,'2003-07-31 13:58:55',NULL,NULL),
+	 ('013       ','การนำเสนอในที่ประชุม',1,1,'2003-07-31 13:59:17',NULL,NULL);
