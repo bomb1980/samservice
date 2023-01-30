@@ -181,8 +181,9 @@ class PerPersonal1 extends \yii\db\ActiveRecord
         $genders['นาย'] = 1;
         $genders['นาง'] = 2;
         $genders['นางสาว'] = 2;
-
-        $url_gettoken = 'https://sso.dpis.go.th/oapi/login';
+   
+        $url_gettoken = 'https://sso.dpis.go.th/oapi/login'; //prd domain
+        $url_gettoken = 'https://172.16.12.248/oapi/login'; //prd ip
         $curl = curl_init();
         curl_setopt_array($curl, array(
             CURLOPT_URL => $url_gettoken,
@@ -205,7 +206,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
         ));
 
 
-        $response = curl_exec($curl);
+        $response = curl_exec($curl); 
         if (curl_errno($curl)) {
             return false;
         }
@@ -237,6 +238,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
 
         $url = "https://sso.dpis.go.th/oapi/open_api_users/callapi";
+        $url = "https://172.16.12.248/oapi/open_api_users/callapi";
         $header = array(
             'Content-Type: application/x-www-form-urlencoded',
             'Authorization: ' . $accessToken

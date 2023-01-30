@@ -416,6 +416,7 @@ class EmpdataController extends Controller
             $url_gettoken = "https://dpis6uat.sso.go.th/oapi/login";
 
             $url_gettoken = 'https://sso.dpis.go.th/oapi/login';
+            $url_gettoken = 'https://172.16.12.248/oapi/login';
             $curl = curl_init();
             curl_setopt_array($curl, array(
                 CURLOPT_URL => $url_gettoken,
@@ -473,6 +474,7 @@ class EmpdataController extends Controller
             // https://dpis6uat.sso.go.th/oapi/open_api_users/callapi
             $url = "https://dpis6uat.sso.go.th/oapi/open_api_users/callapi";
             $url = "https://sso.dpis.go.th/oapi/open_api_users/callapi";
+            $url = "https://172.16.12.248/oapi/open_api_users/callapi";
             $header = array(
                 'Content-Type: application/x-www-form-urlencoded',
                 'Authorization: ' . $accessToken
