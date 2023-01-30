@@ -12,14 +12,14 @@ use app\models\PerPersonal1;
 class EmpdataController extends Controller
 {
 
-    // public function init()
-    // {
-    //     parent::init();
-    //     if (Yii::$app->user->isGuest) {
-    //         UserController::chkLogin();
-    //         exit;
-    //     }
-    // }
+    public function init()
+    {
+        parent::init();
+        if (Yii::$app->user->isGuest) {
+            UserController::chkLogin();
+            exit;
+        }
+    }
 
 
     // http://samservice/empdata/gogo
