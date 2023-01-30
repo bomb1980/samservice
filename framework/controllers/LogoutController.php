@@ -87,11 +87,13 @@ class LogoutController extends Controller
      */
     public function actionIndex()
     {
-		$model = new CommonAction;
-		$local = Yii::$app->params['auth']['local'];
 
+        $model = new CommonAction;
+		$local = Yii::$app->params['auth']['local'];
+        
 		if ($local) {
-			$model->AddLoginLog("Logout", "");
+            // $model->AddLoginLog("Logout", "");
+            // arr('afdddfdsf');
 			Yii::$app->user->logout();
 			return $this->goHome();
 		}
