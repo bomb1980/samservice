@@ -415,8 +415,8 @@ class CommonAction
 			  `log_type`,
 			  `log_description`,
 			  `log_createby`,
-			  `log_ipaddress`,
-			  log_session_id
+			  `log_ipaddress` /*,
+			  log_session_id */
 			)
 			VALUES
 			  (
@@ -424,8 +424,8 @@ class CommonAction
 				:log_type,
 				:log_description,
 				:log_createby,
-				:log_ipaddress,
-				:log_session_id
+				:log_ipaddress /*,
+				:log_session_id */
 			  );";
 
 			$command = $connlog->createCommand($sql);
@@ -433,7 +433,7 @@ class CommonAction
 			$command->bindValue(":log_description", $description);
 			$command->bindValue(":log_createby", $createby);
 			$command->bindValue(":log_ipaddress", Yii::$app->getRequest()->getUserIP());
-			$command->bindValue(":log_session_id", Yii::$app->session->getId());
+			//$command->bindValue(":log_session_id", Yii::$app->session->getId());
 			$command->execute();
 			$log_id = $connlog->getLastInsertID();
 
@@ -496,22 +496,22 @@ class CommonAction
 			insert into log_login_session (
 				`log_date`,
 				`log_createby`,
-				`log_session_id`,
+				/*`log_session_id`, */
 				`log_ipaddress`
 			  )
 			  values
 				(
 				  NOW(),
 				  :log_createby,
-				  :log_session_id,
+				  /*:log_session_id, */
 				  :log_ipaddress
 				);
 			";
 
 			$command = $conn->createCommand($sql);
 			$command->bindValue(":log_createby", $createby);
-			//$command->bindValue(":log_session_id", Yii::$app->user->getState("guid"));
-			$command->bindValue(":log_session_id", Yii::$app->session->getId());
+			//$command->bindValue(":log_session_id", Yii::$app->user->getState("guid")); //nn
+			//$command->bindValue(":log_session_id", Yii::$app->session->getId());
 			$command->bindValue(":log_ipaddress", Yii::$app->getRequest()->getUserIP());
 			$command->execute();
 			$log_id = $conn->getLastInsertID();
