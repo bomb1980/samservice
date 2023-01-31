@@ -25,24 +25,6 @@ class CronempController extends Controller
 
 	}
 
-	function getAuthorizationHeader()
-	{
-
-		$headers = null;
-
-		if (function_exists('apache_request_headers')) {
-			$requestHeaders = apache_request_headers();
-			// Server-side fix for bug in old Android versions (a nice side-effect of this fix means we don't care about capitalization for Authorization)
-			$requestHeaders = array_combine(array_map('ucwords', array_keys($requestHeaders)), array_values($requestHeaders));
-			//print_r($requestHeaders);
-			if (isset($requestHeaders['Authorization'])) {
-				$headers = trim($requestHeaders['Authorization']);
-			}
-		}
-		return $headers;
-	}
-
-
 	// http://samservice/cronemp/
 	public function actionIndex()
 	{
@@ -50,14 +32,11 @@ class CronempController extends Controller
 		if ( 0 ) {
 			
 			$simple_string = "ksukrit";
+
 			$encryption = CommonFnc::getEncrypter( $simple_string );
 			
-			
-			// $this->getEncrypter( $simple_string );
-
 			arr($encryption);
 		} 
-
 
 		$headers = CommonFnc::getAuthorizationHeader();
 

@@ -17,6 +17,9 @@ class PerPersonal1 extends \yii\db\ActiveRecord
     public static function getFromApi($user_id = 1)
     {
 
+        global $params;
+        // arr($params['apiUrl']);
+
         ini_set("default_socket_timeout", 20000);
         ini_set('memory_limit', '2048M');
         set_time_limit(0);
@@ -36,154 +39,10 @@ class PerPersonal1 extends \yii\db\ActiveRecord
             'per_occupydate',
         ];
 
-        $gogog = [1, 2];
-
-        foreach ($gogog as $kg => $vg) {
-
-            $sql = "DELETE  FROM PER_PERSONAL WHERE BOMB  = 1  ";
-
-            if ($vg == 1) {
-
-                $cmd = $con->createCommand($sql);
-            } else {
-
-                $cmd = $con2->createCommand($sql);
-            }
-            // $cmd->execute();
-
-
-            $sql = "
-                SELECT 
-                    MAX( per_id ) as max_id
-                FROM per_personal 
-                ORDER BY per_id DESC
-                
-            ";
-
-            if ($vg == 1) {
-
-                $cmd = $con->createCommand($sql);
-            } else {
-
-                $cmd = $con2->createCommand($sql);
-            }
-
-
-            $per_ids[$vg] = 0;
-            foreach ($cmd->queryAll() as $ka => $va) {
-                $per_ids[$vg] = $va['MAX_ID'];
-            }
-
-            $keep[$vg] = [];
-        }
-
-
-
-        $gogog = [1, 2];
-
-        $orgs = [];
-
-        foreach ($gogog as $kg => $vg) {
-
-            $sql = "
-                SELECT 
-                    per_cardno,
-                    per_name,
-                    per_surname,
-                    per_status,
-                    per_eng_name,
-                    per_eng_surname,
-                    per_startdate,
-                    per_occupydate,
-                    level_no,
-                    per_id
-                FROM per_personal 
-                ORDER BY per_id ASC
-            ";
-
-            if ($vg == 1) {
-
-                $cmd = $con->createCommand($sql);
-            } else {
-
-                $cmd = $con2->createCommand($sql);
-            }
-
-
-            $old_level_nos[$vg] = [];
-
-            foreach ($cmd->queryAll() as $ka => $va) {
-
-
-                // arr($va);
-
-                $concat = '';
-                foreach ($arr as $kf => $vf) {
-
-                    $vf = strtoupper($vf);
-
-                    $concat .= trim($va[$vf]) . '-';
-                }
-
-
-
-                $keep[$vg][$concat] = 1;
-
-                $old_level_nos[$vg][$va['PER_CARDNO']] = $va['LEVEL_NO'];
-            }
-
-
-            $sql = "SELECT * FROM per_org_ass";
-
-            if ($vg == 1) {
-
-                $cmd = $con->createCommand($sql);
-            } else {
-
-                $cmd = $con2->createCommand($sql);
-            }
-            $orgs[$vg] = [];
-            foreach ($cmd->queryAll() as $ka => $va) {
-
-                $orgs[$vg][$va['ORG_NAME']] = $va['ORG_ID'];
-            }
-        }
-
-        $nocard = 0;
-
-        $sql = "SELECT level_no, level_name FROM per_level";
-        $cmd = $con->createCommand($sql);
-        $levels = [];
-        foreach ($cmd->queryAll() as $ka => $va) {
-
-            $levels[$va['LEVEL_NAME']] = $va['LEVEL_NO'];
-        }
-
-        $sql = "SELECT * FROM per_off_type";
-        $cmd = $con->createCommand($sql);
-        $otcods = [];
-        foreach ($cmd->queryAll() as $ka => $va) {
-
-            $otcods[$va['OT_NAME']] = $va['OT_CODE'];
-        }
-
-        $sql = "SELECT * FROM per_prename ORDER BY PN_NAME ASC ";
-        $cmd = $con->createCommand($sql);
-        $pn_codes = [];
-        foreach ($cmd->queryAll() as $ka => $va) {
-
-            $pn_codes[$va['PN_NAME']] = $va['PN_CODE'];
-        }
-
-        // arr( $genders );
-
-
-        $genders['นาย'] = 1;
-        $genders['นาง'] = 2;
-        $genders['นางสาว'] = 2;
+    
    
-        $url_gettoken = 'https://sso.dpis.go.th/oapi/login'; //prd domain
-        $url_gettoken = 'https://172.16.12.248/oapi/login'; //prd ip
+        $url_gettoken = ''. $params['apiUrl'] .'/oapi/login'; //prd domain
+        // $url_gettoken = 'https://172.16.12.248/oapi/login'; //prd ip
         $curl = curl_init();
         curl_setopt_array($curl, array(
             CURLOPT_URL => $url_gettoken,
@@ -208,11 +67,14 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
         $response = curl_exec($curl); 
         if (curl_errno($curl)) {
+
+            echo json_encode( ['success'=>'fail', 'msg'=>'เชื่อมฐานข้อมูลไม่สำเร็จ']);
             return false;
         }
 
         curl_close($curl);
         $result = json_decode($response, true);
+        
 
         // arr( $result );
         $accessToken = '';
@@ -237,8 +99,8 @@ class PerPersonal1 extends \yii\db\ActiveRecord
         }
 
 
-        $url = "https://sso.dpis.go.th/oapi/open_api_users/callapi";
-        $url = "https://172.16.12.248/oapi/open_api_users/callapi";
+        $url = "". $params['apiUrl'] ."/oapi/open_api_users/callapi";
+        // $url = "https://172.16.12.248/oapi/open_api_users/callapi";
         $header = array(
             'Content-Type: application/x-www-form-urlencoded',
             'Authorization: ' . $accessToken
@@ -255,8 +117,9 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                 'page' => $i
             );
 
-            // $data_result = $this->calleservice($url, $header, $param);
             $data_result = self::calleservice($url, $header, $param);
+
+            // arr( $data_result );
 
             if (!isset($data_result['message']) || $data_result['message'] != "success") {
                 $arrsms = array(
@@ -288,19 +151,116 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
                 if (file_get_contents($save_file) ==  $data_result["data"]) {
 
-                    // continue;
+                    continue;
                 }
             }
 
             ++$file_pass;
 
+            if( $file_pass == 1 ) {
 
 
-
-
-
-
-
+                $orgs = [];
+        
+                foreach ([1, 2] as $kg => $vg) {
+        
+        
+                    $sql = "
+                        SELECT 
+                            per_cardno,
+                            per_name,
+                            per_surname,
+                            per_status,
+                            per_eng_name,
+                            per_eng_surname,
+                            per_startdate,
+                            per_occupydate,
+                            level_no,
+                            per_id
+                        FROM per_personal 
+                        ORDER BY per_id ASC
+                    ";
+        
+                    if ($vg == 1) {
+        
+                        $cmd = $con->createCommand($sql);
+                    } else {
+        
+                        $cmd = $con2->createCommand($sql);
+                    }
+        
+        
+                    $old_level_nos[$vg] = [];
+        
+                    $keep[$vg] = [];
+        
+                    $per_ids[$vg] = 0;
+        
+                    foreach ($cmd->queryAll() as $ka => $va) {
+        
+                        $concat = '';
+                        foreach ($arr as $kf => $vf) {
+        
+                            $vf = strtoupper($vf);
+        
+                            $concat .= trim($va[$vf]) . '-';
+                        }
+        
+                        $keep[$vg][$concat] = 1;
+        
+                        $old_level_nos[$vg][$va['PER_CARDNO']] = $va['LEVEL_NO'];
+        
+        
+                        $per_ids[$vg] = $va['PER_ID'];
+        
+                    }
+        
+        
+                    $sql = "SELECT * FROM per_org_ass";
+        
+                    if ($vg == 1) {
+        
+                        $cmd = $con->createCommand($sql);
+                    } else {
+        
+                        $cmd = $con2->createCommand($sql);
+                    }
+                    $orgs[$vg] = [];
+                    foreach ($cmd->queryAll() as $ka => $va) {
+        
+                        $orgs[$vg][$va['ORG_NAME']] = $va['ORG_ID'];
+                    }
+                }
+        
+                $sql = "SELECT level_no, level_name FROM per_level";
+                $cmd = $con->createCommand($sql);
+                $levels = [];
+                foreach ($cmd->queryAll() as $ka => $va) {
+        
+                    $levels[$va['LEVEL_NAME']] = $va['LEVEL_NO'];
+                }
+        
+                $sql = "SELECT * FROM per_off_type";
+                $cmd = $con->createCommand($sql);
+                $otcods = [];
+                foreach ($cmd->queryAll() as $ka => $va) {
+        
+                    $otcods[$va['OT_NAME']] = $va['OT_CODE'];
+                }
+        
+                $sql = "SELECT * FROM per_prename ORDER BY PN_NAME ASC ";
+                $cmd = $con->createCommand($sql);
+                $pn_codes = [];
+                foreach ($cmd->queryAll() as $ka => $va) {
+        
+                    $pn_codes[$va['PN_NAME']] = $va['PN_CODE'];
+                }
+        
+                $genders['นาย'] = 1;
+                $genders['นาง'] = 2;
+                $genders['นางสาว'] = 2;
+        
+            }
 
             $mymess[] = 'บันทึกไฟล์ ' . $save_file . ' จำนวน ' . $cJs . ' ';
 
@@ -310,7 +270,6 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
                 if (empty($va->per_cardno)) {
 
-                    ++$nocard;
                     continue;
                 }
 
@@ -332,12 +291,10 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                             $levels[$va->levelname_th] = $old_level_nos[$setType][$va->per_cardno];
                         } else {
 
-
                             $levels[$va->levelname_th] = 'O1';
                         }
                     }
                 } else {
-
 
                     if (!isset($levels[$va->levelname_th])) {
                         $levels[$va->levelname_th] = NULL;
@@ -371,12 +328,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                     continue;
                 } else {
 
-                    if (isset($per_ids[$setType])) {
-                        $per_ids[$setType] += 1;
-                    } else {
-
-                        $per_ids[$setType] = 1;
-                    }
+                    $per_ids[$setType] += 1;
 
                     $SqlUnion[$setType][] = "
                         SELECT 

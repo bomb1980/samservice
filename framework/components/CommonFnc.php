@@ -1,10 +1,10 @@
 <?php
 
 namespace app\components;
-use Yii;
-use yii\base\Component;
 
-class CommonFnc 
+use Yii;
+
+class CommonFnc
 {
 
 	public static function getAuthorizationHeader()
@@ -14,9 +14,9 @@ class CommonFnc
 
 		if (function_exists('apache_request_headers')) {
 			$requestHeaders = apache_request_headers();
-			// Server-side fix for bug in old Android versions (a nice side-effect of this fix means we don't care about capitalization for Authorization)
+
 			$requestHeaders = array_combine(array_map('ucwords', array_keys($requestHeaders)), array_values($requestHeaders));
-			//print_r($requestHeaders);
+
 			if (isset($requestHeaders['Authorization'])) {
 				$headers = trim($requestHeaders['Authorization']);
 			}
@@ -24,9 +24,10 @@ class CommonFnc
 		return $headers;
 	}
 
-	public  static function getEncrypter($string = NULL, $type = 'encrtyp' )
+	public  static function getEncrypter($string = NULL, $type = 'encrtyp')
 	{
-		$ciphering = "AES-128-CTR";
+		// $ciphering = "AES-128-CTR";
+		$ciphering = "AES-256-CBC";
 
 		$options = 0;
 
@@ -35,7 +36,8 @@ class CommonFnc
 		$encryption_key = "GeeksforGeeks";
 
 
-		if( $type != 'encrtyp' ) {
+		if ($type != 'encrtyp') {
+
 
 			return openssl_decrypt(
 				$string,
@@ -44,8 +46,9 @@ class CommonFnc
 				$options,
 				$encryption_iv
 			);
-	
 		}
+
+		// echo base64_encode($string);
 
 		return openssl_encrypt(
 			$string,
@@ -54,7 +57,6 @@ class CommonFnc
 			$options,
 			$encryption_iv
 		);
-	
 	}
 
 
@@ -64,7 +66,7 @@ class CommonFnc
 	//Common Function /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	//Common Function /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 
-	public  static function write_log($log_filename,$log_msg)
+	public  static function write_log($log_filename, $log_msg)
 	{
 		// if you don't add `FILE_APPEND`, the file will be erased each time you add a log
 		file_put_contents($log_filename, $log_msg . "\n", FILE_APPEND);
@@ -88,7 +90,7 @@ class CommonFnc
 		return sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
 	}
 
-	public function addbg_img($fg, $bg = null, $string = null,  $width = 240, $height = 200, $fontsize=18)
+	public function addbg_img($fg, $bg = null, $string = null,  $width = 240, $height = 200, $fontsize = 18)
 	{
 		if (!file_exists($fg)) {
 			return '';
@@ -119,7 +121,7 @@ class CommonFnc
 			$draw->setTextAlignment(\Imagick::ALIGN_CENTER);
 			//$draw->annotation(120(ซ้าย), 50(บน), "คลิกเพื่อดาวน์โหลด");
 
-			$image->annotateImage($draw, $width/2, 30, 0, $string);
+			$image->annotateImage($draw, $width / 2, 30, 0, $string);
 			//$image->drawImage($draw);
 		}
 
@@ -129,6 +131,7 @@ class CommonFnc
 
 		return  'data:image/png;base64,' . base64_encode($image);
 	}
+
 	public function addbg($fg, $bg = null)
 	{
 		// Create image instances
@@ -210,7 +213,7 @@ class CommonFnc
 		if (!file_exists($imagePath)) {
 			return '';
 		}
-		if(!exif_imagetype($imagePath)) {
+		if (!exif_imagetype($imagePath)) {
 			return '';
 		}
 
@@ -384,12 +387,12 @@ class CommonFnc
 		$strHour = date("H", strtotime($strDate));
 		$strMinute = date("i", strtotime($strDate));
 		$strSeconds = date("s", strtotime($strDate));
-		if($monthname){
-			$strMonthCut = Array("", "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม");	
-		}else{
-			$strMonthCut = Array("", "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค.");
-		}		
-		
+		if ($monthname) {
+			$strMonthCut = array("", "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม");
+		} else {
+			$strMonthCut = array("", "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค.");
+		}
+
 		$strMonthThai = $strMonthCut[$strMonth];
 		if ($showtime) return "$strDay $strMonthThai $strYear, $strHour:$strMinute";
 		else return "$strDay $strMonthThai $strYear";
@@ -641,18 +644,6 @@ class CommonFnc
 
 		echo $output;
 	}
-
-
-	//Custom Function /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//Custom Function /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//Custom Function /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//Custom Function /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-	//Custom Function /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-	//Yii::app()->session->remove('');	
-	//addslashes();
-	//stripslashes();	
-
-
 
 	public function set_cookie($cookie_name, $cookie_value)
 	{

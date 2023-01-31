@@ -41,9 +41,25 @@ $cf_fullname = 'ระบบจัดการ DPIS6 ประกันสัง
 $cf_ver = '20221126';
 
 //$dbhost = 'mysql:host=192.168.10.123;';
-$dbhost = 'mysql:host=127.0.0.1;';
-$dbhostdpis = 'oci:dbname=172.20.91.111:1521/D62SORA;charset=UTF8';
+// arr($_SERVER["HTTP_HOST"]);
+
+if( $_SERVER["HTTP_HOST"] == 'samservice') {
+
+    $dbhost = 'mysql:host=127.0.0.1;';
+    $dbhostdpis = 'oci:dbname=//localhost:1521/eis;charset=UTF8';
+    $apiUrl = 'https://sso.dpis.go.th';
+}
+else {
+
+    $dbhost = 'mysql:host=127.0.0.1;';
+    $dbhostdpis = 'oci:dbname=172.20.91.111:1521/D62SORA;charset=UTF8';
+
+    $apiUrl = 'https://172.16.12.248';
+}
+
+
 return [
+    'apiUrl' => $apiUrl,
     'adminEmail' => 'admin@example.com',
     'senderEmail' => 'noreply@example.com',
     'senderName' => 'Example.com mailer',

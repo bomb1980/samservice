@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\components\CommonFnc;
 use Yii;
 use yii\web\Controller;
 // use yii\helpers\Url;
@@ -21,22 +22,124 @@ class EmpdataController extends Controller
         }
     }
 
+    public function actionTest()
+    {
+
+        exit;
+        echo $dasfdfs = CommonFnc::getEncrypter('bomb');
+
+
+
+        echo '<br>';
+
+        echo CommonFnc::getEncrypter($dasfdfs, 'dsfddsds');
+        // echo 'dsafasddfs';
+
+        exit;
+
+        //localhost
+        // /samservice/empdata/gogo 
+        // url: "/samservice/empdata/gogo",
+
+        // /empdata/gogo 
+        // url: "/empdata/gogo",
+        echo Yii::$app->urlManager->createUrl("");
+
+
+        exit;
+        $con1 = Yii::$app->dbdpis;
+        $con2 = Yii::$app->dbdpisemp;
+
+        $sql = "
+            SELECT
+                per_cardno,
+                per_name,
+                per_surname,
+                per_status,
+                per_eng_name,
+                per_eng_surname,
+                per_startdate,
+                per_occupydate,
+                level_no,
+                per_id
+            FROM per_personal 
+            
+            ORDER BY per_id ASC
+            OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY
+        ";
+
+        $sql1 = $con1->createCommand($sql);
+        $sql2 = $con2->createCommand($sql);
+
+        // $command = $con1->createCommand($sql);
+        // $command->bindValue(':id', $_GET['id']);
+        $post = $sql1->queryAll();
+
+        // $ddsfa = $post->queryAll();
+        arr($post, 0);
+
+
+        // arr( $post );
+
+
+
+        exit;
+
+
+
+
+
+
+
+
+        $gogo = $sql1->union($sql2);
+
+        echo $gogo->sql;
+
+
+
+        $ddsfa = $gogo->queryAll();
+        arr($ddsfa, 0);
+        // $ddsfa = $sql2->queryAll();
+        // arr( $ddsfa, 0 );
+
+
+        // $mydb = new \yii\db\Query();
+
+        // $command  =  $con1
+        //     ->select(['per_name'])
+        //     ->from('per_personal')
+        //     ->limit(10)
+        //     ->createCommand();
+
+        // echo $command->sql;
+
+
+        // arr( $command->queryAll( ), 0 );
+    }
+
+
+
+
 
     // http://samservice/empdata/gogo
     public function actionGogo()
     {
+
+
+
+        
+        // exit;
         $user_id = 1;
-        if( Yii::$app->user->getId() ) {
+        if (Yii::$app->user->getId()) {
 
 
             $user_id = Yii::$app->user->getId();
         }
 
-        echo PerPersonal1::getFromApi( $user_id );
+        echo PerPersonal1::getFromApi($user_id);
 
         exit;
-
-
     }
 
     public function actionUser_permission()
@@ -154,91 +257,6 @@ class EmpdataController extends Controller
 
         // arr($columns);
         return $this->render('view', $datas);
-    }
-
-
-    public function actionTest()
-    {
-
-        //localhost
-        // /samservice/empdata/gogo 
-        // url: "/samservice/empdata/gogo",
-
-        // /empdata/gogo 
-        // url: "/empdata/gogo",
-        echo Yii::$app->urlManager->createUrl("");
-
-
-        exit;
-        $con1 = Yii::$app->dbdpis;
-        $con2 = Yii::$app->dbdpisemp;
-
-        $sql = "
-            SELECT
-                per_cardno,
-                per_name,
-                per_surname,
-                per_status,
-                per_eng_name,
-                per_eng_surname,
-                per_startdate,
-                per_occupydate,
-                level_no,
-                per_id
-            FROM per_personal 
-            
-            ORDER BY per_id ASC
-            OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY
-        ";
-
-        $sql1 = $con1->createCommand($sql);
-        $sql2 = $con2->createCommand($sql);
-
-        // $command = $con1->createCommand($sql);
-        // $command->bindValue(':id', $_GET['id']);
-        $post = $sql1->queryAll();
-
-        // $ddsfa = $post->queryAll();
-        arr($post, 0);
-
-
-        // arr( $post );
-
-
-
-        exit;
-
-
-
-
-
-
-
-
-        $gogo = $sql1->union($sql2);
-
-        echo $gogo->sql;
-
-
-
-        $ddsfa = $gogo->queryAll();
-        arr($ddsfa, 0);
-        // $ddsfa = $sql2->queryAll();
-        // arr( $ddsfa, 0 );
-
-
-        // $mydb = new \yii\db\Query();
-
-        // $command  =  $con1
-        //     ->select(['per_name'])
-        //     ->from('per_personal')
-        //     ->limit(10)
-        //     ->createCommand();
-
-        // echo $command->sql;
-
-
-        // arr( $command->queryAll( ), 0 );
     }
 
 

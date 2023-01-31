@@ -191,8 +191,19 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 					call_datatable('');
 
 				} else {
-					alert(data.msg);
+
 					$("#btnaddall").prop("disabled", false);
+
+					$('#imgprocessall').hide();
+
+					$('.load-result').html(data.msg);
+
+
+					// return;
+
+
+					// alert(data.msg);
+					// $("#btnaddall").prop("disabled", false);
 				}
 
 			})
