@@ -54,11 +54,7 @@
 
 					<button type="button" id="btnaddall" name="btnaddall" class="btn-primary btn waves-effect waves-classic" onclick="ajax_savepermission();">ปรับปรุงข้อมูลทั้งหมด</button>
 					
-					<div class="load-result" style="padding: 10px;margin-top: 15px;background-color: rgb(205 194 180);color: #1b1313;text-align: center;display: none;">
-
-
-					
-					</div>
+					<div class="load-result" style="padding: 10px;margin-top: 15px;background-color: rgb(205 194 180);color: #1b1313;text-align: center;display: none;"></div>
 
 				</div>
 
