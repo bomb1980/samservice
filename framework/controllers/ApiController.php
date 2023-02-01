@@ -22,9 +22,12 @@ class ApiController extends Controller
 
     public function actionIndex()
     {
-        $seltype = isset($_REQUEST['seltype']) ? $_REQUEST['seltype'] : 1;
-        $start = isset($_REQUEST['start']) ? $_REQUEST['start'] : 0;
-        $length = isset($_REQUEST['length']) ? $_REQUEST['length'] : 10;
+        // $req = Yii::$app->request->get();
+        $req = Yii::$app->request->post();
+
+        $seltype = isset($req['seltype']) ? $req['seltype'] : 1;
+        $start = isset($req['start']) ? $req['start'] : 0;
+        $length = isset($req['length']) ? $req['length'] : 10;
 
         if ($seltype == 1) {
 
@@ -44,11 +47,11 @@ class ApiController extends Controller
 
         $replace = [];
         $bindValue = [];
-        if (isset($_REQUEST['per_cardno'])) {
+        if (isset($req['per_cardno'])) {
 
             $replace['WHERE'][] = "per_cardno LIKE :per_cardno";
 
-            $bindValue['per_cardno'] = '%' . $_REQUEST['per_cardno'] . '%';
+            $bindValue['per_cardno'] = '%' . $req['per_cardno'] . '%';
         }
 
 
@@ -60,7 +63,6 @@ class ApiController extends Controller
             $totalRecords = $vt['T'];
         }
    
-
         $sql = "
             SELECT
                 NVL( update_date , '-') as update_date_,
@@ -74,18 +76,26 @@ class ApiController extends Controller
                 per_id
             FROM per_personal 
             [WHERE]
-            ORDER BY per_id DESC
+            [ORDER]
             OFFSET " . $start . " ROWS FETCH NEXT :length ROWS ONLY
         ";
 
         $bindValue['length'] = $length;
 
+        foreach( $req['columns']  as $kc => $vc ) {
+
+            if( $kc == $req['order'][0]['column'] ) {
+
+                $orders[] = "". $vc['data'] ." ". $req['order'][0]['dir'] ."";
+            }
+
+        }
+
+        $orders[] = "per_id DESC";
+
+        $replace['ORDER'] = "ORDER BY " . implode( ' , ', $orders );
+
         $cmd = genCond_( $sql, $replace, $con, $bindValue );
-
-        // arr($cmd->queryAll());
-
-        // echo 'dafsfd';
-        // exit;
 
         echo json_encode(
             [

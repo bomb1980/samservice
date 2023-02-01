@@ -29,7 +29,17 @@
 	.hiddenradio [type=radio]:checked+img {
 		outline: 2px solid #f00;
 	}
+
+	.load-result {
+		padding: 10px;
+		margin-top: 15px;
+		background-color: rgb(205 194 180);
+		color: #1b1313;
+		text-align: center;
+		display: none;
+	}
 </style>
+<link rel="stylesheet" href="/css/data_table/dataTables.bootstrap4.css">
 
 <!-- Page -->
 <div class="page">
@@ -53,8 +63,8 @@
 				<div class="col-md-12">
 
 					<button type="button" id="btnaddall" name="btnaddall" class="btn-primary btn waves-effect waves-classic" onclick="ajax_savepermission();">ปรับปรุงข้อมูลทั้งหมด</button>
-					
-					<div class="load-result" style="padding: 10px;margin-top: 15px;background-color: rgb(205 194 180);color: #1b1313;text-align: center;display: none;"></div>
+
+					<div class="load-result"></div>
 
 				</div>
 
@@ -159,53 +169,51 @@
 		data.append('seltype', seltype);
 
 		$.ajax({
-			url: "empdata/gogo",
-			method: "POST",
-			cache: false,
-			processData: false,
-			contentType: false,
-			dataType: "json",
-			data: data,
-			beforeSend: function() {
-				// $('#imgprocessall').show();
-				$('.load-result').html('<img id="imgprocessall" src="<?php echo Yii::$app->request->baseUrl; ?>/images/common/loading232.gif"  alt="อยู่ระหว่างการประมวลผล"> กำลังโหลดข้อมูล').fadeIn();
-			},
-		})
-		.done(function(data) {
-			console.log(data);
-			if (data.status == 'success') {
+				url: "empdata/gogo",
+				method: "POST",
+				cache: false,
+				processData: false,
+				contentType: false,
+				dataType: "json",
+				data: data,
+				beforeSend: function() {
+					// $('#imgprocessall').show();
+					$('.load-result').html('<img id="imgprocessall" src="<?php echo Yii::$app->request->baseUrl; ?>/images/common/loading232.gif"  alt="อยู่ระหว่างการประมวลผล"> กำลังโหลดข้อมูล').fadeIn();
+				},
+			})
+			.done(function(data) {
+				console.log(data);
+				if (data.status == 'success') {
 
+					$("#btnaddall").prop("disabled", false);
+
+
+					$('.load-result').html(data.msg).fadeIn();
+					call_datatable('');
+
+				} else {
+
+					$("#btnaddall").prop("disabled", false);
+
+
+					$('.load-result').html(data.msg);
+
+				}
+
+			})
+			.fail(function(jqXHR, status, error) {
+
+			})
+			.always(function() {
+				$('#imgprocessall').hide();
 				$("#btnaddall").prop("disabled", false);
-
-				// $('#imgprocessall').hide();
-
-				$('.load-result').html(data.msg).fadeIn();
-				call_datatable('');
-
-			} else {
-
-				$("#btnaddall").prop("disabled", false);
-
-				// $('#imgprocessall').hide();
-
-				$('.load-result').html(data.msg);
-
-			}
-
-		})
-		.fail(function(jqXHR, status, error) {
-			
-		})
-		.always(function() {
-			$('#imgprocessall').hide();
-			$("#btnaddall").prop("disabled", false);
-		});
+			});
 	}
 
 	function call_datatable(search) {
-
+		 
 		postDatas = {};
-		postDatas.token = 'pP63DE5y2z53FHqvtOW4slL0AsUfnfAX8beGLuPj';
+		postDatas.<?php echo Yii::$app->request->csrfParam ?> = '<?php echo Yii::$app->request->csrfToken; ?>';
 
 		postDatas.seltype = $("#seltype").val();
 		postDatas.per_cardno = $("#per_cardno").val();
@@ -215,12 +223,13 @@
 			language: {
 				url: 'js/datatable-thai.json',
 			},
+			ordering: true,
 			serverSide: true,
 			processing: true,
 			dom: 'rtp<"bottom"i>',
 			ajax: {
 				url: 'api',
-				type: 'GET',
+				type: 'POST',
 				data: postDatas,
 				headers: {
 					'Authorization': 'Bearer dNyCr0GdC0jZfNih9bHrIuPjxUW2Xctn6nbZIm8B'
@@ -238,18 +247,17 @@
 					}
 
 					echo '{
-                        data: \'' . $vc['name'] . '\',
-                        name: \'' . $vc['name'] . '\',
-                        className: "' . $className . '",
-                        orderable: true,
-                    },';
+						data: \'' . $vc['name'] . '\',
+						name: \'' . $vc['name'] . '\',
+						className: "' . $className . '",
+						orderable: true,
+					},';
 				}
 				?>
 			],
 
 			paging: true,
 			pageLength: 10,
-			ordering: false,
 			drawCallback: function(settings) {
 				var pagination = $(this).closest('.dataTables_wrapper').find('.dataTables_paginate');
 				pagination.toggle(this.api().page.info().pages > 1);
