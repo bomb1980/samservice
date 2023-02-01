@@ -1,11 +1,3 @@
-<?php
-$this->title   = 'หน้าหลัก' . Yii::$app->params['prg_ctrl']['pagetitle'];
-//$folder = Yii::$app->params['prg_ctrl']['url']['thumbnail'];
-$themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
-
-?>
-
-
 <style>
 	/* HIDE RADIO */
 	.hiddenradio {
@@ -61,8 +53,12 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 				<div class="col-md-12">
 
 					<button type="button" id="btnaddall" name="btnaddall" class="btn-primary btn waves-effect waves-classic" onclick="ajax_savepermission();">ปรับปรุงข้อมูลทั้งหมด</button>
-					<img id="imgprocessall" src="<?php echo Yii::$app->request->baseUrl; ?>/images/common/loading232.gif" style="display: none;" alt="อยู่ระหว่างการประมวลผล">
-					<div class="load-result"></div>
+					
+					<div class="load-result" style="padding: 10px;margin-top: 15px;background-color: rgb(205 194 180);color: #1b1313;text-align: center;display: none;">
+
+
+					
+					</div>
 
 				</div>
 
@@ -70,7 +66,7 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 
 			<div class="row mt-15">
 				<div class="col-md-6">
-					<div class="row required">
+					<div class="row ">
 						<label class="col-md-4 col-form-label control-label">รหัสบัตรประชาชน</label>
 						<div class="col-md-8">
 							<input type="text" class="form-control" id="per_cardno" name="per_cardno">
@@ -81,7 +77,7 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 
 
 				<div class="col-md-6">
-					<div class="row required">
+					<div class="row ">
 						<label class="col-md-4 col-form-label control-label">ประเภทเจ้าหน้าที่</label>
 						<div class="col-md-8">
 
@@ -167,53 +163,47 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 		data.append('seltype', seltype);
 
 		$.ajax({
-				url: "empdata/gogo",
-				method: "POST",
-				cache: false,
-				processData: false,
-				contentType: false,
-				dataType: "json",
-				data: data,
-				beforeSend: function() {
-					$('#imgprocessall').show();
-					$('.load-result').html('');
-				},
-			})
-			.done(function(data) {
-				console.log(data);
-				if (data.status == 'success') {
+			url: "empdata/gogo",
+			method: "POST",
+			cache: false,
+			processData: false,
+			contentType: false,
+			dataType: "json",
+			data: data,
+			beforeSend: function() {
+				// $('#imgprocessall').show();
+				$('.load-result').html('<img id="imgprocessall" src="<?php echo Yii::$app->request->baseUrl; ?>/images/common/loading232.gif"  alt="อยู่ระหว่างการประมวลผล"> กำลังโหลดข้อมูล').fadeIn();
+			},
+		})
+		.done(function(data) {
+			console.log(data);
+			if (data.status == 'success') {
 
-					$("#btnaddall").prop("disabled", false);
-
-					$('#imgprocessall').hide();
-
-					$('.load-result').html(data.msg);
-					call_datatable('');
-
-				} else {
-
-					$("#btnaddall").prop("disabled", false);
-
-					$('#imgprocessall').hide();
-
-					$('.load-result').html(data.msg);
-
-
-					// return;
-
-
-					// alert(data.msg);
-					// $("#btnaddall").prop("disabled", false);
-				}
-
-			})
-			.fail(function(jqXHR, status, error) {
-			 
-			})
-			.always(function() {
-				$('#imgprocessall').hide();
 				$("#btnaddall").prop("disabled", false);
-			});
+
+				// $('#imgprocessall').hide();
+
+				$('.load-result').html(data.msg).fadeIn();
+				call_datatable('');
+
+			} else {
+
+				$("#btnaddall").prop("disabled", false);
+
+				// $('#imgprocessall').hide();
+
+				$('.load-result').html(data.msg);
+
+			}
+
+		})
+		.fail(function(jqXHR, status, error) {
+			
+		})
+		.always(function() {
+			$('#imgprocessall').hide();
+			$("#btnaddall").prop("disabled", false);
+		});
 	}
 
 	function call_datatable(search) {

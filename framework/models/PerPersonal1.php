@@ -368,11 +368,11 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                 
                 if( $setType == 1 ) {
 
-                    $mymess[$setType] = 'มีข้อมูลข้าราชการถูกดึงมาจำนวน '. $total_api_rec[$setType] .'เรคคอร์ด, ข้อมูลใหม่ ' . $total_new_rec[$setType] . 'เรคคอร์ด';
+                    $mymess[$setType] = 'มีข้อมูล <b>ข้าราชการ</b> ถูกดึงมาจำนวน <b>'. $total_api_rec[$setType] .'</b>เรคคอร์ด, ข้อมูลใหม่ <b>' . $total_new_rec[$setType] . '</b>เรคคอร์ด';
                 }
                 else {
-
-                    $mymess[$setType] = 'มีข้อมูลพนักงานถูกดึงมาจำนวน '. $total_api_rec[$setType] .' ข้อมูลใหม่ ' . $total_new_rec[$setType];
+                    $mymess[$setType] = 'มีข้อมูล <b>พนักงาน</b> ถูกดึงมาจำนวน <b>'. $total_api_rec[$setType] .'</b>เรคคอร์ด, ข้อมูลใหม่ <b>' . $total_new_rec[$setType] . '</b>เรคคอร์ด';
+                    
                 }
 
                 $SqlUnion[$setType][] = "

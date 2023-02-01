@@ -8,6 +8,7 @@ use yii\web\Controller;
 // use yii\helpers\Url;
 
 use app\components\UserController;
+use app\models\MasUser;
 use app\models\PerPersonal1;
 
 class EmpdataController extends Controller
@@ -21,6 +22,223 @@ class EmpdataController extends Controller
             exit;
         }
     }
+
+    // http://samservice/empdata/gogo
+    public function actionGogo()
+    {
+
+        $user_id = 1;
+        if (Yii::$app->user->getId()) {
+
+
+            $user_id = Yii::$app->user->getId();
+        }
+
+        echo PerPersonal1::getFromApi($user_id);
+
+        exit;
+    }
+
+    public function actionSyndata()
+    {
+
+        // arr( Yii::$app->params['prg_ctrl'] );
+
+        $datas['columns'] = [
+            [
+                'name' => 'PER_ID',
+                'label' => 'id',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'PER_CARDNO',
+                'label' => 'เลขบัตร',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'FULL_NAME_THAI',
+                'label' => 'ชื่อ นามสกุล',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'FULL_NAME_EN',
+                'label' => 'name surname',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+           
+            [
+                'name' => 'PER_STARTDATE',
+                'label' => 'เริ่มงานเมื่อ',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'LEVEL_NO',
+                'label' => 'ระดับ',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'UPDATE_DATE_',
+                'label' => 'อัพเดทเมื่อ',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'PER_STATUS',
+                'label' => 'สถานะ',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+
+        ];
+
+
+        // arr($columns);
+        return $this->render('view', $datas);
+    }
+
+
+
+    // http://samservice/empdata/user_register
+    public function actionUser_register()
+    {
+
+        if (Yii::$app->request->isPost) {
+
+            $r = Yii::$app->request->post();
+
+            $a = new MasUser();
+
+            // $a->load(Yii::$app->request->post());
+
+            // exit;
+
+            $a->uid = $r['username'];
+            $a->password = Yii::$app->getSecurity()->generatePasswordHash($r['password']);
+            $a->displayname = $r['fname'];
+            $a->ssobranch_code = $r['selDepartment'];
+            $a->ssomail = NULL;
+            $a->status = 1;
+            $a->create_by = json_encode(Yii::$app->user->getId());
+
+            $a->save();
+
+            $log_page = Yii::$app->request->referrer;
+
+
+            return Yii::$app->getResponse()->redirect($log_page);
+
+            exit;
+        }
+
+        $datas['columns'] = [
+
+            [
+                'name' => 'uid',
+                'label' => 'ชื่อ Login',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'displayname',
+                'label' => 'ชื่อ-นามสกุล',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'ssobranch_code',
+                'label' => 'รหัสหน่วยงาน',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'branch_name',
+                'label' => 'ชื่อหน่วยงาน',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+
+            [
+                'name' => 'btn1',
+                'label' => 'ยกเลิกสิทธิ์',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'btn',
+                'label' => 'แก้ไข',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+        ];
+
+        $datas['tableUrl'] = '';
+        $datas['tableUrl'] = '';
+        $datas['tableUrl'] = '';
+        $datas['tableUrl'] = '';
+        $datas['fname'] = 'fname';
+        $datas['username'] = 'username';
+        $datas['fname'] = 'afdsadfdsfds';
+
+        return $this->render('view_user_new', $datas);
+    }
+
+
+    public function actionUser_permission()
+    {
+
+        $datas['columns'] = [
+
+            [
+                'name' => 'uid',
+                'label' => 'ชื่อ Login',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'displayname',
+                'label' => 'ชื่อ-นามสกุล',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'ssobranch_code',
+                'label' => 'รหัสหน่วยงาน',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'branch_name',
+                'label' => 'ชื่อหน่วยงาน',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+
+            [
+                'name' => 'btn1',
+                'label' => 'ยกเลิกสิทธิ์',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'btn',
+                'label' => 'แก้ไข',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+        ];
+
+        $datas['tableUrl'] = '';
+
+        return $this->render('view_user', $datas);
+    }
+
+
 
     public function actionTest()
     {
@@ -118,146 +336,6 @@ class EmpdataController extends Controller
         // arr( $command->queryAll( ), 0 );
     }
 
-
-
-
-
-    // http://samservice/empdata/gogo
-    public function actionGogo()
-    {
-
-
-
-        
-        // exit;
-        $user_id = 1;
-        if (Yii::$app->user->getId()) {
-
-
-            $user_id = Yii::$app->user->getId();
-        }
-
-        echo PerPersonal1::getFromApi($user_id);
-
-        exit;
-    }
-
-    public function actionUser_permission()
-    {
-
-        $datas['columns'] = [
-
-            [
-                'name' => 'uid',
-                'label' => 'ชื่อ Login',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'displayname',
-                'label' => 'ชื่อ-นามสกุล',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'ssobranch_code',
-                'label' => 'รหัสหน่วยงาน',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'branch_name',
-                'label' => 'ชื่อหน่วยงาน',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-
-            [
-                'name' => 'btn1',
-                'label' => 'ยกเลิกสิทธิ์',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'btn',
-                'label' => 'แก้ไข',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-        ];
-
-        $datas['tableUrl'] = '';
-
-        return $this->render('view_user', $datas);
-    }
-
-    public function actionSyndata()
-    {
-
-        // arr( Yii::$app->params['prg_ctrl'] );
-
-        $datas['columns'] = [
-            [
-                'name' => 'PER_CARDNO',
-                'label' => 'เลขบัตร',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'PER_NAME',
-                'label' => 'ชื่อ',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'PER_SURNAME',
-                'label' => 'นามสกุล',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'PER_STATUS',
-                'label' => 'สถานะ',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'PER_ENG_NAME',
-                'label' => 'ชื่ออังกฤษ',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'PER_ENG_SURNAME',
-                'label' => 'นามสกุลอังกฤษ',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'PER_STARTDATE',
-                'label' => 'เริ่มงานเมื่อ',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'PER_OCCUPYDATE',
-                'label' => 'PER_OCCUPYDATE',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'LEVEL_NO',
-                'label' => 'ระดับ',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-
-        ];
-
-
-        // arr($columns);
-        return $this->render('view', $datas);
-    }
 
 
 
