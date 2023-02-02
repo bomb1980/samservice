@@ -277,7 +277,11 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
             foreach ($js as $ka => $va) {
 
-                // arr( $ka );
+
+
+                // arr();
+
+              
 
                 // if( $ka <= 10 ) {
                 //     arr( $va, 0);
@@ -304,6 +308,8 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
                     continue;
                 }
+
+                
 
                 $cards[$va->per_cardno] = 1;
 
@@ -344,6 +350,8 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                     continue;
                 }
 
+              
+
                 if (!isset($pn_codes[$va->prename_th])) {
                     $pn_codes[$va->prename_th] = '003';
                 }
@@ -356,45 +364,95 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                     $otcods[$va->pertype] = '01';
                 }
 
+
+                // if( in_array( $va->per_name, ['ติณณภพ', 'จารุณี'])  ) {
+
+                //     arr( $va, 0 );
+                // }
+
+
                 if (!isset($orgs[$setType][$va->organize_th_ass])) {
-                    continue;
-                } 
+                    // continue;
 
-                if( !isset( $total_new_rec[$setType] ) ) {
-                    $total_new_rec[$setType] = 0;
-                }
 
-                ++$total_new_rec[$setType];
-                
-                if( $setType == 1 ) {
-
-                    $mymess[$setType] = 'มีข้อมูล <b>ข้าราชการ</b> ถูกดึงมาจำนวน <b>'. $total_api_rec[$setType] .'</b>เรคคอร์ด, ข้อมูลใหม่ <b>' . $total_new_rec[$setType] . '</b>เรคคอร์ด';
-                }
-                else {
-                    $mymess[$setType] = 'มีข้อมูล <b>พนักงาน</b> ถูกดึงมาจำนวน <b>'. $total_api_rec[$setType] .'</b>เรคคอร์ด, ข้อมูลใหม่ <b>' . $total_new_rec[$setType] . '</b>เรคคอร์ด';
+                    if( !isset( $total_new_rec[$setType] ) ) {
+                        $total_new_rec[$setType] = 0;
+                    }
+    
+                    ++$total_new_rec[$setType];
                     
+                    if( $setType == 1 ) {
+    
+                        $mymess[$setType] = 'มีข้อมูล <b>ข้าราชการ</b> ถูกดึงมาจำนวน <b>'. $total_api_rec[$setType] .'</b>เรคคอร์ด, ข้อมูลใหม่ <b>' . $total_new_rec[$setType] . '</b>เรคคอร์ด';
+                    }
+                    else {
+                        $mymess[$setType] = 'มีข้อมูล <b>พนักงาน</b> ถูกดึงมาจำนวน <b>'. $total_api_rec[$setType] .'</b>เรคคอร์ด, ข้อมูลใหม่ <b>' . $total_new_rec[$setType] . '</b>เรคคอร์ด';
+                        
+                    }
+    
+                    $SqlUnion[$setType][] = "
+                        SELECT 
+                            '" . $va->pertype_id . "' AS pertype_id,
+                            " . ++$per_ids[$setType] . "  AS per_id,
+                            '" . $va->per_name . "' AS per_name,
+                            '" . $va->per_cardno . "' AS per_cardno,
+                            '" . $va->per_surname . "' AS per_surname,
+                            '" . $va->per_eng_name . "' AS per_eng_name,
+                            '" . $va->per_eng_surname . "' AS per_eng_surname,
+                            '" . $va->birth_date . "' AS per_birthdate,
+                            '" . $va->per_startdate . "' AS per_startdate,
+                            '" . $va->per_occupydate . "' AS per_occupydate,
+                            '" . $va->per_status . "' AS per_status,
+                            '" . $levels[$va->levelname_th] . "' AS level_no,
+                            '" . $genders[$va->prename_th] . "' AS genders,
+                            '" . $pn_codes[$va->prename_th] . "' AS pn_code,
+                            '" . $otcods[$va->pertype] . "' AS otcode,
+                            NULL AS org
+                        FROM dual
+                    ";
+                } 
+                else {
+
+
+                    if( !isset( $total_new_rec[$setType] ) ) {
+                        $total_new_rec[$setType] = 0;
+                    }
+    
+                    ++$total_new_rec[$setType];
+                    
+                    if( $setType == 1 ) {
+    
+                        $mymess[$setType] = 'มีข้อมูล <b>ข้าราชการ</b> ถูกดึงมาจำนวน <b>'. $total_api_rec[$setType] .'</b>เรคคอร์ด, ข้อมูลใหม่ <b>' . $total_new_rec[$setType] . '</b>เรคคอร์ด';
+                    }
+                    else {
+                        $mymess[$setType] = 'มีข้อมูล <b>พนักงาน</b> ถูกดึงมาจำนวน <b>'. $total_api_rec[$setType] .'</b>เรคคอร์ด, ข้อมูลใหม่ <b>' . $total_new_rec[$setType] . '</b>เรคคอร์ด';
+                        
+                    }
+    
+                    $SqlUnion[$setType][] = "
+                        SELECT 
+                            '" . $va->pertype_id . "' AS pertype_id,
+                            " . ++$per_ids[$setType] . "  AS per_id,
+                            '" . $va->per_name . "' AS per_name,
+                            '" . $va->per_cardno . "' AS per_cardno,
+                            '" . $va->per_surname . "' AS per_surname,
+                            '" . $va->per_eng_name . "' AS per_eng_name,
+                            '" . $va->per_eng_surname . "' AS per_eng_surname,
+                            '" . $va->birth_date . "' AS per_birthdate,
+                            '" . $va->per_startdate . "' AS per_startdate,
+                            '" . $va->per_occupydate . "' AS per_occupydate,
+                            '" . $va->per_status . "' AS per_status,
+                            '" . $levels[$va->levelname_th] . "' AS level_no,
+                            '" . $genders[$va->prename_th] . "' AS genders,
+                            '" . $pn_codes[$va->prename_th] . "' AS pn_code,
+                            '" . $otcods[$va->pertype] . "' AS otcode,
+                            " . $orgs[$setType][$va->organize_th_ass] . " AS org
+                        FROM dual
+                    ";
                 }
 
-                $SqlUnion[$setType][] = "
-                    SELECT 
-                        '" . $va->pertype_id . "' AS pertype_id,
-                        " . ++$per_ids[$setType] . "  AS per_id,
-                        '" . $va->per_name . "' AS per_name,
-                        '" . $va->per_cardno . "' AS per_cardno,
-                        '" . $va->per_surname . "' AS per_surname,
-                        '" . $va->per_eng_name . "' AS per_eng_name,
-                        '" . $va->per_eng_surname . "' AS per_eng_surname,
-                        '" . $va->birth_date . "' AS per_birthdate,
-                        '" . $va->per_startdate . "' AS per_startdate,
-                        '" . $va->per_occupydate . "' AS per_occupydate,
-                        '" . $va->per_status . "' AS per_status,
-                        '" . $levels[$va->levelname_th] . "' AS level_no,
-                        '" . $genders[$va->prename_th] . "' AS genders,
-                        '" . $pn_codes[$va->prename_th] . "' AS pn_code,
-                        '" . $otcods[$va->pertype] . "' AS otcode,
-                        " . $orgs[$setType][$va->organize_th_ass] . " AS org
-                    FROM dual
-                ";
+               
+
 
                 foreach ($SqlUnion as $ks => $vs) {
 
