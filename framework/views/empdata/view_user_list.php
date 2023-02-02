@@ -1,11 +1,3 @@
-<?php
-$this->title   = 'หน้าหลัก' . Yii::$app->params['prg_ctrl']['pagetitle'];
-//$folder = Yii::$app->params['prg_ctrl']['url']['thumbnail'];
-$themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
-
-?>
-
-
 <style>
 	/* HIDE RADIO */
 	.hiddenradio {
@@ -54,10 +46,9 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 
 	<div class="page-content">
 		<!-- Panel jvectormap -->
+		 
 
 		<div class="panel-body container-fluid">
-
-
 
 			<div class="row">
 				<div class="col-md-6">
@@ -236,7 +227,7 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 						secondaryColor: '#ff4c52'
 					});
 					el.onchange = function() {
-						
+
 						$.ajax({
 							url: "<?php echo Yii::$app->urlManager->createAbsoluteUrl("admin/updateuserworkstatus"); ?>",
 							method: "POST",
@@ -247,16 +238,16 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 							},
 							success: function(data) {
 
-								alert( data.msg);
+								alert(data.msg);
 							}
 						});
 					};
 				});
 				$('.grid-error').html('');
-				
+
 			}
 		});
-		
+
 	}
 
 

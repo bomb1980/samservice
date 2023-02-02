@@ -15,6 +15,7 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
     public $displayname;
     public $status;
     public $ssobranch_code;
+    public $role_id;
 
     private static $users = [
         '100' => [
@@ -50,6 +51,7 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
                     'displayname' => $user['displayname'],
                     'ssobranch_code' => $user['ssobranch_code'],
                     'status' => $user['status'],
+                    'role_id' => $user['role_id'],
                     // assign other attributes, too if needed
                 ];
 
@@ -86,6 +88,8 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
         $rows = lkup_user::getUsername($username);
         if (count($rows) > 0) {
             $user = $rows[0];
+
+            // arr( $user);
             $user_info =
                 [
                     'id' => $user['id'],
@@ -94,6 +98,7 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
                     'displayname' => $user['displayname'],
                     'ssobranch_code' => $user['ssobranch_code'],
                     'status' => $user['status'],
+                    'role_id' => $user['role_id'],
                     // assign other attributes, too if needed
                 ];
 

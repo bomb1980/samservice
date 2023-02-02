@@ -10,6 +10,7 @@ use Yii;
  * @property int $id
  * @property string|null $uid
  * @property string|null $password
+ * @property string|null $passwordcheck
  * @property string|null $displayname
  * @property string|null $ssobranch_code
  * @property string|null $ssomail
@@ -37,12 +38,15 @@ class MasUser extends \yii\db\ActiveRecord
     {
         return [
             // [['lasted_login_date', 'create_date', 'update_date'], 'safe'],
-            [['uid', 'create_by', 'update_by'], 'string', 'max' => 20],
-            [['password'], 'string', 'max' => 255],
-            [['displayname'], 'string', 'max' => 200],
+
+            [['uid', 'update_by', 'create_by'], 'string', 'max' => 255],
+            [['uid', 'displayname', 'ssobranch_code'], 'required'],
+            [['uid'],'unique'],
+            [['displayname'], 'string', 'max' => 255],
             [['ssobranch_code'], 'string', 'max' => 6],
-            [['ssomail'], 'string', 'max' => 50],
-            [['status'], 'string', 'max' => 2],
+            [['ssomail'], 'string', 'max' => 255],
+            [  ['status'], 'integer'],
+            // ['password', 'compare', 'compareAttribute'=>'passwordcheck'],
         ];
     }
 

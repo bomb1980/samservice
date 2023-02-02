@@ -128,18 +128,14 @@
       <li class="site-menu-category">ตั้งค่าข้อมูล</li>
 
 
-      <!-- <li class="site-menu-item">
-        <a href="<?php echo Yii::$app->urlManager->createUrl('admin/user_permission'); ?>">
-          <i class="site-menu-icon fas fa-user-cog" aria-hidden="true"></i>
-          <span class="site-menu-title">สิทธิ์ผู้ใช้งาน</span>
-        </a>
-      </li> -->
+    
       <li class="site-menu-item">
-        <a href="<?php echo Yii::$app->urlManager->createUrl('empdata/user_permission'); ?>">
+        <a href="<?php echo Yii::$app->urlManager->createUrl('empdata/user_list'); ?>">
           <i class="site-menu-icon fas fa-user-cog" aria-hidden="true"></i>
           <span class="site-menu-title">สิทธิ์ผู้ใช้งาน</span>
         </a>
       </li>
+
 
       <li class="site-menu-item">
         <a href="<?php echo Yii::$app->urlManager->createUrl('admin/datamanagement'); ?>">
@@ -149,7 +145,7 @@
       </li>
 
       <li class="site-menu-item">
-        <a href="<?php echo Yii::$app->urlManager->createUrl('register'); ?>">
+        <a href="<?php echo Yii::$app->urlManager->createUrl('empdata/user_register'); ?>">
           <i class="site-menu-icon fas fa-user-plus" aria-hidden="true"></i>
           <span class="site-menu-title">เพิ่มผู้ใช้งาน</span>
         </a>

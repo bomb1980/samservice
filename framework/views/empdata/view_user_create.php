@@ -47,7 +47,7 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 		<div class="page-header-actions">
 			<ol class="breadcrumb">
 				<li class="breadcrumb-item"><a href="<?php echo Yii::$app->urlManager->createUrl(""); ?>">หน้าแรก</a></li>
-				<li class="breadcrumb-item atcitve">แอดมิน</li>
+				<li class="breadcrumb-item atcitve">เพิ่มผู้ใช้งาน</li>
 			</ol>
 		</div>
 	</div>
@@ -57,48 +57,86 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 
 		<div class="panel-body container-fluid">
 
+			<div class="form-content">
+
+				<form role="form" method="post" name="loginform" autocomplete="off">
+
+					<input type="hidden" name="<?php echo Yii::$app->request->csrfParam ?>" value="<?php echo Yii::$app->request->csrfToken; ?>">
+
+					<div class="row">
+
+						<div class="form-material col-md-6" data-plugin="formMaterial">
+							<label class="">Full Name</label>
 
 
-			<div class="row">
-				<div class="col-md-6">
-					<div class="row required">
-
-						<div class="col-md-8">
-							<div class="input-group">
-								<input type="text" name="FSearch1" id="FSearch1" class="form-control" placeholder="Login หรือ ชื่อ-นามสกุล" maxlength="20" style="width: 200px">
-								<span class="input-group-append">
-									<button type="button" class="btn btn-primary waves-effect waves-classic" onclick="checkFields();" title="ค้นหา"><i class="icon wb-search" aria-hidden="true"></i></button>
-									<button type="button" class="btn btn-primary waves-effect waves-classic" onclick="sync_data();" title="ปรับปรุงข้อมูล"><i class="icon md-refresh-sync" aria-hidden="true"></i></button>
-
-
-								</span>
-
-							</div>
+							<input class="form-control empty" name="fname" type="text" value="<?php echo $fname ?>" autofocus=""  required="" maxlength="50">
 						</div>
+						<div class="form-material col-md-6" data-plugin="formMaterial">
+							<label class="">Username</label>
+
+							<input class="form-control empty" name="username" type="text" value="<?php echo $username ?>" autofocus=""  required="" maxlength="20">
+						</div>
+
 					</div>
 
-				</div>
+
+					<br>
+
+					<div class="row">
+						<div class="form-material col-md-6" data-plugin="formMaterial">
+							<label class="">Password</label>
+							<input class="form-control empty" name="password" type="password" value="" maxlength="20">
+						</div>
+						<div class="form-material col-md-6" data-plugin="formMaterial">
+							<label class="">Re-enter Password</label>
+							<input type="password" class="form-control empty" name="passwordcheck" maxlength="20">
+						</div>
 
 
+					</div>
+					<br>
 
+					<div class="row">
+
+						<div class="form-material col-md-6">
+							<select class="form-control selectpicker show-tick" id="selDepartment" name="selDepartment" title="เลือกหน่วยงาน..." data-selected-text-format="count > 2" data-live-search="true" required="">
+								<option value="0" disabled="disabled" hidden="hidden" selected="selected">กรุณาเลือกหน่วยงาน</option>
+								<option  value="1000"> สำนักงานประกันสังคมสำนักงานใหญ่ </option>
+								<option value="1001"> สำนักงานประกันสังคมกรุงเทพมหานครพื้นที่ 1 </option>
+								<option value="1002"> สำนักงานประกันสังคมกรุงเทพมหานครพื้นที่ 2 </option>
+								<option  selected value="1003"> สำนักงานประกันสังคมกรุงเทพมหานครพื้นที่ 3 </option>
+								<option value="1004"> สำนักงานประกันสังคมกรุงเทพมหานครพื้นที่ 4 </option>
+								<option value="1005"> สำนักงานประกันสังคมกรุงเทพมหานครพื้นที่ 5 </option>
+								<option value="1006"> สำนักงานประกันสังคมกรุงเทพมหานครพื้นที่ 6 </option>
+								<option value="1007"> สำนักงานประกันสังคมกรุงเทพมหานครพื้นที่ 7 </option>
+								<option value="1008"> สำนักงานประกันสังคมกรุงเทพมหานครพื้นที่ 8 </option>
+								<option value="1009"> สำนักงานประกันสังคมกรุงเทพมหานครพื้นที่ 9 </option>
+								<option value="1010"> สำนักงานประกันสังคมกรุงเทพมหานครพื้นที่ 10 </option>
+								<option value="1011"> สำนักงานประกันสังคมกรุงเทพมหานครพื้นที่ 11 </option>
+								<option value="1012"> สำนักงานประกันสังคมกรุงเทพมหานครพื้นที่ 12 </option>
+								<option value="1050"> สำนักบริหารเทคโนโลยีสารสนเทศ </option>
+								<option value="1063"> ศูนย์สารนิเทศ </option>
+							</select>
+						</div>
+
+
+						<div class="form-material col-md-6">
+						 
+
+							
+							<input type="submit" class="btn btn-primary btn-block" value="Sign up" />
+						</div>
+
+					</div>
+				</form>
 			</div>
 
 
-			<table class="table table-hover dataTable table-striped w-full no-footer dtr-inline mt-15" id="Datatables">
-				<thead>
-					<tr>
 
-						<?php
+			 
 
-						foreach ($columns as $kc => $vc) {
 
-							echo '<th class="text-center">' . $vc['label'] . '</th>';
-						}
-						?>
-
-					</tr>
-				</thead>
-			</table>
+			 
 
 		</div>
 
@@ -236,7 +274,7 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 						secondaryColor: '#ff4c52'
 					});
 					el.onchange = function() {
-						
+
 						$.ajax({
 							url: "<?php echo Yii::$app->urlManager->createAbsoluteUrl("admin/updateuserworkstatus"); ?>",
 							method: "POST",
@@ -247,16 +285,16 @@ $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
 							},
 							success: function(data) {
 
-								alert( data.msg);
+								alert(data.msg);
 							}
 						});
 					};
 				});
 				$('.grid-error').html('');
-				
+
 			}
 		});
-		
+
 	}
 
 

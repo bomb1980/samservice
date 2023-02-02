@@ -30,21 +30,16 @@ class LoginController extends Controller
 	}
 
 
-	public function actionTest()
-	{
-
-		echo 'dasfdssd';
-	}
 
 	public function actionAuth()
 	{
-
 		$model = new LoginForm();
-
+		
 		if ($model->load(Yii::$app->request->post()) && $model->login()) {
-
+			
 			echo Json::encode(['status' => 'success', 'msg' => '']);
-
+			
+			// exit;
 			$username = $_POST['username'];
 			$password = $_POST['password'];
 			$remember_me = $_POST['chk_remember'];
@@ -56,7 +51,6 @@ class LoginController extends Controller
 			if ($remember_me === 'true') {
 
 				setcookie("UserName", $username, time() + (86400 * 30), "/");
-
 				setcookie("Password", $ePassword, time() + (86400 * 30), "/");
 				setcookie("checked", "checked", time() + (86400 * 30), "/");
 			} else {
@@ -68,26 +62,26 @@ class LoginController extends Controller
 
 			exit;
 
-			$cwebuser = new \app\components\CustomWebUser();
+			// $cwebuser = new \app\components\CustomWebUser();
 
-			$ssobranch_code = $cwebuser->getInfo("ssobranch_code");
-			$displayname = $cwebuser->getInfo("displayname");
-			$uid = !Yii::$app->user->isGuest ? $cwebuser->getInfo('uid') : 0;
+			// $ssobranch_code = $cwebuser->getInfo("ssobranch_code");
+			// $displayname = $cwebuser->getInfo("displayname");
+			// $uid = !Yii::$app->user->isGuest ? $cwebuser->getInfo('uid') : 0;
 
-			$common = new CommonAction;
-			$common->uid = $uid;
-			$common->displayname = $displayname;
-			$common->ssobranch_code = $ssobranch_code;
-			$rows = $common->Check_mas_user();
+			// $common = new CommonAction;
+			// $common->uid = $uid;
+			// $common->displayname = $displayname;
+			// $common->ssobranch_code = $ssobranch_code;
+			// $rows = $common->Check_mas_user();
 
-			$common->AddLoginSession();
-			$common->AddLoginLog("Login", "ok");
+			// $common->AddLoginSession();
+			// $common->AddLoginLog("Login", "ok");
 
-			echo Json::encode(array('status' => 'success', 'msg' => '',));
+			// echo Json::encode(array('status' => 'success', 'msg' => '',));
 
 
 
-			exit;
+			// exit;
 		} else {
 			//var_dump($model->getErrors());
 			$errors = $model->getErrors();

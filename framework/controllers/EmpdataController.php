@@ -10,6 +10,7 @@ use yii\web\Controller;
 use app\components\UserController;
 use app\models\MasUser;
 use app\models\PerPersonal1;
+use yii\helpers\Url;
 
 class EmpdataController extends Controller
 {
@@ -22,6 +23,172 @@ class EmpdataController extends Controller
             exit;
         }
     }
+
+    // http://samservice/empdata/user_register
+    public function actionUser_register($id = NULL)
+    {
+
+        // arr(Yii::$app->user->identity);
+
+
+        $res = MasUser::findOne($id);
+
+        //form action
+        if (Yii::$app->request->isPost) {
+
+
+            $keep_errors = [];
+
+
+            $r = Yii::$app->request->post();
+
+            if (!$res) {
+
+                $res = new MasUser();
+
+                $res->load(\Yii::$app->request->post());
+
+
+                if ( empty($r['password']) ) {
+
+                    $keep_errors['password'] = 'please input user password';
+                }
+            }
+
+            // arr( $r );
+
+            $res->uid = $r['uid'];
+            // arr( $res );
+
+
+            if (!empty($r['password'])) {
+
+                if ($r['password'] != $r['passwordcheck']) {
+
+                    $keep_errors['passwordcheck'] = 'confirm password not match';
+                }
+
+                $res->password = Yii::$app->getSecurity()->generatePasswordHash($r['password']);
+            }
+            // ssobranch_code
+
+            $res->displayname = $r['displayname'];
+            $res->ssobranch_code = $r['ssobranch_code'];
+            $res->status = 1;
+            $res->create_by = json_encode(Yii::$app->user->getId());
+
+            if (!$res->validate()) {
+
+                foreach ($res->errors as $ke => $ve) {
+                    $keep_errors[$ke] = $ve;
+                }
+            }
+
+            if (!empty($keep_errors)) {
+
+                Yii::$app->session->setFlash('warning', json_encode($keep_errors));
+                $log_page = Yii::$app->request->referrer;
+
+                return Yii::$app->getResponse()->redirect($log_page);
+            }
+
+            $res->save();
+
+
+            $log_page = Url::to(['empdata/user_register', 'id' => $res->id]);
+
+            return Yii::$app->getResponse()->redirect($log_page);
+        }
+
+        //view
+        if ($res) {
+            $datas['form'] = $res;
+            $datas['button_text'] = 'แก้ไขผู้ใช้งาน';
+            $defBranch = $res['ssobranch_code'];
+        } else {
+
+            $defBranch = NULL;
+            $datas['form']['uid'] = NULL;
+            $datas['form']['displayname'] = NULL;
+            $datas['form']['ssobranch_code'] = NULL;
+            $datas['button_text'] = 'เพิ่มผู้ใช้งาน';
+        }
+
+        $datas['columns'] = [
+
+            [
+                'name' => 'uid',
+                'label' => 'ชื่อ Login',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'displayname',
+                'label' => 'ชื่อ-นามสกุล',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'ssobranch_code',
+                'label' => 'รหัสหน่วยงาน',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'branch_name',
+                'label' => 'ชื่อหน่วยงาน',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+
+            [
+                'name' => 'btn1',
+                'label' => 'ยกเลิกสิทธิ์',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'btn',
+                'label' => 'แก้ไข',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+        ];
+
+
+
+        // https://www.yiiframework.com/doc/guide/2.0/en/helper-html
+
+        $con = Yii::$app->db;
+
+        $sql = "SELECT * FROM mas_ssobranch ORDER BY name ASC";
+
+        $cmd = $con->createCommand($sql);
+
+        $options = [];
+        foreach ($cmd->queryAll() as $ka => $va) {
+
+            $select = NULL;
+            if ($defBranch == $va['ssobranch_code']) {
+
+                $select = 'selected';
+            }
+
+            $options[] = '<option ' . $select . ' value="' . $va['ssobranch_code'] . '">' . $va['name'] . '</option>';
+            // arr($va);
+        }
+
+        $datas['DepartmentList'] = '
+            <select class="form-control selectpicker show-tick" name="ssobranch_code" title="เลือกหน่วยงาน..." data-selected-text-format="count > 2" data-live-search="true">
+                <option value="">กรุณาเลือกหน่วยงาน</option>
+                 ' . implode('', $options) . '
+            </select>
+        ';
+
+
+        return $this->render('view_user_new', $datas);
+    }
+
 
     // http://samservice/empdata/gogo
     public function actionGogo()
@@ -69,7 +236,7 @@ class EmpdataController extends Controller
                 'className' => "text-center",
                 'orderable' => false
             ],
-           
+
             [
                 'name' => 'PER_STARTDATE',
                 'label' => 'เริ่มงานเมื่อ',
@@ -105,35 +272,24 @@ class EmpdataController extends Controller
 
 
     // http://samservice/empdata/user_register
-    public function actionUser_register()
+    public function actionUser_list($id = NULL)
     {
+        $res = MasUser::findOne($id);
 
+        //form action
         if (Yii::$app->request->isPost) {
+        }
 
-            $r = Yii::$app->request->post();
+        //view
+        if ($res) {
+            $datas['form'] = $res;
+            $datas['button_text'] = 'แก้ไขผู้ใช้งาน';
+        } else {
 
-            $a = new MasUser();
-
-            // $a->load(Yii::$app->request->post());
-
-            // exit;
-
-            $a->uid = $r['username'];
-            $a->password = Yii::$app->getSecurity()->generatePasswordHash($r['password']);
-            $a->displayname = $r['fname'];
-            $a->ssobranch_code = $r['selDepartment'];
-            $a->ssomail = NULL;
-            $a->status = 1;
-            $a->create_by = json_encode(Yii::$app->user->getId());
-
-            $a->save();
-
-            $log_page = Yii::$app->request->referrer;
-
-
-            return Yii::$app->getResponse()->redirect($log_page);
-
-            exit;
+            $datas['form']['uid'] = NULL;
+            $datas['form']['displayname'] = NULL;
+            $datas['form']['ssobranch_code'] = NULL;
+            $datas['button_text'] = 'เพิ่มผู้ใช้งาน';
         }
 
         $datas['columns'] = [
@@ -177,15 +333,7 @@ class EmpdataController extends Controller
             ],
         ];
 
-        $datas['tableUrl'] = '';
-        $datas['tableUrl'] = '';
-        $datas['tableUrl'] = '';
-        $datas['tableUrl'] = '';
-        $datas['fname'] = 'fname';
-        $datas['username'] = 'username';
-        $datas['fname'] = 'afdsadfdsfds';
-
-        return $this->render('view_user_new', $datas);
+        return $this->render('view_user_list', $datas);
     }
 
 
@@ -242,98 +390,6 @@ class EmpdataController extends Controller
 
     public function actionTest()
     {
-
-        exit;
-        echo $dasfdfs = CommonFnc::getEncrypter('bomb');
-
-
-
-        echo '<br>';
-
-        echo CommonFnc::getEncrypter($dasfdfs, 'dsfddsds');
-        // echo 'dsafasddfs';
-
-        exit;
-
-        //localhost
-        // /samservice/empdata/gogo 
-        // url: "/samservice/empdata/gogo",
-
-        // /empdata/gogo 
-        // url: "/empdata/gogo",
-        echo Yii::$app->urlManager->createUrl("");
-
-
-        exit;
-        $con1 = Yii::$app->dbdpis;
-        $con2 = Yii::$app->dbdpisemp;
-
-        $sql = "
-            SELECT
-                per_cardno,
-                per_name,
-                per_surname,
-                per_status,
-                per_eng_name,
-                per_eng_surname,
-                per_startdate,
-                per_occupydate,
-                level_no,
-                per_id
-            FROM per_personal 
-            
-            ORDER BY per_id ASC
-            OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY
-        ";
-
-        $sql1 = $con1->createCommand($sql);
-        $sql2 = $con2->createCommand($sql);
-
-        // $command = $con1->createCommand($sql);
-        // $command->bindValue(':id', $_GET['id']);
-        $post = $sql1->queryAll();
-
-        // $ddsfa = $post->queryAll();
-        arr($post, 0);
-
-
-        // arr( $post );
-
-
-
-        exit;
-
-
-
-
-
-
-
-
-        $gogo = $sql1->union($sql2);
-
-        echo $gogo->sql;
-
-
-
-        $ddsfa = $gogo->queryAll();
-        arr($ddsfa, 0);
-        // $ddsfa = $sql2->queryAll();
-        // arr( $ddsfa, 0 );
-
-
-        // $mydb = new \yii\db\Query();
-
-        // $command  =  $con1
-        //     ->select(['per_name'])
-        //     ->from('per_personal')
-        //     ->limit(10)
-        //     ->createCommand();
-
-        // echo $command->sql;
-
-
-        // arr( $command->queryAll( ), 0 );
     }
 
 
