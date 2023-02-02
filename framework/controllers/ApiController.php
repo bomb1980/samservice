@@ -7,6 +7,7 @@ use yii\web\Controller;
 // use yii\helpers\Url;
 
 use app\components\UserController;
+use yii\helpers\Url;
 
 class ApiController extends Controller
 {
@@ -86,7 +87,7 @@ class ApiController extends Controller
 
             if( $kc == $req['order'][0]['column'] ) {
 
-                $orders[] = "". $vc['data'] ." ". $req['order'][0]['dir'] ."";
+                $orders[] = $vc['data'] ." ". $req['order'][0]['dir'];
             }
 
         }
@@ -180,14 +181,15 @@ class ApiController extends Controller
 
                 $dataitem['btn1'] = '<input type="checkbox" class="js-switch_work_status" id="input_work_status' . $dataitem["id"] . '" name="input_work_status' . $dataitem["id"] . '" data-id="' . $dataitem["id"] . '" data-status="' . $dataitem["status"] . '" data-plugin="switchery" ' . ($dataitem["status"] == 1 ? "checked" : "") . '  />';
 
+                
 
                 $dataitem['btn'] = '
                     <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-icon btn-info waves-effect waves-classic" data-target="#mdEditRole" data-toggle="modal" data-user_id="' . $dataitem['id'] . '" data-ssobranch_code="' . $dataitem['ssobranch_code'] . '"><i class="icon md-edit" aria-hidden="true"></i></button>
+                        <a href="'. Url::to(['empdata/user_register', 'id' => $dataitem["id"]]) .'" class="btn btn-icon btn-info waves-effect waves-classic"><i class="icon md-edit" aria-hidden="true"></i></a>
                     </div>
                 ';
 
-                // $dataitem['btn'] = '<div class="btn-group" role="group"><button type="button" class="btn btn-icon btn-info waves-effect waves-classic" data-target="#mdEditRole" data-toggle="modal" data-user_id="" data-ssobranch_code="" title="แก้ไขสิทธิ์" ><i class="icon md-edit" aria-hidden="true"></i></button></div>';
+                
             }
 
 
