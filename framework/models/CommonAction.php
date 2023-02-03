@@ -1,7 +1,9 @@
 <?php
+
 namespace app\models;
 
 use Yii;
+
 /**
  * LoginForm class.
  * LoginForm is the data structure for keeping
@@ -14,7 +16,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
-class CommonAction 
+class CommonAction
 {
 
 	public $uid;
@@ -26,6 +28,40 @@ class CommonAction
 
 	public $download_dir;
 	public $download_file;
+
+	// Admin Only
+	public static function AddEventLog($log_user, $log_action, $log_page, $log_description)
+	{
+		// LogEvent
+		$conn = Yii::$app->logdb;
+		$transaction = $conn->beginTransaction();
+
+		try {
+
+		
+			$sql = "INSERT INTO log_event(log_user, log_action, log_page, log_date, log_ip, log_description) 
+			VALUES(:log_user, :log_action, :log_page, NOW(), :log_ip, :log_description)";
+
+			$command = $conn->createCommand($sql);
+
+			$command->bindValue(":log_user", $log_user);
+			$command->bindValue(":log_action", $log_action);
+			$command->bindValue(":log_page", $log_page);
+			$command->bindValue(":log_ip", Yii::$app->getRequest()->getUserIP());
+			$command->bindValue(":log_description", $log_description);
+			$command->execute();
+
+			$transaction->commit();
+			return true;
+		
+		} catch (Exception $e) {
+
+			$transaction->rollBack();
+			Yii::$app->session['errmsg_addlog'] = 'error ' . $e->getMessage();
+			return false;
+		}
+	}
+
 
 	/**
 	 * Declares the validation rules.
@@ -342,36 +378,6 @@ class CommonAction
 		return $content;
 	}
 
-	// Admin Only
-	public static function AddEventLog($log_user, $log_action, $log_page, $log_description)
-	{
-		$conn = Yii::$app->logdb;
-		$transaction = $conn->beginTransaction();
-		try {
-			$createby = !Yii::$app->user->isGuest ? Yii::$app->user->id : 0;
-			//Yii::$app->request->getUserHostAddress()
-
-			$sql = "INSERT INTO log_event(log_user, log_action, log_page, log_date, log_ip, log_description) 
-			VALUES(:log_user, :log_action, :log_page, NOW(), :log_ip, :log_description)";
-
-			$command = $conn->createCommand($sql);
-
-			$command->bindValue(":log_user", $log_user);
-			$command->bindValue(":log_action", $log_action);
-			$command->bindValue(":log_page", $log_page);
-			$command->bindValue(":log_ip", Yii::$app->getRequest()->getUserIP());
-			$command->bindValue(":log_description", $log_description);
-			$command->execute();
-
-			$transaction->commit();
-			return true;
-		} catch (Exception $e) {
-
-			$transaction->rollBack();
-			Yii::$app->session['errmsg_addlog'] = 'error ' . $e->getMessage();
-			return false;
-		}
-	}
 
 	public function AddAdminLog($action, $description)
 	{
@@ -407,7 +413,7 @@ class CommonAction
 			//$createby = !Yii::$app->user->isGuest?Yii::$app->user->id:0;
 			//$createby = Yii::$app->user->getState("sub");
 			$cwebuser = new \app\components\CustomWebUser();
-			$createby = !Yii::$app->user->isGuest? $cwebuser->getInfo('uid') : 0; 
+			$createby = !Yii::$app->user->isGuest ? $cwebuser->getInfo('uid') : 0;
 
 			$sql = "
 			INSERT INTO log_login (
@@ -568,7 +574,7 @@ class CommonAction
 		try {
 			//$createby = !Yii::$app->user->isGuest?Yii::$app->user->id:0;
 			//$createby = Yii::$app->user->getState("sub");
-			$cwebuser = new \app\components\CustomWebUser(); 
+			$cwebuser = new \app\components\CustomWebUser();
 
 			$sql = "
 			INSERT INTO log_userlogin(

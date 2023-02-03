@@ -8,6 +8,7 @@ use yii\web\Controller;
 // use yii\helpers\Url;
 
 use app\components\UserController;
+use app\models\LogEvent;
 use app\models\MasSsobranch;
 use app\models\MasUser;
 use app\models\PerPersonal1;
@@ -23,6 +24,93 @@ class EmpdataController extends Controller
             UserController::chkLogin();
             exit;
         }
+    }
+
+    public function actionSyndata()
+    {
+
+        // arr( Yii::$app->params['prg_ctrl'] );
+
+        $datas['columns'] = [
+            [
+                'name' => 'PER_ID',
+                'label' => 'id',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'PER_CARDNO',
+                'label' => 'เลขบัตร',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'FULL_NAME_THAI',
+                'label' => 'ชื่อ นามสกุล',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'FULL_NAME_EN',
+                'label' => 'name surname',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+
+            [
+                'name' => 'PER_STARTDATE',
+                'label' => 'เริ่มงานเมื่อ',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'LEVEL_NO',
+                'label' => 'ระดับ',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'UPDATE_DATE_',
+                'label' => 'อัพเดทเมื่อ',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'PER_STATUS',
+                'label' => 'สถานะ',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+
+        ];
+
+
+        $LogEvents = LogEvent::find(['log_page' => 'syndata'])->orderBy(['log_id'=>SORT_DESC])->limit(1)->all();
+
+
+        $datas['last_user'] = NULL;
+        foreach ($LogEvents as $ka => $LogEvent) {
+
+            // arr( $LogEvent );
+
+            if( $LogEvent['log_user'] == yii::$app->user->getId() ) {
+
+                $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">'. $LogEvent->log_date.'</b> โดย <b style="color: #a53f6f;">คุณ</b> </div>';
+            }
+            else {
+
+                $res = MasUser::findOne($LogEvent->log_user);
+                
+                if( $res ) {
+                    $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">'. $LogEvent->log_date.'</b> โดยคุณ  <b style="color: #a53f6f;">'. $res['displayname'].'</b> </div>';
+    
+                }
+
+            }
+
+        }
+
+        return $this->render('view', $datas);
     }
 
     public function actionTest()
@@ -160,92 +248,7 @@ class EmpdataController extends Controller
         exit;
     }
 
-    public function actionSyndata()
-    {
-
-        // arr( Yii::$app->params['prg_ctrl'] );
-
-        $datas['columns'] = [
-            [
-                'name' => 'PER_ID',
-                'label' => 'id',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'PER_CARDNO',
-                'label' => 'เลขบัตร',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'FULL_NAME_THAI',
-                'label' => 'ชื่อ นามสกุล',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'FULL_NAME_EN',
-                'label' => 'name surname',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-
-            [
-                'name' => 'PER_STARTDATE',
-                'label' => 'เริ่มงานเมื่อ',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'LEVEL_NO',
-                'label' => 'ระดับ',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'UPDATE_DATE_',
-                'label' => 'อัพเดทเมื่อ',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'PER_STATUS',
-                'label' => 'สถานะ',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-
-        ];
-
-
-        $con = Yii::$app->logdb;
-        $sql = "SELECT * FROM log_event WHERE log_page = 'syndata' ORDER BY log_id DESC LIMIT 0, 1";
-
-        $cmd = $con->createCommand($sql);
-
-        $datas['last_user'] = NULL;
-        foreach ($cmd->queryAll() as $ka => $va) {
-
-            if( $va['log_user'] == yii::$app->user->getId() ) {
-
-                $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">'. $va['log_date'].'</b> โดย <b style="color: #a53f6f;">คุณ</b> </div>';
-            }
-            else {
-
-                $res = MasUser::findOne($va['log_user']);
-                
-                if( $res ) {
-                    $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">'. $va['log_date'].'</b> โดยคุณ  <b style="color: #a53f6f;">'. $res['displayname'].'</b> </div>';
-    
-                }
-
-            }
-
-        }
-
-        return $this->render('view', $datas);
-    }
+  
 
     // http://samservice/empdata/user_register
     public function actionUser_list($id = NULL)
