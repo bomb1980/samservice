@@ -60,9 +60,18 @@
 		<div class="panel-body container-fluid">
 
 			<div class="row">
-				<div class="col-md-12">
+
+				<div class="col-md-12" style="display: flex; justify-content: space-between; align-items: center;">
 
 					<button type="button" id="btnaddall" name="btnaddall" class="btn-primary btn waves-effect waves-classic" onclick="ajax_savepermission();">ปรับปรุงข้อมูลทั้งหมด</button>
+
+					<?php echo $last_user ?>
+
+
+				</div>
+				<div class="col-md-12">
+
+
 
 					<div class="load-result"></div>
 
@@ -211,7 +220,7 @@
 	}
 
 	function call_datatable(search) {
-		 
+
 		postDatas = {};
 		postDatas.<?php echo Yii::$app->request->csrfParam ?> = '<?php echo Yii::$app->request->csrfToken; ?>';
 

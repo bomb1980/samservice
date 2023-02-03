@@ -467,6 +467,16 @@ class PerPersonal1 extends \yii\db\ActiveRecord
         $return['status'] = 'success';
 
         echo json_encode($return);
+
+
+        $log_page = basename(Yii::$app->request->referrer);
+
+        $log_description = 'อัพเดตข้อมูลเจ้าหน้าที่';
+        
+        $createby = Yii::$app->user->getId();
+        
+      
+        \app\models\CommonAction::AddEventLog($createby, "Update", $log_page, $log_description);
     }
 
 

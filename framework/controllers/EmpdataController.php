@@ -25,6 +25,22 @@ class EmpdataController extends Controller
         }
     }
 
+    public function actionTest()
+    {
+        exit;
+        $log_page = basename(Yii::$app->request->referrer);
+
+        $log_description = 'อัพเดตข้อมูลเจ้าหน้าที่';
+        
+        $createby = Yii::$app->user->getId();
+        
+      
+        \app\models\CommonAction::AddEventLog($createby, "Update", $log_page, $log_description);
+
+       
+    }
+
+
     // http://samservice/empdata/user_register
     public function actionUser_register($id = NULL)
     {
@@ -203,6 +219,26 @@ class EmpdataController extends Controller
         ];
 
 
+        $con = Yii::$app->logdb;
+        $sql = "SELECT * FROM log_event WHERE log_page = 'syndata' ORDER BY log_id DESC LIMIT 0, 1";
+
+        $cmd = $con->createCommand($sql);
+
+        $datas['last_user'] = NULL;
+        foreach ($cmd->queryAll() as $ka => $va) {
+
+            $res = MasUser::findOne($va['log_user']);
+            
+            if( $res ) {
+                $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">'. $va['log_date'].'</b> โดยคุณ  <b style="color: #a53f6f;">'. $res['displayname'].'</b> </div>';
+
+            }
+
+
+        }
+
+
+
         // arr($columns);
         return $this->render('view', $datas);
     }
@@ -326,10 +362,7 @@ class EmpdataController extends Controller
 
 
 
-    public function actionTest()
-    {
-    }
-
+  
 
 
 
