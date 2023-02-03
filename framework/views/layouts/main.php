@@ -1,27 +1,13 @@
-
-<?php //$this->beginContent('//layouts/web_skeleton'); ?>
-<?php //require_once("header.php"); ?>
-<?php //require_once("menu.php"); ?>
-<?php //echo $content; ?>
-<?php //require_once("footer.php"); ?>
-<?php //$this->endContent(); ?>
-
 <?php
 $themesurl = Yii::$app->params['prg_ctrl']['url']['themes'];
-/* @var $this \yii\web\View */
-/* @var $content string */
 
-use app\widgets\Alert;
 use yii\helpers\Html;
-use yii\bootstrap\Nav;
-use yii\bootstrap\NavBar;
-use yii\widgets\Breadcrumbs;
-use app\assets\AppAsset;
+
 
 $cwebuser = new \app\components\CustomWebUser();
 
+$this->beginPage() 
 ?>
-<?php $this->beginPage() ?>
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
 <head>

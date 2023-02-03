@@ -59,82 +59,161 @@ use yii\helpers\Html;
 
 	<div class="page-content">
 
-	
-	<!-- $name, $selection = null, $items = [], $options = [] -->
-	
+
+		<!-- $name, $selection = null, $items = [], $options = [] -->
+
 		<!-- Panel jvectormap -->
 		<div class="panel-body container-fluid">
 
-			
+
 			<?php echo Alert::widget() ?>
 			<div class="form-content">
 
 				<?php echo  Html::beginForm(['', 'id' => $form['id']], 'post', ['enctype' => 'multipart/form-data']) ?>
 				<!-- <form role="form" method="post" name="loginform" autocomplete="off"> -->
 
-					<input type="hidden" name="<?php echo Yii::$app->request->csrfParam ?>" value="<?php echo Yii::$app->request->csrfToken; ?>">
+				<input type="hidden" name="<?php echo Yii::$app->request->csrfParam ?>" value="<?php echo Yii::$app->request->csrfToken; ?>">
 
-					<div class="row">
+				<div class="row">
 
-						<div class="form-material col-md-6" data-plugin="formMaterial">
-							<label class="">uid</label>
+					<div class="form-material col-md-6" data-plugin="formMaterial">
+						<label class="">User Name (ใช้สำหรับล็อกอิน)</label>
 
-							<input class="form-control empty" name="uid" type="text" value="<?php echo $form['uid'] ?>" autofocus="" maxlength="20">
-						</div>
+						<input class="form-control empty" name="uid" type="text" value="<?php echo $form['uid'] ?>" autofocus="" maxlength="20">
+					</div>
 
-						<div class="form-material col-md-6" data-plugin="formMaterial">
-							<label class="">displayname</label>
+					<div class="form-material col-md-6" data-plugin="formMaterial">
+						<label class="">ชื่อ นามสกุล</label>
 
-							<input class="form-control empty" name="displayname" type="text" value="<?php echo $form['displayname'] ?>" autofocus="" maxlength="50">
-						</div>
-
-
-
+						<input class="form-control empty" name="displayname" type="text" value="<?php echo $form['displayname'] ?>" autofocus="" maxlength="50">
 					</div>
 
 
-					<br>
 
-					<div class="row">
-						<div class="form-material col-md-6" data-plugin="formMaterial">
-							<label class="">Password</label>
-							<input class="form-control empty" name="password" type="password" value="" maxlength="20">
-						</div>
-						<div class="form-material col-md-6" data-plugin="formMaterial">
-							<label class="">Re-enter Password</label>
-							<input type="password" class="form-control empty" name="passwordcheck" maxlength="20">
-						</div>
+				</div>
 
 
+				<br>
+
+				<div class="row">
+					<div class="form-material col-md-6" data-plugin="formMaterial">
+						<label class="">รหัสผ่าน</label>
+						<input class="form-control empty" name="password" type="password" value="" maxlength="20">
 					</div>
-					<br>
-
-					<div class="row">
-
-						<div class="form-material col-md-6">
-							 
-						 
-
-							<?php echo  Html::dropDownList('ssobranch_code', $form['ssobranch_code'], ArrayHelper::map($MasSsobranch, 'ssobranch_code', 'name'), ['title'=>'เลือกหน่วยงาน...', 'prompt'=>'เลือกหน่วยงาน...', 'class'=>'form-control selectpicker show-tick', 'data-live-search'=>'true']) ?>
-						</div>
-
-
-						<div class="form-material col-md-6">
-
-
-
-							<input type="submit" class="btn btn-primary btn-block" value="<?php echo $button_text ?>" />
-						</div>
-
+					<div class="form-material col-md-6" data-plugin="formMaterial">
+						<label class="">ยืนยันรหัสผ่าน</label>
+						<input type="password" class="form-control empty" name="passwordcheck" maxlength="20">
 					</div>
 
-					<?php echo Html::endForm() ?>
-				 
+
+				</div>
+
+
+				<div class="row">
+
+					<div class="form-material col-md-6" data-plugin="formMaterial">
+
+
+						<div class="my-bg-grey">
+
+
+							<div class="my-head"><input <?php echo $check1 ?> class="my-radio" type="radio" name="role_id" value="1"> ผู้ดูแลระบบ</div>
+
+							<div class="content-role-selection">
+
+								<ol>
+									<li class="">
+										<a href="/dashboard">
+
+											<span class="site-menu-title">หน้าแรก</span>
+										</a>
+									</li>
+
+									<li class="">
+										<a href="/empdata/syndata">
+											<span class="site-menu-title">ข้อมูลเจ้าหน้าที่</span>
+										</a>
+									</li>
+
+									<li class="">
+										<a href="/empdata/user_list">
+											<span class="site-menu-title">สิทธิ์ผู้ใช้งาน</span>
+										</a>
+									</li>
+
+									<li class="">
+										<a href="/empdata/user_register">
+											<span class="site-menu-title">เพิ่มผู้ใช้งาน</span>
+										</a>
+									</li>
+
+									<li class="">
+										<a href="/admin/datamanagement">
+											<span class="site-menu-title">ดูฐานข้อมูลระบบ</span>
+										</a>
+									</li>
+								</ol>
+							</div>
+
+						</div>
+
+					</div>
+					<div class="form-material col-md-6" data-plugin="formMaterial">
+
+						<div class="my-bg-grey bg-user">
+
+
+							<div class="my-head"><input <?php echo $check2 ?> class="my-radio" type="radio" name="role_id" value="2"> ผู้ใช้ทั่วไป</div>
+
+							<div class="content-role-selection">
+
+								<ol>
+									<li class="">
+										<a href="/dashboard">
+
+											<span class="site-menu-title">หน้าแรก</span>
+										</a>
+									</li>
+
+									<li class="">
+										<a href="/empdata/syndata">
+											<span class="site-menu-title">ข้อมูลเจ้าหน้าที่</span>
+										</a>
+									</li>
+
+
+								</ol>
+							</div>
+
+						</div>
+
+					</div>
+
+				</div>
+
+				<br>
+
+				<div class="row">
+					<div class="form-material col-md-6">
+
+						<?php echo  Html::dropDownList('ssobranch_code', $form['ssobranch_code'], ArrayHelper::map($MasSsobranch, 'ssobranch_code', 'name'), ['title' => 'เลือกหน่วยงาน...', 'prompt' => 'เลือกหน่วยงาน...', 'class' => 'form-control selectpicker show-tick', 'data-live-search' => 'true']) ?>
+					</div>
+
+
+					<div class="form-material col-md-6">
+
+
+
+						<input type="submit" class="btn btn-primary btn-block" value="<?php echo $button_text ?>" />
+					</div>
+
+
+				</div>
+
+				<?php echo Html::endForm() ?>
+
 			</div>
 		</div>
-
-
-
 	</div>
 </div>
 
@@ -162,7 +241,7 @@ use yii\helpers\Html;
 <script type="text/javascript">
 	jQuery(document).ready(function($) {
 
-		 
+
 	});
 
 	$("#mdEditRole").on("show.bs.modal", function(e) {

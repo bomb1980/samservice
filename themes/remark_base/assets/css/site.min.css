@@ -12202,6 +12202,39 @@ h3.example-title {
 }
 
 
-.bootstrap-select{
-      border: solid 1px #ccc !important;  
+.bootstrap-select {
+      border: solid 1px #ccc !important;
+}
+
+
+.content-role-selection {
+      padding-top: 1rem;
+
+}
+
+
+.my-bg-grey {
+      background-color: #bdd3e4;
+      height: 100%;
+}
+
+.my-head {
+
+padding: 10px 0;
+
+padding-top: 25px;
+
+background-color: white;
+}
+
+.my-radio {
+      margin-left: 0;
+      position: relative;
+      top: 3px;
+}
+
+.bg-user{
+      
+    background-color: #f9be70;
+
 }

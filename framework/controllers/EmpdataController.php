@@ -11,7 +11,6 @@ use app\components\UserController;
 use app\models\MasSsobranch;
 use app\models\MasUser;
 use app\models\PerPersonal1;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 
 class EmpdataController extends Controller
@@ -30,7 +29,7 @@ class EmpdataController extends Controller
     public function actionUser_register($id = NULL)
     {
 
-        // arr(Yii::$app->user->identity);
+        // arr(Yii::$app->user->identity->role_id);
 
 
         $res = MasUser::findOne($id);
@@ -51,7 +50,7 @@ class EmpdataController extends Controller
                 $res->load(\Yii::$app->request->post());
 
 
-                if ( empty($r['password']) ) {
+                if (empty($r['password'])) {
 
                     $keep_errors['password'] = 'please input user password';
                 }
@@ -76,6 +75,7 @@ class EmpdataController extends Controller
             $res->displayname = $r['displayname'];
             $res->ssobranch_code = $r['ssobranch_code'];
             $res->status = 1;
+            $res->role_id = $r['role_id'];
             $res->create_by = json_encode(Yii::$app->user->getId());
 
             if (!$res->validate()) {
@@ -95,28 +95,32 @@ class EmpdataController extends Controller
 
             $res->save();
 
-
             $log_page = Url::to(['empdata/user_register', 'id' => $res->id]);
 
             return Yii::$app->getResponse()->redirect($log_page);
         }
 
         //view
+        $datas['form']['id'] = NULL;
+        $datas['form']['uid'] = NULL;
+        $datas['form']['displayname'] = NULL;
+        $datas['form']['ssobranch_code'] = NULL;
+        $datas['button_text'] = 'เพิ่มผู้ใช้งาน';
+
+
+        $datas['check1'] = 'checked';
+        $datas['check2'] = NULL;
         if ($res) {
 
             $datas['form'] = $res;
             $datas['button_text'] = 'แก้ไขผู้ใช้งาน';
-        } else {
 
-            $datas['form']['id'] = NULL;
-            $datas['form']['uid'] = NULL;
-            $datas['form']['displayname'] = NULL;
-            $datas['form']['ssobranch_code'] = NULL;
-            $datas['button_text'] = 'เพิ่มผู้ใช้งาน';
+            if ($res->role_id != 1) {
+
+                $datas['check1'] = NULL;
+                $datas['check2'] = 'checked';
+            }
         }
-
-   
-        // https://www.yiiframework.com/doc/guide/2.0/en/helper-html
 
         $datas['MasSsobranch'] = MasSsobranch::find()->all();
 

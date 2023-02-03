@@ -40,7 +40,7 @@ class MasUser extends \yii\db\ActiveRecord
             // [['lasted_login_date', 'create_date', 'update_date'], 'safe'],
 
             [['uid', 'update_by', 'create_by'], 'string', 'max' => 255],
-            [['uid', 'displayname', 'ssobranch_code'], 'required'],
+            [['uid', 'displayname', 'ssobranch_code', 'role_id'], 'required'],
             [['uid'],'unique'],
             [['displayname'], 'string', 'max' => 255],
             [['ssobranch_code'], 'string', 'max' => 6],
