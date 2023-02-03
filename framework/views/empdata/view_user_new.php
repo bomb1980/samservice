@@ -1,6 +1,9 @@
 <?php
 
 use app\widgets\Alert;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
+
 ?>
 <style>
 	/* HIDE RADIO */
@@ -55,13 +58,19 @@ use app\widgets\Alert;
 	</div>
 
 	<div class="page-content">
+
+	
+	<!-- $name, $selection = null, $items = [], $options = [] -->
+	
 		<!-- Panel jvectormap -->
 		<div class="panel-body container-fluid">
 
 			
 			<?php echo Alert::widget() ?>
 			<div class="form-content">
-				<form role="form" method="post" name="loginform" autocomplete="off">
+
+				<?php echo  Html::beginForm(['', 'id' => $form['id']], 'post', ['enctype' => 'multipart/form-data']) ?>
+				<!-- <form role="form" method="post" name="loginform" autocomplete="off"> -->
 
 					<input type="hidden" name="<?php echo Yii::$app->request->csrfParam ?>" value="<?php echo Yii::$app->request->csrfToken; ?>">
 
@@ -103,25 +112,10 @@ use app\widgets\Alert;
 					<div class="row">
 
 						<div class="form-material col-md-6">
-							<!-- <select class="form-control selectpicker show-tick" id="selDepartment" name="selDepartment" title="เลือกหน่วยงาน..." data-selected-text-format="count > 2" data-live-search="true" required="">
-								<option value="0" disabled="disabled" hidden="hidden" selected="selected">กรุณาเลือกหน่วยงาน</option>
-								<option value="1000"> สำนักงานประกันสังคมสำนักงานใหญ่ </option>
-								<option value="1001"> สำนักงานประกันสังคมกรุงเทพมหานครพื้นที่ 1 </option>
-								<option value="1002"> สำนักงานประกันสังคมกรุงเทพมหานครพื้นที่ 2 </option>
-								<option selected value="1003"> สำนักงานประกันสังคมกรุงเทพมหานครพื้นที่ 3 </option>
-								<option value="1004"> สำนักงานประกันสังคมกรุงเทพมหานครพื้นที่ 4 </option>
-								<option value="1005"> สำนักงานประกันสังคมกรุงเทพมหานครพื้นที่ 5 </option>
-								<option value="1006"> สำนักงานประกันสังคมกรุงเทพมหานครพื้นที่ 6 </option>
-								<option value="1007"> สำนักงานประกันสังคมกรุงเทพมหานครพื้นที่ 7 </option>
-								<option value="1008"> สำนักงานประกันสังคมกรุงเทพมหานครพื้นที่ 8 </option>
-								<option value="1009"> สำนักงานประกันสังคมกรุงเทพมหานครพื้นที่ 9 </option>
-								<option value="1010"> สำนักงานประกันสังคมกรุงเทพมหานครพื้นที่ 10 </option>
-								<option value="1011"> สำนักงานประกันสังคมกรุงเทพมหานครพื้นที่ 11 </option>
-								<option value="1012"> สำนักงานประกันสังคมกรุงเทพมหานครพื้นที่ 12 </option>
-								<option value="1050"> สำนักบริหารเทคโนโลยีสารสนเทศ </option>
-								<option value="1063"> ศูนย์สารนิเทศ </option>
-							</select> -->
-							<?php echo $DepartmentList ?>
+							 
+						 
+
+							<?php echo  Html::dropDownList('ssobranch_code', $form['ssobranch_code'], ArrayHelper::map($MasSsobranch, 'ssobranch_code', 'name'), ['title'=>'เลือกหน่วยงาน...', 'prompt'=>'เลือกหน่วยงาน...', 'class'=>'form-control selectpicker show-tick', 'data-live-search'=>'true']) ?>
 						</div>
 
 
@@ -133,7 +127,9 @@ use app\widgets\Alert;
 						</div>
 
 					</div>
-				</form>
+
+					<?php echo Html::endForm() ?>
+				 
 			</div>
 		</div>
 
@@ -162,34 +158,11 @@ use app\widgets\Alert;
 </div>
 <!-- End Page -->
 
-<script src="js/datatables.net/jquery.dataTables.js"></script>
-<script src="js/datatables.net-bs4/dataTables.bootstrap4.js"></script>
-<script src="js/datatables.net-fixedheader/dataTables.fixedHeader.js"></script>
-<script src="js/datatables.net-fixedcolumns/dataTables.fixedColumns.js"></script>
-<script src="js/datatables.net-rowgroup/dataTables.rowGroup.js"></script>
-<script src="js/datatables.net-scroller/dataTables.scroller.js"></script>
-<script src="js/datatables.net-responsive/dataTables.responsive.js"></script>
-<script src="js/datatables.net-responsive-bs4/responsive.bootstrap4.js"></script>
-<script src="js/datatables.net-buttons/dataTables.buttons.js"></script>
-<script src="js/datatables.net-buttons/buttons.html5.js"></script>
-<script src="js/datatables.net-buttons/buttons.flash.js"></script>
-<script src="js/datatables.net-buttons/buttons.print.js"></script>
-<script src="js/datatables.net-buttons/buttons.colVis.js"></script>
-<script src="js/datatables.net-buttons-bs4/buttons.bootstrap4.js"></script>
 
 <script type="text/javascript">
 	jQuery(document).ready(function($) {
 
-		call_datatable('');
-
-		$('#seltype').change(function() {
-			call_datatable('');
-
-		});
-		$('#per_cardno').keyup(function() {
-			call_datatable('');
-
-		});
+		 
 	});
 
 	$("#mdEditRole").on("show.bs.modal", function(e) {
@@ -216,85 +189,6 @@ use app\widgets\Alert;
 
 	});
 
-
-	function call_datatable(search) {
-
-		postDatas = {};
-		postDatas.token = 'pP63DE5y2z53FHqvtOW4slL0AsUfnfAX8beGLuPj';
-
-		postDatas.seltype = $("#seltype").val();
-		postDatas.per_cardno = $("#per_cardno").val();
-
-		$('#Datatables').DataTable().destroy();
-		var table = $('#Datatables').DataTable({
-			language: {
-				url: 'js/datatable-thai.json',
-			},
-			serverSide: true,
-			processing: true,
-			dom: 'rtp<"bottom"i>',
-			ajax: {
-				url: 'api/getuser',
-				type: 'GET',
-				data: postDatas,
-				headers: {
-					'Authorization': 'Bearer dNyCr0GdC0jZfNih9bHrIuPjxUW2Xctn6nbZIm8B'
-				}
-			},
-			columns: [
-
-				<?php
-
-				foreach ($columns as $kc => $vc) {
-
-					$className = 'text-center';
-					if (isset($vc['className'])) {
-						$className = $vc['className'];
-					}
-
-					echo '{
-                        data: \'' . $vc['name'] . '\',
-                        name: \'' . $vc['name'] . '\',
-                        className: "' . $className . '",
-                        orderable: true,
-                    },';
-				}
-				?>
-			],
-
-			paging: true,
-			pageLength: 10,
-			ordering: false,
-			drawCallback: function(settings) {
-				var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch_work_status'));
-				elems.forEach(function(el) {
-					//var init = new Switchery(el);
-					var init = new Switchery(el, {
-						secondaryColor: '#ff4c52'
-					});
-					el.onchange = function() {
-
-						$.ajax({
-							url: "<?php echo Yii::$app->urlManager->createAbsoluteUrl("admin/updateuserworkstatus"); ?>",
-							method: "POST",
-							dataType: "json",
-							data: {
-								id: $(this).data("id"),
-								'<?= Yii::$app->request->csrfParam ?>': '<?= Yii::$app->request->getCsrfToken() ?>',
-							},
-							success: function(data) {
-
-								alert(data.msg);
-							}
-						});
-					};
-				});
-				$('.grid-error').html('');
-
-			}
-		});
-
-	}
 
 
 	async function calltask() {

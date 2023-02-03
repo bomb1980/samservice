@@ -8,8 +8,10 @@ use yii\web\Controller;
 // use yii\helpers\Url;
 
 use app\components\UserController;
+use app\models\MasSsobranch;
 use app\models\MasUser;
 use app\models\PerPersonal1;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 
 class EmpdataController extends Controller
@@ -58,7 +60,6 @@ class EmpdataController extends Controller
             // arr( $r );
 
             $res->uid = $r['uid'];
-            // arr( $res );
 
 
             if (!empty($r['password'])) {
@@ -102,89 +103,22 @@ class EmpdataController extends Controller
 
         //view
         if ($res) {
+
             $datas['form'] = $res;
             $datas['button_text'] = 'แก้ไขผู้ใช้งาน';
-            $defBranch = $res['ssobranch_code'];
         } else {
 
-            $defBranch = NULL;
+            $datas['form']['id'] = NULL;
             $datas['form']['uid'] = NULL;
             $datas['form']['displayname'] = NULL;
             $datas['form']['ssobranch_code'] = NULL;
             $datas['button_text'] = 'เพิ่มผู้ใช้งาน';
         }
 
-        $datas['columns'] = [
-
-            [
-                'name' => 'uid',
-                'label' => 'ชื่อ Login',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'displayname',
-                'label' => 'ชื่อ-นามสกุล',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'ssobranch_code',
-                'label' => 'รหัสหน่วยงาน',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'branch_name',
-                'label' => 'ชื่อหน่วยงาน',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-
-            [
-                'name' => 'btn1',
-                'label' => 'ยกเลิกสิทธิ์',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'btn',
-                'label' => 'แก้ไข',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-        ];
-
-
-
+   
         // https://www.yiiframework.com/doc/guide/2.0/en/helper-html
 
-        $con = Yii::$app->db;
-
-        $sql = "SELECT * FROM mas_ssobranch ORDER BY name ASC";
-
-        $cmd = $con->createCommand($sql);
-
-        $options = [];
-        foreach ($cmd->queryAll() as $ka => $va) {
-
-            $select = NULL;
-            if ($defBranch == $va['ssobranch_code']) {
-
-                $select = 'selected';
-            }
-
-            $options[] = '<option ' . $select . ' value="' . $va['ssobranch_code'] . '">' . $va['name'] . '</option>';
-            // arr($va);
-        }
-
-        $datas['DepartmentList'] = '
-            <select class="form-control selectpicker show-tick" name="ssobranch_code" title="เลือกหน่วยงาน..." data-selected-text-format="count > 2" data-live-search="true">
-                <option value="">กรุณาเลือกหน่วยงาน</option>
-                 ' . implode('', $options) . '
-            </select>
-        ';
-
+        $datas['MasSsobranch'] = MasSsobranch::find()->all();
 
         return $this->render('view_user_new', $datas);
     }

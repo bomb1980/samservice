@@ -134,7 +134,7 @@
       return plugins[name];
     }
 
-    console.warn("Plugin:".concat(name, " has no warpped class."));
+    // console.warn("Plugin:".concat(name, " has no warpped class."));
     return false;
   }
 
@@ -168,7 +168,7 @@
       return false;
     }
 
-    console.warn("Plugin:".concat(name, " script is not loaded."));
+    // console.warn("Plugin:".concat(name, " script is not loaded."));
     return false;
   }
 
