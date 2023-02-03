@@ -227,23 +227,25 @@ class EmpdataController extends Controller
         $datas['last_user'] = NULL;
         foreach ($cmd->queryAll() as $ka => $va) {
 
-            $res = MasUser::findOne($va['log_user']);
-            
-            if( $res ) {
-                $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">'. $va['log_date'].'</b> โดยคุณ  <b style="color: #a53f6f;">'. $res['displayname'].'</b> </div>';
+            if( $va['log_user'] == yii::$app->user->getId() ) {
+
+                $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">'. $va['log_date'].'</b> โดย <b style="color: #a53f6f;">คุณ</b> </div>';
+            }
+            else {
+
+                $res = MasUser::findOne($va['log_user']);
+                
+                if( $res ) {
+                    $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">'. $va['log_date'].'</b> โดยคุณ  <b style="color: #a53f6f;">'. $res['displayname'].'</b> </div>';
+    
+                }
 
             }
 
-
         }
 
-
-
-        // arr($columns);
         return $this->render('view', $datas);
     }
-
-
 
     // http://samservice/empdata/user_register
     public function actionUser_list($id = NULL)
