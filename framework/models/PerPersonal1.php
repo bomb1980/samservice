@@ -39,7 +39,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
             'per_occupydate',
         ];
 
-        $url_gettoken = ''. $params['apiUrl'] .'/oapi/login'; //prd domain
+        $url_gettoken = $params['apiUrl'] .'/oapi/login'; //prd domain
         // $url_gettoken = 'https://172.16.12.248/oapi/login'; //prd ip
         $curl = curl_init();
         curl_setopt_array($curl, array(
@@ -97,7 +97,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
         }
 
 
-        $url = "". $params['apiUrl'] ."/oapi/open_api_users/callapi";
+        $url = $params['apiUrl'] ."/oapi/open_api_users/callapi";
         // $url = "https://172.16.12.248/oapi/open_api_users/callapi";
         $header = array(
             'Content-Type: application/x-www-form-urlencoded',
@@ -325,8 +325,6 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                 if (isset($keep[$setType][$concat])) {
                     continue;
                 }
-
-              
 
                 if (!isset($pn_codes[$va->prename_th])) {
                     $pn_codes[$va->prename_th] = '003';

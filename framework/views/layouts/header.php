@@ -227,7 +227,7 @@
 	  <!-- Navbar Toolbar Right -->
 	  <ul class="nav navbar-toolbar navbar-right navbar-toolbar-right">
 		<li class="nav-item">
-		  <a class="nav-link" href="javascript:void(0)" role="button" style="cursor:default;"> 
+		  <a class="nav-link" href="<?php echo Yii::$app->urlManager->createUrl('profile'); ?>" role="button" style=""> 
 			<i class="icon wb-user" aria-hidden="true"></i> รหัสผู้ใช้ : <?php echo $cwebuser->getInfo('displayname'); ?>
 		  </a> 
 		</li>						
@@ -237,41 +237,8 @@
 		  </a>
 		</li>		  
 	  
-		<?php /*
-		<li class="nav-item dropdown">
-		  <a class="nav-link" data-toggle="dropdown" href="javascript:void(0)" data-animation="scale-up"
-			aria-expanded="false" role="button">
-			<span class="flag-icon flag-icon-us"></span>
-		  </a>
-		  <div class="dropdown-menu" role="menu">
-			<a class="dropdown-item" href="javascript:void(0)" role="menuitem">
-			  <span class="flag-icon flag-icon-gb"></span> English</a>
-			<a class="dropdown-item" href="javascript:void(0)" role="menuitem">
-			  <span class="flag-icon flag-icon-fr"></span> French</a>
-			<a class="dropdown-item" href="javascript:void(0)" role="menuitem">
-			  <span class="flag-icon flag-icon-cn"></span> Chinese</a>
-			<a class="dropdown-item" href="javascript:void(0)" role="menuitem">
-			  <span class="flag-icon flag-icon-de"></span> German</a>
-			<a class="dropdown-item" href="javascript:void(0)" role="menuitem">
-			  <span class="flag-icon flag-icon-nl"></span> Dutch</a>
-		  </div>
-		</li>
-		*/ ?>
-		<?php /*
-		<li class="nav-item dropdown">
-		  <a class="nav-link navbar-avatar" data-toggle="dropdown" href="#" aria-expanded="false"
-			data-animation="scale-up" role="button">
-			<?php echo Yii::$app->user->getInfo('displayname'); ?>
-			<i class="icon wb-triangle-down" aria-hidden="true"></i>
-		  </a>
-		  <div class="dropdown-menu" role="menu">
-			<a class="dropdown-item" href="javascript:void(0)" role="menuitem"><i class="icon wb-user" aria-hidden="true"></i> Profile</a>
-			<a class="dropdown-item" href="javascript:void(0)" role="menuitem"><i class="icon wb-settings" aria-hidden="true"></i> Settings</a>
-			<div class="dropdown-divider" role="presentation"></div>
-			<a class="dropdown-item" href="javascript:void(0)" role="menuitem"><i class="icon wb-power" aria-hidden="true"></i> Logout</a>
-		  </div>
-		</li>
-		*/ ?>
+		
+		
 		
 		<?php /*
 		<li class="nav-item dropdown">
