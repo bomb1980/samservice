@@ -231,6 +231,23 @@ class PerPersonal1 extends \yii\db\ActiveRecord
         
                         $orgs[$vg][$va['ORG_NAME']] = $va['ORG_ID'];
                     }
+
+
+                    $sql = "SELECT * FROM per_off_type";
+                    // $cmd = $con->createCommand($sql);
+
+                    if ($vg == 1) {
+        
+                        $cmd = $con->createCommand($sql);
+                    } else {
+        
+                        $cmd = $con2->createCommand($sql);
+                    }
+                    $otcods[$vg] = [];
+                    foreach ($cmd->queryAll() as $ka => $va) {
+            
+                        $otcods[$vg][$va['OT_NAME']] = $va['OT_CODE'];
+                    }
                 }
         
                 $sql = "SELECT level_no, level_name FROM per_level";
@@ -241,14 +258,8 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                     $levels[$va['LEVEL_NAME']] = $va['LEVEL_NO'];
                 }
         
-                $sql = "SELECT * FROM per_off_type";
-                $cmd = $con->createCommand($sql);
-                $otcods = [];
-                foreach ($cmd->queryAll() as $ka => $va) {
-        
-                    $otcods[$va['OT_NAME']] = $va['OT_CODE'];
-                }
-        
+               
+                
                 $sql = "SELECT * FROM per_prename ORDER BY PN_NAME ASC ";
                 $cmd = $con->createCommand($sql);
                 $pn_codes = [];
@@ -334,8 +345,18 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                     $genders[$va->prename_th] = 1;
                 }
 
-                if (!isset($otcods[$va->pertype])) {
-                    $otcods[$va->pertype] = '01';
+                if($setType == 1 ) {
+
+
+                    if (!isset($otcods[$setType][$va->pertype])) {
+                        $otcods[$setType][$va->pertype] = '01';
+                    }
+                }
+                else {
+
+                    if (!isset($otcods[$setType][$va->pertype])) {
+                        $otcods[$setType][$va->pertype] = '11';
+                    }
                 }
 
 
@@ -382,7 +403,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                         '" . $levels[$va->levelname_th] . "' AS level_no,
                         '" . $genders[$va->prename_th] . "' AS genders,
                         '" . $pn_codes[$va->prename_th] . "' AS pn_code,
-                        '" . $otcods[$va->pertype] . "' AS otcode,
+                        '" . $otcods[$setType][$va->pertype] . "' AS otcode,
                         " . $orgs[$setType][$va->organize_th_ass] . " AS org
                     FROM dual
                 ";
