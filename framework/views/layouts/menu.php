@@ -6,18 +6,18 @@
           <ul class="site-menu" data-plugin="menu">
             <li class="site-menu-category"></li>
             <li class="site-menu-item">
-              <a href="/dashboard">
+              <a href="<?php echo Yii::$app->urlManager->createUrl('dashboard'); ?>">
                 <i class="site-menu-icon fas fa-home" aria-hidden="true"></i>
                 <span class="site-menu-title">หน้าแรก</span>
               </a>
             </li>
 
-
+            
             <li class="site-menu-category">จัดการข้อมูล</li>
 
 
             <li class="site-menu-item">
-              <a href="/empdata/syndata">
+              <a href="<?php echo Yii::$app->urlManager->createUrl('empdata/syndata'); ?>">
                 <i class="site-menu-icon icon fas fa-people-arrows" aria-hidden="true"></i>
                 <span class="site-menu-title">ข้อมูลเจ้าหน้าที่</span>
               </a>
@@ -27,21 +27,21 @@
             <li class="site-menu-category">ตั้งค่าข้อมูล</li>
 
             <li class="site-menu-item">
-              <a href="/empdata/user_list">
+              <a href="<?php echo Yii::$app->urlManager->createUrl('empdata/user_list'); ?>">
                 <i class="site-menu-icon fas fa-user-cog" aria-hidden="true"></i>
                 <span class="site-menu-title">สิทธิ์ผู้ใช้งาน</span>
               </a>
             </li>
 
             <li class="site-menu-item">
-              <a href="/empdata/user_register">
+              <a href="<?php echo Yii::$app->urlManager->createUrl('empdata/user_register'); ?>">
                 <i class="site-menu-icon fas fa-user-plus" aria-hidden="true"></i>
                 <span class="site-menu-title">เพิ่มผู้ใช้งาน</span>
               </a>
             </li>
 
             <li class="site-menu-item">
-              <a href="/admin/datamanagement">
+              <a href="<?php echo Yii::$app->urlManager->createUrl('admin/datamanagement'); ?>">
                 <i class="site-menu-icon fas fa-database" aria-hidden="true"></i>
                 <span class="site-menu-title">ดูฐานข้อมูลระบบ</span>
               </a>
@@ -55,8 +55,9 @@
 
   </div>
 
-<?php } else { ?>
-
+<?php } else {?>
+  
+  
   <div class="site-menubar site-menubar-light">
     <div class="site-menubar-body">
       <div>
@@ -64,29 +65,29 @@
           <ul class="site-menu" data-plugin="menu">
             <li class="site-menu-category"></li>
             <li class="site-menu-item">
-              <a href="/dashboard">
+              <a href="<?php echo Yii::$app->urlManager->createUrl('dashboard'); ?>">
                 <i class="site-menu-icon fas fa-home" aria-hidden="true"></i>
                 <span class="site-menu-title">หน้าแรก</span>
               </a>
             </li>
 
-
+            
             <li class="site-menu-category">จัดการข้อมูล</li>
 
 
             <li class="site-menu-item">
-              <a href="/empdata/syndata">
+              <a href="<?php echo Yii::$app->urlManager->createUrl('empdata/syndata'); ?>">
                 <i class="site-menu-icon icon fas fa-people-arrows" aria-hidden="true"></i>
                 <span class="site-menu-title">ข้อมูลเจ้าหน้าที่</span>
               </a>
             </li>
 
 
-           
+            
 
-          
+            
 
-           
+            
 
            
 
@@ -97,8 +98,7 @@
     </div>
 
   </div>
-
-<?php } ?>
+  <?php } ?>
 
 <script type="text/javascript">
   jQuery(document).ready(function($) {
