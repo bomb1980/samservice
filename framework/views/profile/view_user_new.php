@@ -66,7 +66,7 @@ use yii\helpers\Html;
 		<div class="panel-body container-fluid">
 
 
-			<?php echo Alert::widget() ?>
+			<?php //echo Alert::widget() ?>
 			<div class="form-content">
 
 				<?php echo  Html::beginForm([''], 'post', ['enctype' => 'multipart/form-data']) ?>

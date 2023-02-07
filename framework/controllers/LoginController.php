@@ -33,15 +33,20 @@ class LoginController extends Controller
 
 	public function actionAuth()
 	{
+
+		// echo 'ggggggggg';
 		$model = new LoginForm();
+
+		// echo 'jjljllkl';
+
+		$password = $_POST['password'];
+
 		
-		if ($model->load(Yii::$app->request->post()) && $model->login()) {
-			
+		if ($model->load(Yii::$app->request->post()) && $model->login( $password )) {
+
 			echo Json::encode(['status' => 'success', 'msg' => '']);
 			
-			// exit;
 			$username = $_POST['username'];
-			$password = $_POST['password'];
 			$remember_me = $_POST['chk_remember'];
 			$encryption_key = Yii::$app->params['auth']['crypter']['encryption_key'];
 			$method = Yii::$app->params['auth']['crypter']['method'];
@@ -59,55 +64,14 @@ class LoginController extends Controller
 				setcookie("Password", "", time() - 3600, "/");
 				setcookie("checked", "", time() - 3600, "/");
 			}
-
-			exit;
-
-			// $cwebuser = new \app\components\CustomWebUser();
-
-			// $ssobranch_code = $cwebuser->getInfo("ssobranch_code");
-			// $displayname = $cwebuser->getInfo("displayname");
-			// $uid = !Yii::$app->user->isGuest ? $cwebuser->getInfo('uid') : 0;
-
-			// $common = new CommonAction;
-			// $common->uid = $uid;
-			// $common->displayname = $displayname;
-			// $common->ssobranch_code = $ssobranch_code;
-			// $rows = $common->Check_mas_user();
-
-			// $common->AddLoginSession();
-			// $common->AddLoginLog("Login", "ok");
-
-			// echo Json::encode(array('status' => 'success', 'msg' => '',));
-
-
-
-			// exit;
+ 
 		} else {
-			//var_dump($model->getErrors());
-			$errors = $model->getErrors();
 
-			if (empty($errors)) {
-				return;
-			}
-			$message = '';
-			foreach ($errors as $name => $error) {
-				if (!is_array($error)) {
-					continue;
-				}
-				$message .= $name . ': ';
-				foreach ($error as $e) {
-					$message .= $e . '; ';
-				}
-			}
-			//echo $message;
-			$common = new CommonAction;
-			$common->AddLoginLog("Login", "error:" . $message);
 
-			Yii::$app->session->remove('errmsg_login');
-
-			echo Json::encode(array('status' => 'error', 'msg' => $message,));
-			return;
+			echo Json::encode(array('status' => 'error', 'msg' => 'ล็อกอินไม่ถูกต้อง',));
+	
 		}
+		exit;
 	}
 
 	public function actionError()

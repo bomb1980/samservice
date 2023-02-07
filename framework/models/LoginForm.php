@@ -66,14 +66,43 @@ class LoginForm extends Model
      * Logs in a user using the provided username and password.
      * @return bool whether the user is logged in successfully
      */
-    public function login()
+    public function login( $password = NULL )
     {
 
         if ($this->_user === false) {
             $this->_user = User::findByUsername($this->username);
         }
+        
+        
+        if( $password != NULL ) {
+            
+            // arr($this->_user);
 
-        // arr($this->_user);
+            // $u = new User();
+
+            // arr($u->validatePassword( $password ));
+
+            if(  !Yii::$app->getSecurity()->validatePassword($password, $this->_user->password)   ) {
+
+                // arr('dadsdsdsadsf');
+
+                $this->_user = NULL;
+
+
+            }
+
+
+            // arr('aaaaaaaaaa');
+            
+            // if( ) {
+
+
+            // }
+
+        }
+
+
+
 
         // return $this->_user;
 
