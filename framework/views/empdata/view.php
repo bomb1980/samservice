@@ -39,7 +39,7 @@
 		display: none;
 	}
 </style>
-<link rel="stylesheet" href="/css/data_table/dataTables.bootstrap4.css">
+<link rel="stylesheet" href="css/data_table/dataTables.bootstrap4.css">
 
 <!-- Page -->
 <div class="page">
@@ -232,6 +232,7 @@
 			language: {
 				url: 'js/datatable-thai.json',
 			},
+			order: [[0, 'desc']],
 			ordering: true,
 			serverSide: true,
 			processing: true,
