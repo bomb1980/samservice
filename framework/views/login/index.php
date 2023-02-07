@@ -134,6 +134,7 @@ if (isset($_COOKIE['UserName']) && isset($_COOKIE['Password'])) {
             });
         }
         var success_auth = function(data) {
+            // alert('aaaaaaaaaaaaa');
 
             if (data.status == 'success') {
                 location.href = '<?php echo Yii::$app->request->baseUrl; ?>';
@@ -144,7 +145,9 @@ if (isset($_COOKIE['UserName']) && isset($_COOKIE['Password'])) {
             }
         }
         var error_auth = function(data) {
-            alert('Invalid Exception.');
+
+            // alert('adsffdfsd');
+            alert('ข้อมูลไม่ถูกต้อง');
         }
         jQuery(document).ready(function($) {
             $("#password").keyup(function(e) {
