@@ -239,7 +239,7 @@
 			dom: 'rtp<"bottom"i>',
 			ajax: {
 				url: 'api',
-				type: 'POST',
+				type: 'GET',
 				data: postDatas,
 				headers: {
 					'Authorization': 'Bearer dNyCr0GdC0jZfNih9bHrIuPjxUW2Xctn6nbZIm8B'
