@@ -26,6 +26,116 @@ class EmpdataController extends Controller
         }
     }
 
+    
+    public function actionSyndata()
+    {
+
+        // arr( Yii::$app->params['prg_ctrl'] );
+
+        $datas['columns'] = [
+            // [
+            //     'name' => 'PER_ID',
+            //     'label' => 'id',
+            //     'className' => "text-center",
+            //     'orderable' => false
+            // ],
+             [
+                'name' => 'PER_CARDNO',
+                'label' => 'เลขบัตร',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'POS_ID',
+                'label' => 'เลขที่ตำแหน่ง',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'FULL_NAME_THAI',
+                'label' => 'ชื่อ นามสกุล',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'LEVEL_NO',
+                'label' => 'ระดับผู้ดำรงตำแหน่ง',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+
+           
+            
+           
+           
+           
+            [
+                'name' => 'ORGANIZE_TH',
+                'label' => 'สังกัดตามกฏหมาย',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'ORGANIZE_TH_ASS',
+                'label' => 'สังกัดตามมอบหมายงาน',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            // [
+            //     'name' => 'PER_STARTDATE',
+            //     'label' => 'เริ่มงานเมื่อ',
+            //     'className' => "text-center",
+            //     'orderable' => false
+            // ],
+           
+            // [
+            //     'name' => 'UPDATE_DATE_',
+            //     'label' => 'อัพเดทเมื่อ',
+            //     'className' => "text-center",
+            //     'orderable' => false
+            // ],
+            [
+                'name' => 'OT_NAME',
+                'label' => 'ประเภทบุคลากร',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'PER_STATUS_NAME',
+                'label' => 'สถานะ',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+           
+
+
+        ];
+
+
+        $LogEvents = LogEvent::find(['log_page' => 'syndata'])->orderBy(['log_id' => SORT_DESC])->limit(1)->all();
+
+
+        $datas['last_user'] = NULL;
+        foreach ($LogEvents as $ka => $LogEvent) {
+
+            // arr( $LogEvent );
+
+            if ($LogEvent['log_user'] == yii::$app->user->getId()) {
+
+                $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">' . $LogEvent->log_date . '</b> โดย <b style="color: #a53f6f;">คุณ</b> </div>';
+            } else {
+
+                $res = MasUser::findOne($LogEvent->log_user);
+
+                if ($res) {
+                    $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">' . $LogEvent->log_date . '</b> โดยคุณ  <b style="color: #a53f6f;">' . $res['displayname'] . '</b> </div>';
+                }
+            }
+        }
+
+        return $this->render('view', $datas);
+    }
+
     // http://samservice/empdata/user_register
     public function actionUser_register($id = NULL)
     {
@@ -128,88 +238,6 @@ class EmpdataController extends Controller
     }
 
 
-    public function actionSyndata()
-    {
-
-        // arr( Yii::$app->params['prg_ctrl'] );
-
-        $datas['columns'] = [
-            [
-                'name' => 'PER_ID',
-                'label' => 'id',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'PER_CARDNO',
-                'label' => 'เลขบัตร',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'FULL_NAME_THAI',
-                'label' => 'ชื่อ นามสกุล',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'FULL_NAME_EN',
-                'label' => 'name surname',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-
-            [
-                'name' => 'PER_STARTDATE',
-                'label' => 'เริ่มงานเมื่อ',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'LEVEL_NO',
-                'label' => 'ระดับ',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'UPDATE_DATE_',
-                'label' => 'อัพเดทเมื่อ',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'PER_STATUS',
-                'label' => 'สถานะ',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-
-        ];
-
-
-        $LogEvents = LogEvent::find(['log_page' => 'syndata'])->orderBy(['log_id' => SORT_DESC])->limit(1)->all();
-
-
-        $datas['last_user'] = NULL;
-        foreach ($LogEvents as $ka => $LogEvent) {
-
-            // arr( $LogEvent );
-
-            if ($LogEvent['log_user'] == yii::$app->user->getId()) {
-
-                $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">' . $LogEvent->log_date . '</b> โดย <b style="color: #a53f6f;">คุณ</b> </div>';
-            } else {
-
-                $res = MasUser::findOne($LogEvent->log_user);
-
-                if ($res) {
-                    $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">' . $LogEvent->log_date . '</b> โดยคุณ  <b style="color: #a53f6f;">' . $res['displayname'] . '</b> </div>';
-                }
-            }
-        }
-
-        return $this->render('view', $datas);
-    }
 
     public function actionTest()
     {
