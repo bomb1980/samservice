@@ -113,7 +113,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
         for ($i = 1; $i <= 50; $i++) {
 
             $param = array(
-                'endpoint' => 'sso_personal',
+                'endpoint' => 'sso_personal2',
                 'limit' => 1000,
                 'page' => $i
             );
@@ -226,6 +226,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
         
                         $cmd = $con2->createCommand($sql);
                     }
+                    
                     $orgs[$vg] = [];
                     foreach ($cmd->queryAll() as $ka => $va) {
         
@@ -234,7 +235,6 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
 
                     $sql = "SELECT * FROM per_off_type";
-                    // $cmd = $con->createCommand($sql);
 
                     if ($vg == 1) {
         
@@ -243,6 +243,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
         
                         $cmd = $con2->createCommand($sql);
                     }
+
                     $otcods[$vg] = [];
                     foreach ($cmd->queryAll() as $ka => $va) {
             
@@ -259,7 +260,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                 }
         
                
-                
+
                 $sql = "SELECT * FROM per_prename ORDER BY PN_NAME ASC ";
                 $cmd = $con->createCommand($sql);
                 $pn_codes = [];
@@ -280,18 +281,23 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
             foreach ($js as $ka => $va) {
 
-
+                
+                if( $ka < 2 ) {
+                    
+                    // arr( $va, 0 );
+                  
+                }
+                
+                $setType = 2;
                 if (in_array($va->pertype_id, [5, 42, 43, 44])) {
 
                     $setType = 1;
-                } else {
-                    $setType = 2;
-                }
-
+                } 
 
                 if( !isset( $total_api_rec[$setType] ) ) {
                     $total_api_rec[$setType] = 0;
                 }
+
                 ++$total_api_rec[$setType];
                 
 
@@ -326,13 +332,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                     $concat .= trim($va->$vf) . '-';
                 }
                 
-                // if( $va->per_cardno == '3819900090281') {
-                    
-                //    arr($concat);
-                    
-                // }
               
-
                 if (isset($keep[$setType][$concat])) {
                     continue;
                 }
@@ -359,14 +359,6 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                     }
                 }
 
-
-                // if( in_array( $va->per_name, ['ติณณภพ', 'จารุณี'])  ) {
-
-                //     arr( $va, 0 );
-                // }
-
-
-
                 if( !isset( $total_new_rec[$setType] ) ) {
                     $total_new_rec[$setType] = 0;
                 }
@@ -385,10 +377,20 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                 if (!isset($orgs[$setType][$va->organize_th_ass])) {
 
                     $orgs[$setType][$va->organize_th_ass] = json_encode( NULL );
-                } 
-               
+                }
+                
+
+
+                if( empty( $va->organize_id_ass ) ) {
+                    // organize_id_ass
+
+                    $va->organize_id_ass = NULL; 
+
+                }
+
                 $SqlUnion[$setType][] = "
                     SELECT 
+                        '". json_encode( $va ) ."' AS dpis6_data,
                         '" . $va->pertype_id . "' AS pertype_id,
                         " . ++$per_ids[$setType] . "  AS per_id,
                         '" . $va->per_name . "' AS per_name,
@@ -400,11 +402,12 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                         '" . $va->per_startdate . "' AS per_startdate,
                         '" . $va->per_occupydate . "' AS per_occupydate,
                         '" . $va->per_status . "' AS per_status,
-                        '" . $levels[$va->levelname_th] . "' AS level_no,
+                        '" . $va->pos_id . "' AS pos_id,
+                        '" . $va->level_code . "' AS level_no,
                         '" . $genders[$va->prename_th] . "' AS per_gender,
                         '" . $pn_codes[$va->prename_th] . "' AS pn_code,
                         '" . $otcods[$setType][$va->pertype] . "' AS ot_code,
-                        " . $orgs[$setType][$va->organize_th_ass] . " AS org_id
+                        '" . $va->organize_id_ass . "' AS org_id
                     FROM dual
                 ";
 
@@ -418,8 +421,8 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                             ) s ON ( 1 = 0 )
                             WHEN NOT MATCHED THEN
                             INSERT  ( 
-                                per_status, per_gender, org_id, ot_code, per_occupydate, per_startdate, per_birthdate, per_eng_surname, per_eng_name, per_surname, per_cardno, per_name, level_no_salary, level_no, per_id, per_type, pn_code, pos_id, poem_id, per_orgmgt, per_salary, per_mgtsalary, per_spsalary, mr_code, per_offno, per_taxno, per_blood, re_code, per_retiredate, per_posdate, per_saldate, pn_code_f, per_fathername, per_fathersurname, pn_code_m, per_mothername, per_mothersurname, per_add1, per_add2, pv_code, mov_code, per_ordain, per_soldier, per_member, update_user, update_date, department_id, approve_per_id, replace_per_id, absent_flag, poems_id, per_hip_flag, per_cert_occ, per_nickname, per_home_tel, per_office_tel, per_fax, per_mobile, per_email, per_file_no, per_bank_account, per_id_ref, per_id_ass_ref, per_contact_person, per_remark, per_start_org, per_cooperative, per_cooperative_no, per_memberdate, per_seq_no, pay_id, es_code, pl_name_work, org_name_work, per_docno, per_docdate, per_effectivedate, per_pos_reason, per_pos_year, per_pos_doctype, per_pos_docno, per_pos_org, per_ordain_detail, per_pos_orgmgt, per_pos_docdate, per_pos_desc, per_pos_remark, per_book_no, per_book_date, per_contact_count, per_disability, pot_id, per_union, per_uniondate, per_job, org_id_1, org_id_2, org_id_3, org_id_4, org_id_5, per_union2, per_uniondate2, per_union3, per_uniondate3, per_union4, per_uniondate4, per_union5, per_uniondate5, per_set_ass, per_audit_flag, per_probation_flag, department_id_ass, per_birth_place, per_scar, per_renew, per_leveldate, per_postdate, per_ot_flag) 
-                            values ( s.per_status, s.per_gender, s.org_id, s.ot_code, s.per_occupydate, s.per_startdate, s.per_birthdate, s.per_eng_surname, s.per_eng_name, s.per_surname, s.per_cardno, s.per_name, s.level_no, s.level_no, s.per_id, 1, s.pn_code, 2670, null,  0, 0, 0, 0, 1, null, null, null, null, '-', null, null, null, null, null, null, null, null, null, null, null, '11894', 0, 0, 0, :user_id, TO_CHAR(CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS'), 3062, null, null, null, null, null, null, null, null, null, null, null, '-', null, null, null, null, null, null, null, 0, null, null, 3571, 3804, '02', null, null, '-', '-', null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1, null, 0, null, null, null, null, null, null, null, 0, null, 0, null, 0, null, 0, null, 1, 0, 0, 3062, null, null, 0, null, null, null )
+                                pos_id, dpis6_data, per_status, per_gender, org_id, ot_code, per_occupydate, per_startdate, per_birthdate, per_eng_surname, per_eng_name, per_surname, per_cardno, per_name, level_no_salary, level_no, per_id, per_type, pn_code, poem_id, per_orgmgt, per_salary, per_mgtsalary, per_spsalary, mr_code, per_offno, per_taxno, per_blood, re_code, per_retiredate, per_posdate, per_saldate, pn_code_f, per_fathername, per_fathersurname, pn_code_m, per_mothername, per_mothersurname, per_add1, per_add2, pv_code, mov_code, per_ordain, per_soldier, per_member, update_user, update_date, department_id, approve_per_id, replace_per_id, absent_flag, poems_id, per_hip_flag, per_cert_occ, per_nickname, per_home_tel, per_office_tel, per_fax, per_mobile, per_email, per_file_no, per_bank_account, per_id_ref, per_id_ass_ref, per_contact_person, per_remark, per_start_org, per_cooperative, per_cooperative_no, per_memberdate, per_seq_no, pay_id, es_code, pl_name_work, org_name_work, per_docno, per_docdate, per_effectivedate, per_pos_reason, per_pos_year, per_pos_doctype, per_pos_docno, per_pos_org, per_ordain_detail, per_pos_orgmgt, per_pos_docdate, per_pos_desc, per_pos_remark, per_book_no, per_book_date, per_contact_count, per_disability, pot_id, per_union, per_uniondate, per_job, org_id_1, org_id_2, org_id_3, org_id_4, org_id_5, per_union2, per_uniondate2, per_union3, per_uniondate3, per_union4, per_uniondate4, per_union5, per_uniondate5, per_set_ass, per_audit_flag, per_probation_flag, department_id_ass, per_birth_place, per_scar, per_renew, per_leveldate, per_postdate, per_ot_flag) 
+                            values ( s.pos_id, s.dpis6_data, s.per_status, s.per_gender, s.org_id, s.ot_code, s.per_occupydate, s.per_startdate, s.per_birthdate, s.per_eng_surname, s.per_eng_name, s.per_surname, s.per_cardno, s.per_name, s.level_no, s.level_no, s.per_id, 1, s.pn_code, null,  0, 0, 0, 0, 1, null, null, null, null, '-', null, null, null, null, null, null, null, null, null, null, null, '11894', 0, 0, 0, :user_id, TO_CHAR(CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS'), 3062, null, null, null, null, null, null, null, null, null, null, null, '-', null, null, null, null, null, null, null, 0, null, null, 3571, 3804, '02', null, null, '-', '-', null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1, null, 0, null, null, null, null, null, null, null, 0, null, 0, null, 0, null, 0, null, 1, 0, 0, 3062, null, null, 0, null, null, null )
                             WHEN MATCHED THEN
                             UPDATE
                             SET     
@@ -457,13 +460,14 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
                         // arr('asfddsdfsasddasadsd');
 
-                        //arr('xxxxx');
+                        // arr('xxxxx');
                     }
                 }
             }
         }
 
 
+      
         foreach ($SqlUnion as $ks => $vs) {
 
             if (count($vs) > 0 ) {
@@ -474,8 +478,8 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                     ) s ON ( 1 = 0 )
                     WHEN NOT MATCHED THEN
                     INSERT  ( 
-                        per_status, per_gender, org_id, ot_code, per_occupydate, per_startdate, per_birthdate, per_eng_surname, per_eng_name, per_surname, per_cardno, per_name, level_no_salary, level_no, per_id, per_type, pn_code, pos_id, poem_id, per_orgmgt, per_salary, per_mgtsalary, per_spsalary, mr_code, per_offno, per_taxno, per_blood, re_code, per_retiredate, per_posdate, per_saldate, pn_code_f, per_fathername, per_fathersurname, pn_code_m, per_mothername, per_mothersurname, per_add1, per_add2, pv_code, mov_code, per_ordain, per_soldier, per_member, update_user, update_date, department_id, approve_per_id, replace_per_id, absent_flag, poems_id, per_hip_flag, per_cert_occ, per_nickname, per_home_tel, per_office_tel, per_fax, per_mobile, per_email, per_file_no, per_bank_account, per_id_ref, per_id_ass_ref, per_contact_person, per_remark, per_start_org, per_cooperative, per_cooperative_no, per_memberdate, per_seq_no, pay_id, es_code, pl_name_work, org_name_work, per_docno, per_docdate, per_effectivedate, per_pos_reason, per_pos_year, per_pos_doctype, per_pos_docno, per_pos_org, per_ordain_detail, per_pos_orgmgt, per_pos_docdate, per_pos_desc, per_pos_remark, per_book_no, per_book_date, per_contact_count, per_disability, pot_id, per_union, per_uniondate, per_job, org_id_1, org_id_2, org_id_3, org_id_4, org_id_5, per_union2, per_uniondate2, per_union3, per_uniondate3, per_union4, per_uniondate4, per_union5, per_uniondate5, per_set_ass, per_audit_flag, per_probation_flag, department_id_ass, per_birth_place, per_scar, per_renew, per_leveldate, per_postdate, per_ot_flag) 
-                    values ( s.per_status, s.per_gender, s.org_id, s.ot_code, s.per_occupydate, s.per_startdate, s.per_birthdate, s.per_eng_surname, s.per_eng_name, s.per_surname, s.per_cardno, s.per_name, s.level_no, s.level_no, s.per_id, 1, s.pn_code, 2670, null,  0, 0, 0, 0, 1, null, null, null, null, '-', null, null, null, null, null, null, null, null, null, null, null, '11894', 0, 0, 0, :user_id, TO_CHAR(CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS'), 3062, null, null, null, null, null, null, null, null, null, null, null, '-', null, null, null, null, null, null, null, 0, null, null, 3571, 3804, '02', null, null, '-', '-', null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1, null, 0, null, null, null, null, null, null, null, 0, null, 0, null, 0, null, 0, null, 1, 0, 0, 3062, null, null, 0, null, null, null )
+                        pos_id, dpis6_data, per_status, per_gender, org_id, ot_code, per_occupydate, per_startdate, per_birthdate, per_eng_surname, per_eng_name, per_surname, per_cardno, per_name, level_no_salary, level_no, per_id, per_type, pn_code, poem_id, per_orgmgt, per_salary, per_mgtsalary, per_spsalary, mr_code, per_offno, per_taxno, per_blood, re_code, per_retiredate, per_posdate, per_saldate, pn_code_f, per_fathername, per_fathersurname, pn_code_m, per_mothername, per_mothersurname, per_add1, per_add2, pv_code, mov_code, per_ordain, per_soldier, per_member, update_user, update_date, department_id, approve_per_id, replace_per_id, absent_flag, poems_id, per_hip_flag, per_cert_occ, per_nickname, per_home_tel, per_office_tel, per_fax, per_mobile, per_email, per_file_no, per_bank_account, per_id_ref, per_id_ass_ref, per_contact_person, per_remark, per_start_org, per_cooperative, per_cooperative_no, per_memberdate, per_seq_no, pay_id, es_code, pl_name_work, org_name_work, per_docno, per_docdate, per_effectivedate, per_pos_reason, per_pos_year, per_pos_doctype, per_pos_docno, per_pos_org, per_ordain_detail, per_pos_orgmgt, per_pos_docdate, per_pos_desc, per_pos_remark, per_book_no, per_book_date, per_contact_count, per_disability, pot_id, per_union, per_uniondate, per_job, org_id_1, org_id_2, org_id_3, org_id_4, org_id_5, per_union2, per_uniondate2, per_union3, per_uniondate3, per_union4, per_uniondate4, per_union5, per_uniondate5, per_set_ass, per_audit_flag, per_probation_flag, department_id_ass, per_birth_place, per_scar, per_renew, per_leveldate, per_postdate, per_ot_flag) 
+                    values ( s.pos_id, s.dpis6_data, s.per_status, s.per_gender, s.org_id, s.ot_code, s.per_occupydate, s.per_startdate, s.per_birthdate, s.per_eng_surname, s.per_eng_name, s.per_surname, s.per_cardno, s.per_name, s.level_no, s.level_no, s.per_id, 1, s.pn_code, null,  0, 0, 0, 0, 1, null, null, null, null, '-', null, null, null, null, null, null, null, null, null, null, null, '11894', 0, 0, 0, :user_id, TO_CHAR(CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS'), 3062, null, null, null, null, null, null, null, null, null, null, null, '-', null, null, null, null, null, null, null, 0, null, null, 3571, 3804, '02', null, null, '-', '-', null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1, null, 0, null, null, null, null, null, null, null, 0, null, 0, null, 0, null, 0, null, 1, 0, 0, 3062, null, null, 0, null, null, null )
                     WHEN MATCHED THEN
                     UPDATE
                     SET     
@@ -513,7 +517,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
                 // arr('asfddsdfsasddasadsd');
 
-                //arr('xxxxx');
+                // arr('xxxxx');
             }
         }
 
