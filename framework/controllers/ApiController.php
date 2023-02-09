@@ -158,9 +158,12 @@ class ApiController extends Controller
 
             $json_decode = json_decode( $vd['DPIS6_DATA'] );
 
-            $vd['LEVEL_NO'] = $json_decode->levelname_th;
-            $vd['ORGANIZE_TH'] = $json_decode->organize_th;
-            $vd['ORGANIZE_TH_ASS'] = $json_decode->organize_th_ass;
+            $vd['LEVEL_NO'] =  isset($json_decode->levelname_th) ? $json_decode->levelname_th:'';
+            $vd['ORGANIZE_TH'] =  isset($json_decode->organize_th) ? $json_decode->organize_th:'';
+            $vd['ORGANIZE_TH_ASS'] =  isset($json_decode->organize_th_ass) ? $json_decode->organize_th_ass:'';
+            // $json_decode->levelname_th;
+            // $vd['ORGANIZE_TH'] = $json_decode->organize_th;
+            // $vd['ORGANIZE_TH_ASS'] = $json_decode->organize_th_ass;
             $keep[] = $vd;
         }
 
