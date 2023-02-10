@@ -1,0 +1,73 @@
+td {
+    font-size: 10pt !important;
+}
+
+th {
+    font-size: 10pt !important;
+}
+
+.navbar {
+    /* background-image: url("../assets/images/bg_head_pbms.png"); */
+    background-position: right;
+    background-repeat: no-repeat;
+    /* background-size: 100% 100%; */
+}
+
+@media (max-width: 960px) {
+    .navbar {
+        background-image: none !important;
+    }
+}
+
+li.texttitle {
+    padding-top: 1.75em;
+}
+
+.txt-sysname {
+    color: white;
+    /* float: left; */
+    /* height: 4.715rem; */
+    /* padding: 1.5715rem 1.429rem; */
+    /* margin: 0; */
+    font-size: 1.286rem;
+    font-weight: 700;
+    line-height: 22px;
+}
+
+ul.nav_icon {
+    font-size: 30px;
+}
+
+.form-group .datatable-list {
+    margin-bottom: 0 !important;
+}
+
+table#Datatables thead {
+    background: #f1fff2;
+}
+
+table#Datatables thead th {
+    font-weight: 600 !important;
+    color: #000000 !important;
+}
+
+.scrollable-container {
+    height: auto !important;
+}
+
+.scrollable-content {
+    width: auto !important;
+}
+
+.noti-badg {
+    position: absolute;
+    font-size: 13px;
+    top: 21px;
+    right: 0;
+    width: 22px;
+    display: flex;
+    height: 22px;
+    align-items: center;
+    border-radius: 50%;
+    justify-content: space-around;
+}

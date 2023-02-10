@@ -1,0 +1,23 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\OoapTblReqform;
+use Illuminate\Database\Seeder;
+
+class TblReqformSeeder extends Seeder
+{
+
+    public function run()
+    {
+        OoapTblReqform::truncate();
+
+        OoapTblReqform::insert([
+            ["reqform_no" => "0", "fiscalyear_code" => "2564", "dept_id" => "0", "acttype_id" => "0", "coursegroup_id" => "0", "coursesubgroup_id" => "0", "course_id" => "0", "actname" => "0", "actdetail" => "0", "actremark" => "0", "troubletype_id" => "0", "people_benefit_qty" => "0", "local_material" => "0", "moo" => "0", "province_id" => "0", "amphur_id" => "0", "tambon_id" => "0", "cmname" => "0", "cmleader_name" => "0", "cmleader_desp" => "0", "cmleader_position" => "0", "buildingtype_id" => "0", "building_name" => "0", "building_lat" => "0", "building_long" => "0", "patternarea_id" => "0", "area_wide" => "0.00", "area_long" => "0.00", "area_high" => "0.00", "area_total" => "0.00", "unit_id" => "0",  "day_qty" => "0", "people_qty" => "0", "trainer_qty" => "0", "job_wage_rate" => "0.00", "couse_lunch_rate" => "0.00", "couse_trainer_rate" => "0.00", "couse_material_rate" => "0.00", "other_rate" => "0.00", "job_wage_amt" => "0.00", "couse_lunch_amt" => "0.00", "couse_trainer_amt" => "0.00", "couse_material_amt" => "0.00", "other_amt" => "0.00", "total_amt" => "7878.00", "status" => "3"],
+            ["reqform_no" => "0", "fiscalyear_code" => "2564", "dept_id" => "0", "acttype_id" => "0", "coursegroup_id" => "0", "coursesubgroup_id" => "0", "course_id" => "0", "actname" => "0", "actdetail" => "0", "actremark" => "0", "troubletype_id" => "0", "people_benefit_qty" => "0", "local_material" => "0", "moo" => "0", "province_id" => "0", "amphur_id" => "0", "tambon_id" => "0", "cmname" => "0", "cmleader_name" => "0", "cmleader_desp" => "0", "cmleader_position" => "0", "buildingtype_id" => "0", "building_name" => "0", "building_lat" => "0", "building_long" => "0", "patternarea_id" => "0", "area_wide" => "0.00", "area_long" => "0.00", "area_high" => "0.00", "area_total" => "0.00", "unit_id" => "0",  "day_qty" => "0", "people_qty" => "0", "trainer_qty" => "0", "job_wage_rate" => "0.00", "couse_lunch_rate" => "0.00", "couse_trainer_rate" => "0.00", "couse_material_rate" => "0.00", "other_rate" => "0.00", "job_wage_amt" => "0.00", "couse_lunch_amt" => "0.00", "couse_trainer_amt" => "0.00", "couse_material_amt" => "0.00", "other_amt" => "0.00", "total_amt" => "9999.00", "status" => "3"],
+            ["reqform_no" => "0", "fiscalyear_code" => "2565", "dept_id" => "0", "acttype_id" => "0", "coursegroup_id" => "0", "coursesubgroup_id" => "0", "course_id" => "0", "actname" => "0", "actdetail" => "0", "actremark" => "0", "troubletype_id" => "0", "people_benefit_qty" => "0", "local_material" => "0", "moo" => "0", "province_id" => "0", "amphur_id" => "0", "tambon_id" => "0", "cmname" => "0", "cmleader_name" => "0", "cmleader_desp" => "0", "cmleader_position" => "0", "buildingtype_id" => "0", "building_name" => "0", "building_lat" => "0", "building_long" => "0", "patternarea_id" => "0", "area_wide" => "0.00", "area_long" => "0.00", "area_high" => "0.00", "area_total" => "0.00", "unit_id" => "0",  "day_qty" => "0", "people_qty" => "0", "trainer_qty" => "0", "job_wage_rate" => "0.00", "couse_lunch_rate" => "0.00", "couse_trainer_rate" => "0.00", "couse_material_rate" => "0.00", "other_rate" => "0.00", "job_wage_amt" => "0.00", "couse_lunch_amt" => "0.00", "couse_trainer_amt" => "0.00", "couse_material_amt" => "0.00", "other_amt" => "0.00", "total_amt" => "9999.00", "status" => "3"],
+            ["reqform_no" => "0", "fiscalyear_code" => "2566", "dept_id" => "0", "acttype_id" => "0", "coursegroup_id" => "0", "coursesubgroup_id" => "0", "course_id" => "0", "actname" => "0", "actdetail" => "0", "actremark" => "0", "troubletype_id" => "0", "people_benefit_qty" => "0", "local_material" => "0", "moo" => "0", "province_id" => "0", "amphur_id" => "0", "tambon_id" => "0", "cmname" => "0", "cmleader_name" => "0", "cmleader_desp" => "0", "cmleader_position" => "0", "buildingtype_id" => "0", "building_name" => "0", "building_lat" => "0", "building_long" => "0", "patternarea_id" => "0", "area_wide" => "0.00", "area_long" => "0.00", "area_high" => "0.00", "area_total" => "0.00", "unit_id" => "0",  "day_qty" => "0", "people_qty" => "0", "trainer_qty" => "0", "job_wage_rate" => "0.00", "couse_lunch_rate" => "0.00", "couse_trainer_rate" => "0.00", "couse_material_rate" => "0.00", "other_rate" => "0.00", "job_wage_amt" => "0.00", "couse_lunch_amt" => "0.00", "couse_trainer_amt" => "0.00", "couse_material_amt" => "0.00", "other_amt" => "0.00", "total_amt" => "9999.00", "status" => "3"],
+
+        ]);
+    }
+}
