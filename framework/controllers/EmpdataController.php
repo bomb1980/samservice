@@ -26,7 +26,7 @@ class EmpdataController extends Controller
         }
     }
 
-    
+
     public function actionSyndata()
     {
 
@@ -39,7 +39,7 @@ class EmpdataController extends Controller
             //     'className' => "text-center",
             //     'orderable' => false
             // ],
-             [
+            [
                 'name' => 'PER_CARDNO',
                 'label' => 'เลขบัตร',
                 'className' => "text-center",
@@ -64,11 +64,11 @@ class EmpdataController extends Controller
                 'orderable' => false
             ],
 
-           
-            
-           
-           
-           
+
+
+
+
+
             [
                 'name' => 'ORGANIZE_TH',
                 'label' => 'สังกัดตามกฏหมาย',
@@ -87,7 +87,7 @@ class EmpdataController extends Controller
             //     'className' => "text-center",
             //     'orderable' => false
             // ],
-           
+
             // [
             //     'name' => 'UPDATE_DATE_',
             //     'label' => 'อัพเดทเมื่อ',
@@ -106,7 +106,7 @@ class EmpdataController extends Controller
                 'className' => "text-center",
                 'orderable' => false
             ],
-           
+
 
 
         ];
@@ -252,12 +252,97 @@ class EmpdataController extends Controller
         \app\models\CommonAction::AddEventLog($createby, "Update", $log_page, $log_description);
     }
 
+    public function actionTest1()
+    {
+        global $params;
+        $url_gettoken = $params['apiUrl'] . '/oapi/login'; //prd domain
+        // $url_gettoken = 'https://172.16.12.248/oapi/login'; //prd ip
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $url_gettoken,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => '{
+                "username":"niras_s@hotmail.com",
+                "password":"LcNRemVEmAbS4Cv"
+            }',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json'
+            ),
+        ));
 
+
+        $response = curl_exec($curl);
+        if (curl_errno($curl)) {
+
+            echo json_encode(['success' => 'fail', 'msg' => 'เชื่อมฐานข้อมูลไม่สำเร็จ']);
+            return false;
+        }
+
+        curl_close($curl);
+        $result = json_decode($response, true);
+
+
+        // arr( $result );
+        $accessToken = '';
+        $encrypt_key = '';
+
+        if (json_last_error() === JSON_ERROR_NONE) {
+            if (array_key_exists("error", $result)) {
+                $arrsms = array(
+                    'status' => 'error',
+                    'msg' => $result['error']['message'],
+                );
+                return $arrsms;
+            }
+            $accessToken = $result['accessToken'];
+            $encrypt_key = $result['encrypt_key'];
+        } else {
+            $arrsms = array(
+                'status' => 'error',
+                'msg' => "",
+            );
+            return $arrsms;
+        }
+        $url = "https://dpis6uat.sso.go.th/oapi/open_api_users/callapi";
+        $url = "https://sso.dpis.go.th/oapi/open_api_users/callapi";
+        $header = array(
+            'Content-Type: application/x-www-form-urlencoded',
+            'Authorization: ' . $accessToken
+        );
+        $param = array(
+            'endpoint' => 'ssotest',
+            'limit' => 1,
+        );
+
+        $data_result = $this->calleservice($url, $header, $param);
+
+        if ($data_result['message'] != "success") {
+            $arrsms = array(
+                'status' => 'error',
+                'msg' => "",
+            );
+            return $arrsms;
+        }
+
+        $data = $data_result["data"];
+        $decrypt_data = $this->ssl_decrypt_api($data, $encrypt_key);
+        $js = json_decode($decrypt_data, true);
+        arr($js);
+    }
 
 
     // http://samservice/empdata/gogo
     public function actionGogo()
     {
+
 
         $user_id = 1;
         if (Yii::$app->user->getId()) {
@@ -631,7 +716,7 @@ class EmpdataController extends Controller
                 'Authorization: ' . $accessToken
             );
             $param = array(
-                'endpoint' => 'sso_personal',
+                'endpoint' => 'sso_personal2',
                 'limit' => 1000,
                 'page' => 1
             );
