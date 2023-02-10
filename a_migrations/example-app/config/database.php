@@ -48,13 +48,13 @@ return [
         'oracletcm' => [
             'driver'        => 'oracle',
             'tns' => env('SID', '( DESCRIPTION =
-            (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))
-            (CONNECT_DATA =(SERVICE_NAME=bombtest)))'),
-            'host'          => env('DB_HOST_ORA', 'localhost'),
+            (ADDRESS = (PROTOCOL = TCP)(HOST = 172.20.91.111)(PORT = 1521))
+            (CONNECT_DATA =(SERVICE_NAME=DPIS)))'),
+            'host'          => env('DB_HOST_ORA', '172.20.91.111'),
             'port'          => env('DB_PORT_ORA', '1521'),
-            'database'      => env('DB_DATABASE_ORA', 'bombtest'),
-            'username'      => env('DB_USERNAME_ORA', 'bombtest'),
-            'password'      => env('DB_PASSWORD_ORA', 'bombtest'),
+            'database'      => env('DB_DATABASE_ORA', 'D62SORA'),
+            'username'      => env('DB_USERNAME_ORA', 'DPIS'),
+            'password'      => env('DB_PASSWORD_ORA', 'APP@dpis'),
             'charset'       => env('DB_CHARSET', 'AL32UTF8'),
             'prefix'        => env('DB_PREFIX', ''),
             'prefix_schema' => env('DB_SCHEMA_PREFIX', ''),
