@@ -1,7 +1,0 @@
-PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
-
-# Oracle Instant Client
-export LD_LIBRARY_PATH="/usr/lib/oracle/19.3/client64/lib"
-export TNS_ADMIN="/usr/lib/oracle/19.3/client64/lib"
-export ORACLE_BASE="/usr/lib/oracle/19.3/client64/lib"
-export ORACLE_HOME=$ORACLE_BASE
