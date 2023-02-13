@@ -384,7 +384,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                 if( empty( $va->organize_id_ass ) ) {
                     // organize_id_ass
 
-                    $va->organize_id_ass = NULL; 
+                    $va->organize_id_ass = 0; 
 
                 }
 
@@ -402,13 +402,14 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                         '" . $va->per_startdate . "' AS per_startdate,
                         '" . $va->per_occupydate . "' AS per_occupydate,
                         '" . $va->per_status . "' AS per_status,
-                        '2670' AS pos_id,
-                        '" . $va->pos_id . "' AS pos_id_,
+                        '2670' AS pos_id_,
+                        '" . $va->pos_id . "' AS pos_id,
                         '" . $va->level_code . "' AS level_no,
                         '" . $genders[$va->prename_th] . "' AS per_gender,
                         '" . $pn_codes[$va->prename_th] . "' AS pn_code,
                         '" . $otcods[$setType][$va->pertype] . "' AS ot_code,
-                        " . $orgs[$setType][$va->organize_th_ass]. " AS org_id
+                        " . $orgs[$setType][$va->organize_th_ass]. " AS org_id_,
+                        " . $va->organize_id_ass. " AS org_id
                     FROM dual
                 ";
 
