@@ -244,7 +244,6 @@ class EmpdataController extends Controller
                         '" . $va->org_dopa_code . "' AS org_dopa_code,
                         '" . $ot_code . "' AS ot_code,
                         '" . $va->province_id . "' AS pv_code
-
                     FROM dual
                 ";
 
@@ -273,7 +272,6 @@ class EmpdataController extends Controller
                             ot_code = s.ot_code,
                             pv_code = s.pv_code,
                             update_user = :user_id
-                           
                     ";
 
                     foreach ([1, 2] as $kg => $vg) {
