@@ -12,6 +12,8 @@ class CreatePerOrgAssesTable extends Migration
     {
         Schema::create( 'per_org_ass', function (Blueprint $table) {
                 $table->integer('id')->autoIncrement();
+                $table->string("pos_lat")->nullable();
+                $table->string("pos_long")->nullable();
                 $table->string("pv_code")->nullable();
 
                 $table->string("ot_code")->nullable();
@@ -48,8 +50,7 @@ class CreatePerOrgAssesTable extends Migration
                 $table->string("org_active")->nullable();
                 $table->string("org_website")->nullable();
                 $table->string("org_eng_name")->nullable();
-                $table->string("pos_lat")->nullable();
-                $table->string("pos_long")->nullable();
+
                 $table->string("dt_code")->nullable();
                 $table->string("mg_code")->nullable();
                 $table->string("pg_code")->nullable();
