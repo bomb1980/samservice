@@ -147,15 +147,94 @@ class EmpdataController extends Controller
 
             foreach ($js as $ka => $va) {
 
-                if( $va->department_id != 1640000 ) {
+
+                if ($va->department_id != 1640000) {
                     continue;
                 }
+
+                // arr( $va );
+
+
+
+
+                // [org_status] => 1
+                // [organize_pid] => 17
+                // [org_date] => 
+                // [org_start_date] => 
+                // [org_end_date] => 
+                // [organize_en] => 
+                // [organize_abbrth] => สำนักงานประกันสังคม
+                // [organize_abbren] => 
+            
+                // [country_id] => 41
+                // [province_id] => 1000
+                // [amphur_id] => 
+                // [tambon_id] => 
+                // [postcode] => 
+                // [risk_zone] => 
+                // [orglevel_id] => 2
+                // [orgstat_id] => 
+                // [orgclass_id] => 1
+                // [orgtype_id] => 1
+                // [org_owner_id] => 0
+                // [org_mode] => 1
+                // [org_website] => 
+                // [org_gps] => 
+                // [latitude] => 
+                // [longitude] => 
+                // [ministrygroup_id] => 
+                // [sector_id] => 
+                // [org_chart_level] => 
+                // [command_no] => 
+                // [command_date] => 
+                // [canceldate] => 
+                // [telephone] => 
+                // [fax] => 
+                // [email] => 
+                // [remark] => 
+                // [sortorder] => 
+                // [parent_flag] => 1
+                // [creator] => -1
+                // [createdate] => 2020-02-05 11:02:19
+                // [create_org] => 0
+                // [updateuser] => 310210128083701
+                // [updatedate] => 2022-12-14 14:05:44
+                // [update_org] => 100000
+                // [is_sync] => 0
+                // [sync_datetime] => 2022-12-20 15:44:22
+                // [sync_status_code] => NULL
+                // [org_path] => /17/1640000/
+                // [ministry_id] => 17
+                // [ministry] => กระทรวงแรงงาน
+                // [department] => สำนักงานประกันสังคม
+                // [division_id] => 
+                // [division] => 
+                // [subdiv1] => 
+                // [subdiv2] => 
+                // [subdiv3] => 
+                // [subdiv4] => 
+                // [subdiv5] => 
+                // [subdiv6] => 
+                // [d5_org_id] => 0
+                // [org_model_id] => 
+                // [org_model_dlt_id] => 
+                // [leader_pos_id] => 0
+                // [org_path_name] => /กระทรวงแรงงาน/สำนักงานประกันสังคม/
 
                 $SqlOrgs[] = "
                     SELECT 
                         " . $va->organize_id . " AS org_id,
                         '" . $va->organize_code . "' AS org_code,
-                        '" . $va->organize_th . "' AS org_name
+                        '" . $va->organize_th . "' AS org_name,
+                        '" . $va->department_id . "' AS department_id,
+                        '" . $va->org_id_ass . "' AS org_id_ass,
+                        '" . $va->org_seq_no . "' AS org_seq_no,
+                        '" . $va->organize_add1 . "' AS org_addr1,
+                        '" . $va->organize_add2 . "' AS org_addr2,
+                        '" . $va->organize_add3 . "' AS org_addr3,
+                        '" . $va->organize_job . "' AS org_job,
+                        '" . $va->org_dopa_code . "' AS org_dopa_code
+
                     FROM dual
                 ";
 
@@ -165,14 +244,22 @@ class EmpdataController extends Controller
                         MERGE INTO per_org_ass d
                         USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.org_id = s.org_id )
                         WHEN NOT MATCHED THEN
-                        INSERT ( update_user, update_date, org_id, org_code, org_name, org_short, ol_code, ot_code, org_addr1, org_addr2, org_addr3, ap_code, pv_code, ct_code, org_date, org_job, org_id_ref, org_active, org_website, org_seq_no, department_id, org_eng_name, pos_lat, pos_long, org_dopa_code, dt_code, mg_code, pg_code, org_zone, org_id_ass ) VALUES
-                        ( :user_id, TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' ), s.org_id, s.org_code, s.org_name, 'สสร.', '03 ', '01 ', NULL, NULL, NULL, NULL, '1200', '140 ', NULL, NULL, '3062', '1', NULL, '33', '3062', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '13791')
+                        INSERT ( org_dopa_code, org_job, org_addr2, org_addr3, org_addr1, department_id, update_user, update_date, org_id, org_code, org_name, org_short, ol_code, ot_code,  ap_code, pv_code, ct_code, org_date, org_id_ref, org_active, org_website, org_seq_no, org_eng_name, pos_lat, pos_long, dt_code, mg_code, pg_code, org_zone, org_id_ass ) VALUES
+                        ( s.org_dopa_code, s.org_job, s.org_addr2, s.org_addr3, s.org_addr1, s.department_id, :user_id, TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' ), s.org_id, s.org_code, s.org_name, '-', '-', '-', NULL, '1200', '140 ', NULL, '3063', '1', NULL, s.org_seq_no, NULL, NULL, NULL, NULL, NULL, NULL, NULL, s.org_id_ass )
                         WHEN MATCHED THEN
                         UPDATE
                         SET
                             update_date = TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' ),
                             org_code = s.org_code,
                             org_name = s.org_name,
+                            department_id = s.department_id,
+                            org_id_ass = s.org_id_ass,
+                            org_seq_no = s.org_seq_no,
+                            org_addr1 = s.org_addr1,
+                            org_addr2 = s.org_addr2,
+                            org_addr3 = s.org_addr3,
+                            org_job = s.org_job,
+                            org_dopa_code = s.org_dopa_code,
                             update_user = :user_id
                            
                     ";
@@ -196,44 +283,6 @@ class EmpdataController extends Controller
                     $SqlOrgs = [];
                 }
             }
-        }
-
-
-        if (count($SqlOrgs) > 0) {
-            // TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' )
-            $sql = "
-                MERGE INTO per_org_ass d
-                USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.org_id = s.org_id )
-                WHEN NOT MATCHED THEN
-                INSERT ( update_user, update_date, org_id, org_code, org_name, org_short, ol_code, ot_code, org_addr1, org_addr2, org_addr3, ap_code, pv_code, ct_code, org_date, org_job, org_id_ref, org_active, org_website, org_seq_no, department_id, org_eng_name, pos_lat, pos_long, org_dopa_code, dt_code, mg_code, pg_code, org_zone, org_id_ass ) VALUES
-                ( :user_id, TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' ), s.org_id, s.org_code, s.org_name, 'สสร.', '03 ', '01 ', NULL, NULL, NULL, NULL, '1200', '140 ', NULL, NULL, '3062', '1', NULL, '33', '3062', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '13791')
-                WHEN MATCHED THEN
-                UPDATE
-                SET
-                    update_date = TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' ),
-                    org_code = s.org_code,
-                    org_name = s.org_name,
-                    update_user = :user_id
-                   
-            ";
-
-            foreach ([1, 2] as $kg => $vg) {
-
-                if ($vg == 1) {
-
-                    $cmd = $con->createCommand($sql);
-                } else {
-
-                    $cmd = $con2->createCommand($sql);
-                }
-
-                $cmd->bindValue(":user_id", $user_id);
-
-                $cmd->execute();
-            }
-
-
-            $SqlOrgs = [];
         }
 
 
