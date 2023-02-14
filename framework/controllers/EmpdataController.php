@@ -26,6 +26,500 @@ class EmpdataController extends Controller
         }
     }
 
+    public function actionOganize()
+    {
+        $con = Yii::$app->dbdpis;
+        $con2 = Yii::$app->dbdpisemp;
+        ini_set('memory_limit', '2048M');
+        //ini_set('max_execution_time', 0);
+        set_time_limit(0);
+        global $params;
+        $url_gettoken = $params['apiUrl'] . '/oapi/login'; //prd domain
+        // $url_gettoken = 'https://172.16.12.248/oapi/login'; //prd ip
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $url_gettoken,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => '{
+                "username":"niras_s@hotmail.com",
+                "password":"LcNRemVEmAbS4Cv"
+            }',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json'
+            ),
+        ));
+
+
+        $response = curl_exec($curl);
+        if (curl_errno($curl)) {
+
+            echo json_encode(['success' => 'fail', 'msg' => 'เชื่อมฐานข้อมูลไม่สำเร็จ']);
+            return false;
+        }
+
+        curl_close($curl);
+        $result = json_decode($response, true);
+
+
+        // arr( $result );
+        $accessToken = '';
+        $encrypt_key = '';
+
+        if (json_last_error() === JSON_ERROR_NONE) {
+            if (array_key_exists("error", $result)) {
+                $arrsms = array(
+                    'status' => 'error',
+                    'msg' => $result['error']['message'],
+                );
+                return $arrsms;
+            }
+            $accessToken = $result['accessToken'];
+            $encrypt_key = $result['encrypt_key'];
+        } else {
+            $arrsms = array(
+                'status' => 'error',
+                'msg' => "",
+            );
+            return $arrsms;
+        }
+
+        // $apiUrl = 'https://sso.dpis.go.th';
+        // $url = "https://dpis6uat.sso.go.th/oapi/open_api_users/callapi";
+        // $url = "https://sso.dpis.go.th/oapi/open_api_users/callapi";
+        $url = $params['apiUrl'] ."/oapi/open_api_users/callapi";
+        $header = array(
+            'Content-Type: application/x-www-form-urlencoded',
+            'Authorization: ' . $accessToken
+        );
+
+        $SqlOrgs = [];
+        for ($p = 1; $p <= 20; ++$p) {
+
+
+            $param = array(
+                'endpoint' => 'sso_organize',
+                'limit' => 1000,
+                'page' => $p
+            );
+
+            $data_result = $this->calleservice($url, $header, $param);
+
+            if ($data_result['message'] != "success") {
+                $arrsms = array(
+                    'status' => 'error',
+                    'msg' => "",
+                );
+                return $arrsms;
+            }
+
+            $js = json_decode($this->ssl_decrypt_api($data_result["data"], $encrypt_key));
+
+            if (count($js) == 0) {
+
+                // echo $p;
+
+                break;
+            }
+
+            foreach ($js as $ka => $va) {
+
+                $SqlOrgs[] = "
+                    SELECT 
+                        " . $va->organize_id . " AS org_id,
+                        '" . $va->organize_code . "' AS org_code,
+                        '" . $va->organize_th . "' AS org_name
+                    FROM dual
+                ";
+
+                if ( count($SqlOrgs) > 300 ) {
+                    // TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' )
+                    $sql = "
+                        MERGE INTO per_org_ass d
+                        USING ( " . implode(' UNION ', $SqlOrgs ) . " ) s ON ( d.org_id = s.org_id )
+                        WHEN NOT MATCHED THEN
+                        INSERT ( update_date,  org_id, org_code, org_name, org_short, ol_code, ot_code, org_addr1, org_addr2, org_addr3, ap_code, pv_code, ct_code, org_date, org_job, org_id_ref, org_active, update_user,  org_website, org_seq_no, department_id, org_eng_name, pos_lat, pos_long, org_dopa_code, dt_code, mg_code, pg_code, org_zone, org_id_ass) VALUES
+                        ( TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' ), s.org_id, s.org_code, s.org_name, 'สสร.', '03 ', '01 ', NULL, NULL, NULL, NULL, '1200', '140 ', NULL, NULL, '3062', '1', '1', NULL, '33', '3062', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '13791')
+                        WHEN MATCHED THEN
+                        UPDATE
+                        SET
+                            
+                            update_date = TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' ),
+                            org_id_ = s.org_id,
+                            org_code_ = s.org_code,
+                            org_name_ = s.org_name
+                           
+                    ";
+
+                    foreach ([1, 2] as $kg => $vg) {
+
+                        if ($vg == 1) {
+
+                            $cmd = $con->createCommand($sql);
+                        } else {
+
+                            $cmd = $con2->createCommand($sql);
+                        }
+
+                        $cmd->execute();
+                    }
+
+
+                    $SqlOrgs = [];
+
+                }
+            }
+        }
+
+        if ( count($SqlOrgs) > 0 ) {
+            // TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' )
+            $sql = "
+                MERGE INTO per_org_ass d
+                USING ( " . implode(' UNION ', $SqlOrgs ) . " ) s ON ( d.org_id = s.org_id )
+                WHEN NOT MATCHED THEN
+                INSERT ( update_date,  org_id, org_code, org_name, org_short, ol_code, ot_code, org_addr1, org_addr2, org_addr3, ap_code, pv_code, ct_code, org_date, org_job, org_id_ref, org_active, update_user,  org_website, org_seq_no, department_id, org_eng_name, pos_lat, pos_long, org_dopa_code, dt_code, mg_code, pg_code, org_zone, org_id_ass) VALUES
+                ( TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' ), s.org_id, s.org_code, s.org_name, 'สสร.', '03 ', '01 ', NULL, NULL, NULL, NULL, '1200', '140 ', NULL, NULL, '3062', '1', '1', NULL, '33', '3062', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '13791')
+                WHEN MATCHED THEN
+                UPDATE
+                SET
+                    
+                    update_date = TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' ),
+                    org_id_ = s.org_id,
+                    org_code_ = s.org_code,
+                    org_name_ = s.org_name
+                   
+            ";
+
+            foreach ([1, 2] as $kg => $vg) {
+
+                if ($vg == 1) {
+
+                    $cmd = $con->createCommand($sql);
+                } else {
+
+                    $cmd = $con2->createCommand($sql);
+                }
+
+                $cmd->execute();
+            }
+
+
+            $SqlOrgs = [];
+
+        }
+
+       
+
+        $log_path = Yii::$app->getRuntimePath() . '\logs\log_SSO_Organize_' . date('d-M-Y') . '.log';
+        $results = print_r($js, true);
+        \app\components\CommonFnc::write_log($log_path, $results);
+
+         
+
+
+        exit;
+    }
+
+    public function actionTest1()
+    {
+
+        // 120
+        $old_arr = [
+            'org_id',
+            'level_no',
+            'level_no_salary',
+            'per_id',
+            'pos_id',
+            'dpis6_data',
+            'update_date',
+            'per_status',
+            'per_gender',
+            'org_id_1',
+            'org_id_2',
+            'org_id_3',
+            'org_id_4',
+            'org_id_5',
+            'pn_code',
+            'ot_code',
+            'per_name',
+            'per_cardno',
+            'per_eng_surname',
+            'per_occupydate',
+            'update_user',
+            'bomb',
+            'per_type',
+            'per_surname',
+            'per_eng_name',
+            'per_birthdate',
+            'per_startdate',
+            'poem_id',
+            'per_orgmgt',
+            'per_salary',
+            'per_mgtsalary',
+            'per_spsalary',
+            'mr_code',
+            'per_offno',
+            'per_taxno',
+            'per_blood',
+            're_code',
+            'per_retiredate',
+            'per_posdate',
+            'per_saldate',
+            'pn_code_f',
+            'per_fathername',
+            'per_fathersurname',
+            'pn_code_m',
+            'per_mothername',
+            'per_mothersurname',
+            'per_add1',
+            'per_add2',
+            'pv_code',
+            'mov_code',
+            'per_ordain',
+            'per_soldier',
+            'per_member',
+            'department_id',
+            'approve_per_id',
+            'replace_per_id',
+            'absent_flag',
+            'poems_id',
+            'per_hip_flag',
+            'per_cert_occ',
+            'per_nickname',
+            'per_home_tel',
+            'per_office_tel',
+            'per_fax',
+            'per_mobile',
+            'per_email',
+            'per_file_no',
+            'per_bank_account',
+            'per_id_ref',
+            'per_id_ass_ref',
+            'per_contact_person',
+            'per_remark',
+            'per_start_org',
+            'per_cooperative',
+            'per_cooperative_no',
+            'per_memberdate',
+            'per_seq_no',
+            'pay_id',
+            'es_code',
+            'pl_name_work',
+            'org_name_work',
+            'per_docno',
+            'per_docdate',
+            'per_effectivedate',
+            'per_pos_reason',
+            'per_pos_year',
+            'per_pos_doctype',
+            'per_pos_docno',
+            'per_pos_org',
+            'per_ordain_detail',
+            'per_pos_orgmgt',
+            'per_pos_docdate',
+            'per_pos_desc',
+            'per_pos_remark',
+            'per_book_no',
+            'per_book_date',
+            'per_contact_count',
+            'per_disability',
+            'pot_id',
+            'per_union',
+            'per_uniondate',
+            'per_job',
+            'per_union2',
+            'per_uniondate2',
+            'per_union3',
+            'per_uniondate3',
+            'per_union4',
+            'per_uniondate4',
+            'per_union5',
+            'per_uniondate5',
+            'per_set_ass',
+            'per_audit_flag',
+            'per_probation_flag',
+            'department_id_ass',
+            'per_birth_place',
+            'per_scar',
+            'per_renew',
+            'per_leveldate',
+            'per_postdate',
+            'per_ot_flag',
+        ];
+
+        // exit;
+        //     SELECT
+        //     p.per_id,p.per_cardno,p.birth_date,concat(p.prename_th,p.per_name," ",p.per_surname) as fullname_th,
+        //     p.prename_th,
+        //     p.per_name,
+        //     per_surname,
+        //     p.prename_en,
+        //     p.per_eng_name,
+        //     per_eng_surname,
+        //     concat(p.prename_en,p.per_eng_name," ",p.per_eng_surname) as fullname_en,
+        //     p.per_startdate,
+        //     p.per_occupydate,
+        //     p.pertype_id,   
+        //     (select organize_th from organize where organize_id=p.organize_id_ass) as organize_th_ass,
+        //     p.per_status,
+        //     p.organize_id_ass,
+        //     p.pos_id,
+        //     p.per_level_id,
+
+        //     tb_level.level_code,
+        //     tb_level.positiontype_id as level_positiontype_id,
+        //     tb_level.pertype_id as level_pertype_id,
+        //     tb_level.levelname_th,
+
+        //     tb_line.line_code,
+        //     tb_line.positiontype_id as line_positiontype_id,
+        //     tb_line.pertype_id as line_pertype_id,
+        //     tb_line.linename_th,
+
+        //     tb_pertype.pertype_code,
+        //     tb_pertype.pertype,
+
+        //     o.organize_code,
+        //     o.organize_th,
+
+        //     po.pertype_id as position_pertype_id,
+        //     po.organize_id,
+        //     po.pos_no,
+        //     po.pos_salary,
+        //     po.line_id,
+
+
+        // FROM per_personal p
+        // LEFT JOIN pos_position po ON p.pos_id=po.pos_id
+        // LEFT JOIN organize o ON po.organize_id=o.organize_id
+        // INNER JOIN tb_pertype ON p.pertype_id=tb_pertype.pertype_id 
+        // LEFT JOIN tb_line ON po.line_id=tb_line.line_id
+        // LEFT JOIN tb_level ON p.per_level_id=tb_level.level_id
+        $decrypt_data = '[{"org_owner":"1640000","per_cardno":"3539900052242","per_id":"353990005224201","per_name":"\u0e2a\u0e38\u0e01\u0e24\u0e15","per_surname":"\u0e01\u0e21\u0e25\u0e27\u0e31\u0e12\u0e19\u0e32","d5_per_id":"670","pos_id":"0","pos_no":null,"per_status":"2","per_offno":null,"per_renew":null,"per_taxno":null,"per_start_org":null,"per_startdate":"2002-10-01","per_occupydate":"2002-10-01","per_effectivedate":"2018-03-01","per_gender":"1","blood_id":null,"scar":null,"birth_place":null,"is_ordain":"0","ordain_date":null,"ordain_detail":null,"is_disability":"1","is_soldier_service":"0","per_saldate":null,"probation_startdate":null,"probation_enddate":null,"probation_passdate":null,"per_posdate":"2018-03-01","approve_per_id":null,"replace_per_id":null,"absent_flag":null,"level_no_salary":"03","per_mobile":null,"per_email":"sukrit.k@sso.go.th","per_file_no":null,"per_bank_account":null,"per_license_no":null,"per_id_ref":null,"per_nickname":null,"per_contact_person":null,"per_id_ass_ref":null,"per_cooperative":"0","per_cooperative_no":null,"per_seq_no":"1703","per_pos_reason":null,"per_pos_year":"2561","per_remark":null,"per_pos_docno":null,"per_pos_org":" ","per_pos_orgmgt":null,"per_pos_docdate":null,"per_pos_doctype":"\u0e25\u0e32\u0e2d\u0e2d\u0e01 1\/3\/2561 \u0e40\u0e19\u0e37\u0e48\u0e2d\u0e07\u0e08\u0e32\u0e01\u0e01\u0e25\u0e31\u0e1a\u0e44\u0e1b\u0e14\u0e39\u0e41\u0e25\u0e1a\u0e34\u0e14\u0e32\u0e41\u0e25\u0e30\u0e21\u0e32\u0e23\u0e14\u0e32\u0e17\u0e35\u0e48\u0e20\u0e39\u0e21\u0e34\u0e25\u0e33\u0e40\u0e19\u0e32","per_pos_remark":null,"per_book_no":null,"per_book_date":null,"per_contract_count":null,"disability_id":null,"per_pos_desc":"\u0e2d\u0e19\u0e38\u0e0d\u0e32\u0e15\u0e43\u0e2b\u0e49\u0e1e\u0e19\u0e31\u0e01\u0e07\u0e32\u0e19\u0e25\u0e32\u0e2d\u0e2d\u0e01\u0e08\u0e32\u0e01\u0e23\u0e32\u0e0a\u0e01\u0e32\u0e23","per_job":null,"is_auditor":"0","per_ot_flag":null,"per_type_2535":null,"prename_id":"3","prename_th":"\u0e19\u0e32\u0e22","prename_en":"Mr.","per_eng_name":"SUKRIT","per_eng_surname":"KAMOLWATTANA","married_id":"1","religion_id":"-1","pertype_id":"66","department_id":"1640000","province_id":null,"movement_id":"66","pay_no":null,"per_orgmgt":"0","per_level_id":"-1","posstatus_id":null,"probation_flag":"0","per_salary":"24640.00","per_mgtsalary":"0.00","per_spsalary":"0.00","retired_date":"2035-10-01","nbs_flag":"0","hip_flag":"0","newwave_flag":"0","tena":"0","per_union":"0","per_uniondate":null,"per_union2":"0","per_uniondate2":null,"per_union3":"0","per_uniondate3":null,"per_union4":"0","per_uniondate4":null,"per_union5":"0","per_uniondate5":null,"per_member":"0","per_memberdate":null,"is_sync":"0","sync_datetime":null,"dcid":"1071948","sync_status_code":null,"per_set_ass":"1","organize_id_ass":"1640028","organize_id_work":null,"organize_id_kpi":"0","organize_id_salary":"0","scholar_flag":"0","relocation_type":"0","relocation_name":"0","audit_flag":null,"audit_by":null,"audit_date":null,"department_id_ass":"1640000","create_date":"2017-11-02 14:37:52","creator":"-1","create_org":"1640000","update_date":"2022-12-11 10:30:09","update_user":"-1","update_name":"Administrator","allow_sync":"1","edit_req_no":null,"update_org":"1640000","birth_date":"1974-10-04","creator_name":"Administrator","audit_name":null,"is_delete":"0","exam_register_id":null,"father_name":null,"father_surname":null,"father_prename_th":"","father_prename_id":null,"mother_name":null,"mother_surname":null,"mother_prename_th":"","mother_prename_id":null,"is_draft":"0","biometric_id":"3539900052242","area_province_id":null,"decoration_date":null,"decoration_id":null,"decoration_th":null,"decoration_abbr":null,"per_level_date":null,"per_line_date":null}]';
+
+
+        $js = json_decode($decrypt_data, true);
+        foreach ($js[0] as $kj => $vj) {
+            if (in_array($kj, $old_arr)) {
+            } else {
+
+                arr($kj, 0);
+            }
+        }
+        // arr($js[0]);
+
+        exit;
+
+
+
+        global $params;
+
+        $url_gettoken = $params['apiUrl'] . '/oapi/login'; //prd domain
+
+        // $url_gettoken = 'https://172.16.12.248/oapi/login'; //prd ip
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $url_gettoken,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => '{
+                    "username":"niras_s@hotmail.com",
+                    "password":"LcNRemVEmAbS4Cv"
+                }',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json'
+            ),
+        ));
+
+
+        $response = curl_exec($curl);
+        if (curl_errno($curl)) {
+
+            echo json_encode(['success' => 'fail', 'msg' => 'เชื่อมฐานข้อมูลไม่สำเร็จ']);
+            return false;
+        }
+
+        curl_close($curl);
+        $result = json_decode($response, true);
+
+
+        // arr( $result );
+        $accessToken = '';
+        $encrypt_key = '';
+
+        if (json_last_error() === JSON_ERROR_NONE) {
+            if (array_key_exists("error", $result)) {
+                $arrsms = array(
+                    'status' => 'error',
+                    'msg' => $result['error']['message'],
+                );
+                return $arrsms;
+            }
+            $accessToken = $result['accessToken'];
+            $encrypt_key = $result['encrypt_key'];
+        } else {
+            $arrsms = array(
+                'status' => 'error',
+                'msg' => "",
+            );
+            return $arrsms;
+        }
+        $url = "https://dpis6uat.sso.go.th/oapi/open_api_users/callapi";
+        $url = "https://sso.dpis.go.th/oapi/open_api_users/callapi";
+        $header = array(
+            'Content-Type: application/x-www-form-urlencoded',
+            'Authorization: ' . $accessToken
+        );
+        $param = array(
+            'endpoint' => 'ssotest',
+            'limit' => 1,
+        );
+
+        $data_result = $this->calleservice($url, $header, $param);
+
+        if ($data_result['message'] != "success") {
+            $arrsms = array(
+                'status' => 'error',
+                'msg' => "",
+            );
+            return $arrsms;
+        }
+
+        $data = $data_result["data"];
+        echo $decrypt_data = $this->ssl_decrypt_api($data, $encrypt_key);
+
+        exit;
+
+        $js = json_decode($decrypt_data, true);
+        arr($js);
+    }
+
+    public function actionTest()
+    {
+        exit;
+        $log_page = basename(Yii::$app->request->referrer);
+
+        $log_description = 'อัพเดตข้อมูลเจ้าหน้าที่';
+
+        $createby = Yii::$app->user->getId();
+
+
+        \app\models\CommonAction::AddEventLog($createby, "Update", $log_page, $log_description);
+    }
 
     public function actionSyndata()
     {
@@ -63,12 +557,6 @@ class EmpdataController extends Controller
                 'className' => "text-center",
                 'orderable' => false
             ],
-
-
-
-
-
-
             [
                 'name' => 'ORGANIZE_TH',
                 'label' => 'สังกัดตามกฏหมาย',
@@ -237,210 +725,6 @@ class EmpdataController extends Controller
         return $this->render('view_user_new', $datas);
     }
 
-
-
-    public function actionTest()
-    {
-        exit;
-        $log_page = basename(Yii::$app->request->referrer);
-
-        $log_description = 'อัพเดตข้อมูลเจ้าหน้าที่';
-
-        $createby = Yii::$app->user->getId();
-
-
-        \app\models\CommonAction::AddEventLog($createby, "Update", $log_page, $log_description);
-    }
-
-    public function actionOganize()
-    {
-        ini_set('memory_limit', '2048M');
-        //ini_set('max_execution_time', 0);
-        set_time_limit(0);
-        global $params;
-        $url_gettoken = $params['apiUrl'] . '/oapi/login'; //prd domain
-        // $url_gettoken = 'https://172.16.12.248/oapi/login'; //prd ip
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => $url_gettoken,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_SSL_VERIFYHOST => 0,
-            CURLOPT_SSL_VERIFYPEER => 0,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => '{
-                "username":"niras_s@hotmail.com",
-                "password":"LcNRemVEmAbS4Cv"
-            }',
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/json'
-            ),
-        ));
-
-
-        $response = curl_exec($curl);
-        if (curl_errno($curl)) {
-
-            echo json_encode(['success' => 'fail', 'msg' => 'เชื่อมฐานข้อมูลไม่สำเร็จ']);
-            return false;
-        }
-
-        curl_close($curl);
-        $result = json_decode($response, true);
-
-
-        // arr( $result );
-        $accessToken = '';
-        $encrypt_key = '';
-
-        if (json_last_error() === JSON_ERROR_NONE) {
-            if (array_key_exists("error", $result)) {
-                $arrsms = array(
-                    'status' => 'error',
-                    'msg' => $result['error']['message'],
-                );
-                return $arrsms;
-            }
-            $accessToken = $result['accessToken'];
-            $encrypt_key = $result['encrypt_key'];
-        } else {
-            $arrsms = array(
-                'status' => 'error',
-                'msg' => "",
-            );
-            return $arrsms;
-        }
-        $url = "https://dpis6uat.sso.go.th/oapi/open_api_users/callapi";
-        $url = "https://sso.dpis.go.th/oapi/open_api_users/callapi";
-        $header = array(
-            'Content-Type: application/x-www-form-urlencoded',
-            'Authorization: ' . $accessToken
-        );
-        $param = array(
-            'endpoint' => 'sso_organize',
-            'limit' => 100000,
-        );
-
-        $data_result = $this->calleservice($url, $header, $param);
-
-        if ($data_result['message'] != "success") {
-            $arrsms = array(
-                'status' => 'error',
-                'msg' => "",
-            );
-            return $arrsms;
-        }
-
-        $data = $data_result["data"];
-        $decrypt_data = $this->ssl_decrypt_api($data, $encrypt_key);
-        $js = json_decode($decrypt_data, true);
-
-        $log_path = Yii::$app->getRuntimePath() . '\logs\log_SSO_Organize_' . date('d-M-Y') . '.log';
-        $results = print_r($js, true);
-        \app\components\CommonFnc::write_log($log_path, $results);
-        exit;
-
-    }
-
-    public function actionTest1()
-    {
-        ini_set('memory_limit', '2048M');
-        //ini_set('max_execution_time', 0);
-        set_time_limit(0);
-        global $params;
-        $url_gettoken = $params['apiUrl'] . '/oapi/login'; //prd domain
-        // $url_gettoken = 'https://172.16.12.248/oapi/login'; //prd ip
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => $url_gettoken,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_SSL_VERIFYHOST => 0,
-            CURLOPT_SSL_VERIFYPEER => 0,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => '{
-                "username":"niras_s@hotmail.com",
-                "password":"LcNRemVEmAbS4Cv"
-            }',
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/json'
-            ),
-        ));
-
-
-        $response = curl_exec($curl);
-        if (curl_errno($curl)) {
-
-            echo json_encode(['success' => 'fail', 'msg' => 'เชื่อมฐานข้อมูลไม่สำเร็จ']);
-            return false;
-        }
-
-        curl_close($curl);
-        $result = json_decode($response, true);
-
-
-        // arr( $result );
-        $accessToken = '';
-        $encrypt_key = '';
-
-        if (json_last_error() === JSON_ERROR_NONE) {
-            if (array_key_exists("error", $result)) {
-                $arrsms = array(
-                    'status' => 'error',
-                    'msg' => $result['error']['message'],
-                );
-                return $arrsms;
-            }
-            $accessToken = $result['accessToken'];
-            $encrypt_key = $result['encrypt_key'];
-        } else {
-            $arrsms = array(
-                'status' => 'error',
-                'msg' => "",
-            );
-            return $arrsms;
-        }
-        $url = "https://dpis6uat.sso.go.th/oapi/open_api_users/callapi";
-        $url = "https://sso.dpis.go.th/oapi/open_api_users/callapi";
-        $header = array(
-            'Content-Type: application/x-www-form-urlencoded',
-            'Authorization: ' . $accessToken
-        );
-        $param = array(
-            'endpoint' => 'ssotest',
-            'limit' => 100000,
-        );
-
-        $data_result = $this->calleservice($url, $header, $param);
-
-        if ($data_result['message'] != "success") {
-            $arrsms = array(
-                'status' => 'error',
-                'msg' => "",
-            );
-            return $arrsms;
-        }
-
-        $data = $data_result["data"];
-        $decrypt_data = $this->ssl_decrypt_api($data, $encrypt_key);
-        $js = json_decode($decrypt_data, true);
-
-        $log_path = Yii::$app->getRuntimePath() . '\logs\log_SSO_Per_personel_' . date('d-M-Y') . '.log';
-        $results = print_r($js, true);
-        \app\components\CommonFnc::write_log($log_path, $results);
-        exit;
-
-    }
-
-
     // http://samservice/empdata/gogo
     public function actionGogo()
     {
@@ -457,8 +741,6 @@ class EmpdataController extends Controller
 
         exit;
     }
-
-
 
     // http://samservice/empdata/user_register
     public function actionUser_list($id = NULL)
