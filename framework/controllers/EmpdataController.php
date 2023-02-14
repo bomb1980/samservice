@@ -26,8 +26,26 @@ class EmpdataController extends Controller
         }
     }
 
+    // http://samservice/empdata/gogo
+    public function actionGogo()
+    {
+
+        $user_id = 1;
+        if (Yii::$app->user->getId()) {
+
+
+            $user_id = Yii::$app->user->getId();
+        }
+
+        echo PerPersonal1::getFromApi($user_id);
+
+        exit;
+    }
+
     public function actionOganize()
     {
+
+        $user_id = Yii::$app->user->getId();
         $con = Yii::$app->dbdpis;
         $con2 = Yii::$app->dbdpisemp;
         ini_set('memory_limit', '2048M');
@@ -91,10 +109,8 @@ class EmpdataController extends Controller
             return $arrsms;
         }
 
-        // $apiUrl = 'https://sso.dpis.go.th';
-        // $url = "https://dpis6uat.sso.go.th/oapi/open_api_users/callapi";
-        // $url = "https://sso.dpis.go.th/oapi/open_api_users/callapi";
-        $url = $params['apiUrl'] ."/oapi/open_api_users/callapi";
+
+        $url = $params['apiUrl'] . "/oapi/open_api_users/callapi";
         $header = array(
             'Content-Type: application/x-www-form-urlencoded',
             'Authorization: ' . $accessToken
@@ -131,6 +147,10 @@ class EmpdataController extends Controller
 
             foreach ($js as $ka => $va) {
 
+                if( $va->department_id != 1640000 ) {
+                    continue;
+                }
+
                 $SqlOrgs[] = "
                     SELECT 
                         " . $va->organize_id . " AS org_id,
@@ -139,22 +159,21 @@ class EmpdataController extends Controller
                     FROM dual
                 ";
 
-                if ( count($SqlOrgs) > 300 ) {
+                if (count($SqlOrgs) > 300) {
                     // TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' )
                     $sql = "
                         MERGE INTO per_org_ass d
-                        USING ( " . implode(' UNION ', $SqlOrgs ) . " ) s ON ( d.org_id = s.org_id )
+                        USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.org_id = s.org_id )
                         WHEN NOT MATCHED THEN
-                        INSERT ( update_date,  org_id, org_code, org_name, org_short, ol_code, ot_code, org_addr1, org_addr2, org_addr3, ap_code, pv_code, ct_code, org_date, org_job, org_id_ref, org_active, update_user,  org_website, org_seq_no, department_id, org_eng_name, pos_lat, pos_long, org_dopa_code, dt_code, mg_code, pg_code, org_zone, org_id_ass) VALUES
-                        ( TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' ), s.org_id, s.org_code, s.org_name, 'สสร.', '03 ', '01 ', NULL, NULL, NULL, NULL, '1200', '140 ', NULL, NULL, '3062', '1', '1', NULL, '33', '3062', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '13791')
+                        INSERT ( update_user, update_date, org_id, org_code, org_name, org_short, ol_code, ot_code, org_addr1, org_addr2, org_addr3, ap_code, pv_code, ct_code, org_date, org_job, org_id_ref, org_active, org_website, org_seq_no, department_id, org_eng_name, pos_lat, pos_long, org_dopa_code, dt_code, mg_code, pg_code, org_zone, org_id_ass ) VALUES
+                        ( :user_id, TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' ), s.org_id, s.org_code, s.org_name, 'สสร.', '03 ', '01 ', NULL, NULL, NULL, NULL, '1200', '140 ', NULL, NULL, '3062', '1', NULL, '33', '3062', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '13791')
                         WHEN MATCHED THEN
                         UPDATE
                         SET
-                            
                             update_date = TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' ),
-                            org_id_ = s.org_id,
-                            org_code_ = s.org_code,
-                            org_name_ = s.org_name
+                            org_code = s.org_code,
+                            org_name = s.org_name,
+                            update_user = :user_id
                            
                     ";
 
@@ -168,32 +187,33 @@ class EmpdataController extends Controller
                             $cmd = $con2->createCommand($sql);
                         }
 
+                        $cmd->bindValue(":user_id", $user_id);
+
                         $cmd->execute();
                     }
 
 
                     $SqlOrgs = [];
-
                 }
             }
         }
 
-        if ( count($SqlOrgs) > 0 ) {
+
+        if (count($SqlOrgs) > 0) {
             // TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' )
             $sql = "
                 MERGE INTO per_org_ass d
-                USING ( " . implode(' UNION ', $SqlOrgs ) . " ) s ON ( d.org_id = s.org_id )
+                USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.org_id = s.org_id )
                 WHEN NOT MATCHED THEN
-                INSERT ( update_date,  org_id, org_code, org_name, org_short, ol_code, ot_code, org_addr1, org_addr2, org_addr3, ap_code, pv_code, ct_code, org_date, org_job, org_id_ref, org_active, update_user,  org_website, org_seq_no, department_id, org_eng_name, pos_lat, pos_long, org_dopa_code, dt_code, mg_code, pg_code, org_zone, org_id_ass) VALUES
-                ( TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' ), s.org_id, s.org_code, s.org_name, 'สสร.', '03 ', '01 ', NULL, NULL, NULL, NULL, '1200', '140 ', NULL, NULL, '3062', '1', '1', NULL, '33', '3062', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '13791')
+                INSERT ( update_user, update_date, org_id, org_code, org_name, org_short, ol_code, ot_code, org_addr1, org_addr2, org_addr3, ap_code, pv_code, ct_code, org_date, org_job, org_id_ref, org_active, org_website, org_seq_no, department_id, org_eng_name, pos_lat, pos_long, org_dopa_code, dt_code, mg_code, pg_code, org_zone, org_id_ass ) VALUES
+                ( :user_id, TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' ), s.org_id, s.org_code, s.org_name, 'สสร.', '03 ', '01 ', NULL, NULL, NULL, NULL, '1200', '140 ', NULL, NULL, '3062', '1', NULL, '33', '3062', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '13791')
                 WHEN MATCHED THEN
                 UPDATE
                 SET
-                    
                     update_date = TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' ),
-                    org_id_ = s.org_id,
-                    org_code_ = s.org_code,
-                    org_name_ = s.org_name
+                    org_code = s.org_code,
+                    org_name = s.org_name,
+                    update_user = :user_id
                    
             ";
 
@@ -207,21 +227,23 @@ class EmpdataController extends Controller
                     $cmd = $con2->createCommand($sql);
                 }
 
+                $cmd->bindValue(":user_id", $user_id);
+
                 $cmd->execute();
             }
 
 
             $SqlOrgs = [];
-
         }
 
-       
+
+
 
         $log_path = Yii::$app->getRuntimePath() . '\logs\log_SSO_Organize_' . date('d-M-Y') . '.log';
         $results = print_r($js, true);
         \app\components\CommonFnc::write_log($log_path, $results);
 
-         
+
 
 
         exit;
@@ -725,22 +747,7 @@ class EmpdataController extends Controller
         return $this->render('view_user_new', $datas);
     }
 
-    // http://samservice/empdata/gogo
-    public function actionGogo()
-    {
 
-
-        $user_id = 1;
-        if (Yii::$app->user->getId()) {
-
-
-            $user_id = Yii::$app->user->getId();
-        }
-
-        echo PerPersonal1::getFromApi($user_id);
-
-        exit;
-    }
 
     // http://samservice/empdata/user_register
     public function actionUser_list($id = NULL)
