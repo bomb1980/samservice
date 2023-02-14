@@ -252,8 +252,105 @@ class EmpdataController extends Controller
         \app\models\CommonAction::AddEventLog($createby, "Update", $log_page, $log_description);
     }
 
+    public function actionOganize()
+    {
+        ini_set('memory_limit', '2048M');
+        //ini_set('max_execution_time', 0);
+        set_time_limit(0);
+        global $params;
+        $url_gettoken = $params['apiUrl'] . '/oapi/login'; //prd domain
+        // $url_gettoken = 'https://172.16.12.248/oapi/login'; //prd ip
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $url_gettoken,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => '{
+                "username":"niras_s@hotmail.com",
+                "password":"LcNRemVEmAbS4Cv"
+            }',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json'
+            ),
+        ));
+
+
+        $response = curl_exec($curl);
+        if (curl_errno($curl)) {
+
+            echo json_encode(['success' => 'fail', 'msg' => 'เชื่อมฐานข้อมูลไม่สำเร็จ']);
+            return false;
+        }
+
+        curl_close($curl);
+        $result = json_decode($response, true);
+
+
+        // arr( $result );
+        $accessToken = '';
+        $encrypt_key = '';
+
+        if (json_last_error() === JSON_ERROR_NONE) {
+            if (array_key_exists("error", $result)) {
+                $arrsms = array(
+                    'status' => 'error',
+                    'msg' => $result['error']['message'],
+                );
+                return $arrsms;
+            }
+            $accessToken = $result['accessToken'];
+            $encrypt_key = $result['encrypt_key'];
+        } else {
+            $arrsms = array(
+                'status' => 'error',
+                'msg' => "",
+            );
+            return $arrsms;
+        }
+        $url = "https://dpis6uat.sso.go.th/oapi/open_api_users/callapi";
+        $url = "https://sso.dpis.go.th/oapi/open_api_users/callapi";
+        $header = array(
+            'Content-Type: application/x-www-form-urlencoded',
+            'Authorization: ' . $accessToken
+        );
+        $param = array(
+            'endpoint' => 'sso_organize',
+            'limit' => 100000,
+        );
+
+        $data_result = $this->calleservice($url, $header, $param);
+
+        if ($data_result['message'] != "success") {
+            $arrsms = array(
+                'status' => 'error',
+                'msg' => "",
+            );
+            return $arrsms;
+        }
+
+        $data = $data_result["data"];
+        $decrypt_data = $this->ssl_decrypt_api($data, $encrypt_key);
+        $js = json_decode($decrypt_data, true);
+
+        $log_path = Yii::$app->getRuntimePath() . '\logs\log_SSO_Organize_' . date('d-M-Y') . '.log';
+        $results = print_r($js, true);
+        \app\components\CommonFnc::write_log($log_path, $results);
+        exit;
+
+    }
+
     public function actionTest1()
     {
+        ini_set('memory_limit', '2048M');
+        //ini_set('max_execution_time', 0);
+        set_time_limit(0);
         global $params;
         $url_gettoken = $params['apiUrl'] . '/oapi/login'; //prd domain
         // $url_gettoken = 'https://172.16.12.248/oapi/login'; //prd ip
@@ -319,7 +416,7 @@ class EmpdataController extends Controller
         );
         $param = array(
             'endpoint' => 'ssotest',
-            'limit' => 1,
+            'limit' => 100000,
         );
 
         $data_result = $this->calleservice($url, $header, $param);
@@ -335,7 +432,12 @@ class EmpdataController extends Controller
         $data = $data_result["data"];
         $decrypt_data = $this->ssl_decrypt_api($data, $encrypt_key);
         $js = json_decode($decrypt_data, true);
-        arr($js);
+
+        $log_path = Yii::$app->getRuntimePath() . '\logs\log_SSO_Per_personel_' . date('d-M-Y') . '.log';
+        $results = print_r($js, true);
+        \app\components\CommonFnc::write_log($log_path, $results);
+        exit;
+
     }
 
 
