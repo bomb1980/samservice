@@ -244,8 +244,8 @@ class EmpdataController extends Controller
                         MERGE INTO per_org_ass d
                         USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.org_id = s.org_id )
                         WHEN NOT MATCHED THEN
-                        INSERT ( org_dopa_code, org_job, org_addr2, org_addr3, org_addr1, department_id, update_user, update_date, org_id, org_code, org_name, org_short, ol_code, ot_code,  ap_code, pv_code, ct_code, org_date, org_id_ref, org_active, org_website, org_seq_no, org_eng_name, pos_lat, pos_long, dt_code, mg_code, pg_code, org_zone, org_id_ass ) VALUES
-                        ( s.org_dopa_code, s.org_job, s.org_addr2, s.org_addr3, s.org_addr1, s.department_id, :user_id, TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' ), s.org_id, s.org_code, s.org_name, '-', '-', '-', NULL, '-', '-', NULL, '0', '1', NULL, s.org_seq_no, NULL, NULL, NULL, NULL, NULL, NULL, NULL, s.org_id_ass )
+                        INSERT ( org_dopa_code, org_job, org_addr2, org_addr3, org_addr1, department_id, update_user, update_date, org_id, org_code, org_name, org_short, ol_code, ot_code, ap_code, pv_code, ct_code, org_date, org_id_ref, org_active, org_website, org_seq_no, org_eng_name, pos_lat, pos_long, dt_code, mg_code, pg_code, org_zone, org_id_ass ) VALUES
+                        ( s.org_dopa_code, s.org_job, s.org_addr2, s.org_addr3, s.org_addr1, s.department_id, :user_id, TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' ), s.org_id, s.org_code, s.org_name, '-', '-', '03', NULL, '-', '-', NULL, '0', '1', NULL, s.org_seq_no, NULL, NULL, NULL, NULL, NULL, NULL, NULL, s.org_id_ass )
                         WHEN MATCHED THEN
                         UPDATE
                         SET
@@ -291,8 +291,8 @@ class EmpdataController extends Controller
                 MERGE INTO per_org_ass d
                 USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.org_id = s.org_id )
                 WHEN NOT MATCHED THEN
-                INSERT ( org_dopa_code, org_job, org_addr2, org_addr3, org_addr1, department_id, update_user, update_date, org_id, org_code, org_name, org_short, ol_code, ot_code,  ap_code, pv_code, ct_code, org_date, org_id_ref, org_active, org_website, org_seq_no, org_eng_name, pos_lat, pos_long, dt_code, mg_code, pg_code, org_zone, org_id_ass ) VALUES
-                ( s.org_dopa_code, s.org_job, s.org_addr2, s.org_addr3, s.org_addr1, s.department_id, :user_id, TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' ), s.org_id, s.org_code, s.org_name, '-', '-', '-', NULL, '-', '-', NULL, '0', '1', NULL, s.org_seq_no, NULL, NULL, NULL, NULL, NULL, NULL, NULL, s.org_id_ass )
+                INSERT ( org_dopa_code, org_job, org_addr2, org_addr3, org_addr1, department_id, update_user, update_date, org_id, org_code, org_name, org_short, ol_code, ot_code, ap_code, pv_code, ct_code, org_date, org_id_ref, org_active, org_website, org_seq_no, org_eng_name, pos_lat, pos_long, dt_code, mg_code, pg_code, org_zone, org_id_ass ) VALUES
+                ( s.org_dopa_code, s.org_job, s.org_addr2, s.org_addr3, s.org_addr1, s.department_id, :user_id, TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' ), s.org_id, s.org_code, s.org_name, '-', '-', '03', NULL, '-', '-', NULL, '0', '1', NULL, s.org_seq_no, NULL, NULL, NULL, NULL, NULL, NULL, NULL, s.org_id_ass )
                 WHEN MATCHED THEN
                 UPDATE
                 SET
@@ -329,7 +329,6 @@ class EmpdataController extends Controller
 
             $SqlOrgs = [];
         }
-
 
 
         $log_path = Yii::$app->getRuntimePath() . '\logs\log_SSO_Organize_' . date('d-M-Y') . '.log';
