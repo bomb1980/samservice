@@ -37,15 +37,19 @@ class EmpdataController extends Controller
             $user_id = Yii::$app->user->getId();
         }
 
+        $this->actionOganize( $user_id );
+
         echo PerPersonal1::getFromApi($user_id);
+
+        
 
         exit;
     }
 
-    public function actionOganize()
+    public function actionOganize( $user_id = 1 )
     {
 
-        $user_id = Yii::$app->user->getId();
+        // $user_id = Yii::$app->user->getId();
         $con = Yii::$app->dbdpis;
         $con2 = Yii::$app->dbdpisemp;
         ini_set('memory_limit', '2048M');
@@ -87,7 +91,6 @@ class EmpdataController extends Controller
         $result = json_decode($response, true);
 
 
-        // arr( $result );
         $accessToken = '';
         $encrypt_key = '';
 
@@ -152,86 +155,16 @@ class EmpdataController extends Controller
                     continue;
                 }
 
-                // arr( $va );
-
-
-
-
-                // [org_status] => 1
-                // [organize_pid] => 17
-                // [org_date] => 
-                // [org_start_date] => 
-                // [org_end_date] => 
-                // [organize_en] => 
-                // [organize_abbrth] => สำนักงานประกันสังคม
-                // [organize_abbren] => 
-            
-                // [country_id] => 41
-                // [province_id] => 1000
-                // [amphur_id] => 
-                // [tambon_id] => 
-                // [postcode] => 
-                // [risk_zone] => 
-                // [orglevel_id] => 2
-                // [orgstat_id] => 
-                // [orgclass_id] => 1
-                // [orgtype_id] => 1
-                // [org_owner_id] => 0
-                // [org_mode] => 1
-                // [org_website] => 
-                // [org_gps] => 
-                // [latitude] => 
-                // [longitude] => 
-                // [ministrygroup_id] => 
-                // [sector_id] => 
-                // [org_chart_level] => 
-                // [command_no] => 
-                // [command_date] => 
-                // [canceldate] => 
-                // [telephone] => 
-                // [fax] => 
-                // [email] => 
-                // [remark] => 
-                // [sortorder] => 
-                // [parent_flag] => 1
-                // [creator] => -1
-                // [createdate] => 2020-02-05 11:02:19
-                // [create_org] => 0
-                // [updateuser] => 310210128083701
-                // [updatedate] => 2022-12-14 14:05:44
-                // [update_org] => 100000
-                // [is_sync] => 0
-                // [sync_datetime] => 2022-12-20 15:44:22
-                // [sync_status_code] => NULL
-                // [org_path] => /17/1640000/
-                // [ministry_id] => 17
-                // [ministry] => กระทรวงแรงงาน
-                // [department] => สำนักงานประกันสังคม
-                // [division_id] => 
-                // [division] => 
-                // [subdiv1] => 
-                // [subdiv2] => 
-                // [subdiv3] => 
-                // [subdiv4] => 
-                // [subdiv5] => 
-                // [subdiv6] => 
-                // [d5_org_id] => 0
-                // [org_model_id] => 
-                // [org_model_dlt_id] => 
-                // [leader_pos_id] => 0
-                // [org_path_name] => /กระทรวงแรงงาน/สำนักงานประกันสังคม/
-
+ 
                 if( $va->orgclass_id == 1 ) {
 
                     $ot_code = '01';
                 }
                 else {
                     $ot_code = '03';
-
                 }
 
-                 // [latitude] => 
-                // [longitude] => 
+        
                 $SqlOrgs[] = "
                     SELECT 
                         " . $va->organize_id . " AS org_id,
@@ -251,6 +184,9 @@ class EmpdataController extends Controller
                         '" . $va->longitude . "' AS pos_long
                     FROM dual
                 ";
+
+                  // [org_status] => 1, [organize_pid] => 17, [org_date] => , [org_start_date] => , [org_end_date] => , [organize_en] => , [organize_abbrth] => สำนักงานประกันสังคม, [organize_abbren] => 
+            // , [country_id] => 41,  [amphur_id] => , [tambon_id] => , [postcode] => , [risk_zone] => , [orglevel_id] => 2, [orgstat_id] => , [orgclass_id] => 1, [orgtype_id] => 1, [org_owner_id] => 0, [org_mode] => 1, [org_website] => , [org_gps] => , [ministrygroup_id] => , [sector_id] => , [org_chart_level] => , [command_no] => , [command_date] => , [canceldate] => , [telephone] => , [fax] => , [email] => , [remark] => , [sortorder] => , [parent_flag] => 1, [creator] => -1, [createdate] => 2020-02-05 11:02:19, [create_org] => 0, [updateuser] => 310210128083701, [updatedate] => 2022-12-14 14:05:44, [update_org] => 100000, [is_sync] => 0, [sync_datetime] => 2022-12-20 15:44:22, [sync_status_code] => NULL, [org_path] => /17/1640000/, [ministry_id] => 17, [ministry] => กระทรวงแรงงาน, [department] => สำนักงานประกันสังคม, [division_id] => , [division] => , [subdiv1] => , [subdiv2] => , [subdiv3] => , [subdiv4] => , [subdiv5] => , [subdiv6] => , [d5_org_id] => 0, [org_model_id] => , [org_model_dlt_id] => , [leader_pos_id] => 0, [org_path_name] => /กระทรวงแรงงาน/สำนักงานประกันสังคม/
 
                 if (count($SqlOrgs) > 300) {
                     // TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' )
@@ -295,7 +231,6 @@ class EmpdataController extends Controller
 
                         $cmd->execute();
                     }
-
 
                     $SqlOrgs = [];
                 }
@@ -357,9 +292,10 @@ class EmpdataController extends Controller
         \app\components\CommonFnc::write_log($log_path, $results);
 
 
+        return;
 
 
-        exit;
+        // exit;
     }
 
     public function actionTest1()

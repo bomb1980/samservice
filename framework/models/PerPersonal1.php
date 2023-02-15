@@ -13,19 +13,15 @@ use Yii;
 class PerPersonal1 extends \yii\db\ActiveRecord
 {
 
-
     public static function getFromApi($user_id = 1)
     {
-
         global $params;
-        // arr($params['apiUrl']);
 
         ini_set("default_socket_timeout", 20000);
         ini_set('memory_limit', '2048M');
         set_time_limit(0);
 
         $con = Yii::$app->dbdpis;
-
         $con2 = Yii::$app->dbdpisemp;
 
         $arr = [
@@ -39,7 +35,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
             'per_occupydate',
         ];
 
-        $url_gettoken = $params['apiUrl'] .'/oapi/login'; //prd domain
+        $url_gettoken = $params['apiUrl'] . '/oapi/login'; //prd domain
         // $url_gettoken = 'https://172.16.12.248/oapi/login'; //prd ip
         $curl = curl_init();
         curl_setopt_array($curl, array(
@@ -63,16 +59,16 @@ class PerPersonal1 extends \yii\db\ActiveRecord
         ));
 
 
-        $response = curl_exec($curl); 
+        $response = curl_exec($curl);
         if (curl_errno($curl)) {
 
-            echo json_encode( ['success'=>'fail', 'msg'=>'เชื่อมฐานข้อมูลไม่สำเร็จ']);
+            echo json_encode(['success' => 'fail', 'msg' => 'เชื่อมฐานข้อมูลไม่สำเร็จ']);
             return false;
         }
 
         curl_close($curl);
         $result = json_decode($response, true);
-        
+
 
         // arr( $result );
         $accessToken = '';
@@ -97,7 +93,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
         }
 
 
-        $url = $params['apiUrl'] ."/oapi/open_api_users/callapi";
+        $url = $params['apiUrl'] . "/oapi/open_api_users/callapi";
         // $url = "https://172.16.12.248/oapi/open_api_users/callapi";
         $header = array(
             'Content-Type: application/x-www-form-urlencoded',
@@ -120,7 +116,49 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
             $data_result = self::calleservice($url, $header, $param);
 
-            // arr( $data_result );
+            //             SELECT
+            //     p.per_id,p.per_cardno,p.birth_date,concat(p.prename_th,p.per_name," ",p.per_surname) as fullname_th,
+            //     p.prename_th,
+            //     p.per_name,
+            //     per_surname,
+            //     p.prename_en,
+            //     p.per_eng_name,
+            //     per_eng_surname,
+            //     concat(p.prename_en,p.per_eng_name," ",p.per_eng_surname) as fullname_en,
+            //     p.per_startdate,
+            //     p.per_occupydate,
+            //     p.pertype_id,   
+            //     (select organize_th from organize where organize_id=p.organize_id_ass) as organize_th_ass,
+            //     p.per_status,
+            //     p.organize_id_ass,
+            //     p.pos_id,
+            //     p.per_level_id,
+            //     po.line_id,
+            //     tb_level.level_code,
+            //     tb_level.positiontype_id as level_positiontype_id,
+            //     tb_level.pertype_id as level_pertype_id,
+            //     tb_level.levelname_th,
+
+            //     tb_line.line_code,
+            //     tb_line.positiontype_id as line_positiontype_id,
+            //     tb_line.pertype_id as line_pertype_id,
+            //     tb_line.linename_th,
+
+            //     tb_pertype.pertype_code,
+            //     tb_pertype.pertype,
+            //     o.organize_code,
+            //     o.organize_th,
+            //     po.pertype_id as position_pertype_id,
+            //     po.organize_id,
+            //     po.pos_no,
+            //     po.pos_salary
+
+            // FROM per_personal p
+            // LEFT JOIN pos_position po ON p.pos_id=po.pos_id
+            // LEFT JOIN organize o ON po.organize_id=o.organize_id
+            // INNER JOIN tb_pertype ON p.pertype_id=tb_pertype.pertype_id 
+            // LEFT JOIN tb_line ON po.line_id=tb_line.line_id
+            // LEFT JOIN tb_level ON p.per_level_id=tb_level.level_id
 
             if (!isset($data_result['message']) || $data_result['message'] != "success") {
                 $arrsms = array(
@@ -158,14 +196,17 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
             ++$file_pass;
 
-            if( $file_pass == 1 ) {
+            if ($file_pass == 1) {
 
 
                 $orgs = [];
-        
+
                 foreach ([1, 2] as $kg => $vg) {
-        
-        
+
+
+                   
+
+
                     $sql = "
                         SELECT 
                             per_cardno,
@@ -181,55 +222,54 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                         FROM per_personal 
                         ORDER BY per_id ASC
                     ";
-        
+
                     if ($vg == 1) {
-        
+
                         $cmd = $con->createCommand($sql);
                     } else {
-        
+
                         $cmd = $con2->createCommand($sql);
                     }
-        
-        
+
+
                     $old_level_nos[$vg] = [];
-        
+
                     $keep[$vg] = [];
-        
+
                     $per_ids[$vg] = 0;
-        
+
                     foreach ($cmd->queryAll() as $ka => $va) {
-        
+
                         $concat = '';
                         foreach ($arr as $kf => $vf) {
-        
+
                             $vf = strtoupper($vf);
-        
+
                             $concat .= trim($va[$vf]) . '-';
                         }
 
                         $keep[$vg][$concat] = 1;
-        
+
                         $old_level_nos[$vg][$va['PER_CARDNO']] = $va['LEVEL_NO'];
-        
-        
+
+
                         $per_ids[$vg] = $va['PER_ID'];
-        
                     }
-        
-        
+
+
                     $sql = "SELECT * FROM per_org_ass";
-        
+
                     if ($vg == 1) {
-        
+
                         $cmd = $con->createCommand($sql);
                     } else {
-        
+
                         $cmd = $con2->createCommand($sql);
                     }
-                    
+
                     $orgs[$vg] = [];
                     foreach ($cmd->queryAll() as $ka => $va) {
-        
+
                         $orgs[$vg][$va['ORG_NAME']] = $va['ORG_ID'];
                     }
 
@@ -237,69 +277,60 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                     $sql = "SELECT * FROM per_off_type";
 
                     if ($vg == 1) {
-        
+
                         $cmd = $con->createCommand($sql);
                     } else {
-        
+
                         $cmd = $con2->createCommand($sql);
                     }
 
                     $otcods[$vg] = [];
                     foreach ($cmd->queryAll() as $ka => $va) {
-            
+
                         $otcods[$vg][$va['OT_NAME']] = $va['OT_CODE'];
                     }
                 }
-        
+
                 $sql = "SELECT level_no, level_name FROM per_level";
                 $cmd = $con->createCommand($sql);
                 $levels = [];
                 foreach ($cmd->queryAll() as $ka => $va) {
-        
+
                     $levels[$va['LEVEL_NAME']] = $va['LEVEL_NO'];
                 }
-        
-               
 
                 $sql = "SELECT * FROM per_prename ORDER BY PN_NAME ASC ";
                 $cmd = $con->createCommand($sql);
                 $pn_codes = [];
                 foreach ($cmd->queryAll() as $ka => $va) {
-        
+
                     $pn_codes[$va['PN_NAME']] = $va['PN_CODE'];
                 }
-        
+
                 $genders['นาย'] = 1;
                 $genders['นาง'] = 2;
                 $genders['นางสาว'] = 2;
-        
             }
 
 
             // file_put_contents($save_file, $data_result["data"]);
             file_put_contents($save_file, $data_result["data"]);
 
+            // $SqlOrgs = [];
+
             foreach ($js as $ka => $va) {
 
-                
-                if( $ka < 2 ) {
-                    
-                    // arr( $va, 0 );
-                  
-                }
-                
                 $setType = 2;
                 if (in_array($va->pertype_id, [5, 42, 43, 44])) {
 
                     $setType = 1;
-                } 
+                }
 
-                if( !isset( $total_api_rec[$setType] ) ) {
+                if (!isset($total_api_rec[$setType])) {
                     $total_api_rec[$setType] = 0;
                 }
 
                 ++$total_api_rec[$setType];
-                
 
                 if (empty($va->per_cardno)) {
 
@@ -331,8 +362,8 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                 foreach ($arr as $kf => $vf) {
                     $concat .= trim($va->$vf) . '-';
                 }
-                
-              
+
+
                 if (isset($keep[$setType][$concat])) {
                     continue;
                 }
@@ -345,52 +376,48 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                     $genders[$va->prename_th] = 1;
                 }
 
-                if($setType == 1 ) {
+                if ($setType == 1) {
 
 
                     if (!isset($otcods[$setType][$va->pertype])) {
                         $otcods[$setType][$va->pertype] = '01';
                     }
-                }
-                else {
+                } else {
 
                     if (!isset($otcods[$setType][$va->pertype])) {
                         $otcods[$setType][$va->pertype] = '11';
                     }
                 }
 
-                if( !isset( $total_new_rec[$setType] ) ) {
+                if (!isset($total_new_rec[$setType])) {
                     $total_new_rec[$setType] = 0;
                 }
 
                 ++$total_new_rec[$setType];
-                
-                if( $setType == 1 ) {
 
-                    $mymess[$setType] = 'มีข้อมูล <b>ข้าราชการ</b> ถูกดึงมาจำนวน <b>'. $total_api_rec[$setType] .'</b>เรคคอร์ด, ข้อมูลใหม่ <b>' . $total_new_rec[$setType] . '</b>เรคคอร์ด';
-                }
-                else {
-                    $mymess[$setType] = 'มีข้อมูล <b>พนักงาน</b> ถูกดึงมาจำนวน <b>'. $total_api_rec[$setType] .'</b>เรคคอร์ด, ข้อมูลใหม่ <b>' . $total_new_rec[$setType] . '</b>เรคคอร์ด';
-                    
+                if ($setType == 1) {
+
+                    $mymess[$setType] = 'มีข้อมูล <b>ข้าราชการ</b> ถูกดึงมาจำนวน <b>' . $total_api_rec[$setType] . '</b>เรคคอร์ด, ข้อมูลใหม่ <b>' . $total_new_rec[$setType] . '</b>เรคคอร์ด';
+                } else {
+                    $mymess[$setType] = 'มีข้อมูล <b>พนักงาน</b> ถูกดึงมาจำนวน <b>' . $total_api_rec[$setType] . '</b>เรคคอร์ด, ข้อมูลใหม่ <b>' . $total_new_rec[$setType] . '</b>เรคคอร์ด';
                 }
 
                 if (!isset($orgs[$setType][$va->organize_th_ass])) {
 
-                    $orgs[$setType][$va->organize_th_ass] = json_encode( NULL );
+                    $orgs[$setType][$va->organize_th_ass] = json_encode(NULL);
                 }
-                
 
-
-                if( empty( $va->organize_id_ass ) ) {
+                if (empty($va->organize_id_ass)) {
                     // organize_id_ass
 
-                    $va->organize_id_ass = 0; 
-
+                    $va->organize_id_ass = 0;
                 }
+
+                // arr( $va );
 
                 $SqlUnion[$setType][] = "
                     SELECT 
-                        '". json_encode( $va ) ."' AS dpis6_data,
+                        '" . json_encode($va) . "' AS dpis6_data,
                         '" . $va->pertype_id . "' AS pertype_id,
                         " . ++$per_ids[$setType] . "  AS per_id,
                         '" . $va->per_name . "' AS per_name,
@@ -408,14 +435,14 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                         '" . $genders[$va->prename_th] . "' AS per_gender,
                         '" . $pn_codes[$va->prename_th] . "' AS pn_code,
                         '" . $otcods[$setType][$va->pertype] . "' AS ot_code,
-                        " . $orgs[$setType][$va->organize_th_ass]. " AS org_id_,
-                        " . $va->organize_id_ass. " AS org_id
+                        " . $orgs[$setType][$va->organize_th_ass] . " AS org_id_,
+                        " . $va->organize_id_ass . " AS org_id
                     FROM dual
                 ";
 
                 foreach ($SqlUnion as $ks => $vs) {
 
-                    if (count($vs) == 1000 ) {
+                    if (count($vs) == 1000) {
                         $sql = "
                             MERGE INTO per_personal d
                             USING ( 
@@ -469,10 +496,10 @@ class PerPersonal1 extends \yii\db\ActiveRecord
         }
 
 
-      
+
         foreach ($SqlUnion as $ks => $vs) {
 
-            if (count($vs) > 0 ) {
+            if (count($vs) > 0) {
                 $sql = "
                     MERGE INTO per_personal d
                     USING ( 
@@ -523,13 +550,12 @@ class PerPersonal1 extends \yii\db\ActiveRecord
             }
         }
 
-        
-
         $keep = [];
 
         $levels = [];
 
         $return['msg'] = 'ไม่มีการปรับปรุงข้อมูลใดๆ';
+
         if (!empty($mymess)) {
 
             $return['msg'] = implode('<br>', $mymess);
@@ -539,14 +565,12 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
         echo json_encode($return);
 
-
         $log_page = basename(Yii::$app->request->referrer);
 
         $log_description = 'อัพเดตข้อมูลเจ้าหน้าที่';
-        
+
         $createby = Yii::$app->user->getId();
-        
-      
+
         \app\models\CommonAction::AddEventLog($createby, "Update", $log_page, $log_description);
     }
 
