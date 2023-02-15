@@ -24,8 +24,8 @@ class CreatePERPERSONALSTable extends Migration
             $table->decimal('org_id', 20, 2)->default(0)->nullable();
 
 
-            $table->integer('per_id')->autoIncrement();
-            $table->decimal('pos_id', 20, 2)->default(0)->nullable();
+            $table->integer('per_id')->length(20)->autoIncrement();
+            $table->integer('pos_id')->length(20)->default(0)->nullable();
 
             $table->string("dpis6_data", 4000)->nullable();
             $table->string("update_date")->nullable();
@@ -43,7 +43,6 @@ class CreatePERPERSONALSTable extends Migration
             $table->string("per_cardno")->nullable();
             $table->string("per_eng_surname")->nullable();
             $table->string("per_occupydate")->nullable();
-            // $table->timestamp('update_date')->default(DB::raw('CURRENT_TIMESTAMP'));
 
             $table->decimal('update_user', 20, 2)->default(0)->nullable();
 
@@ -55,7 +54,6 @@ class CreatePERPERSONALSTable extends Migration
             $table->string("per_eng_name")->nullable();
             $table->string("per_birthdate")->nullable();
             $table->string("per_startdate")->nullable();
-            // $table->string("per_cardno")->nullable()->unique();
             $table->decimal('poem_id', 20, 2)->default(0)->nullable();
             $table->decimal('per_orgmgt', 20, 2)->default(0)->nullable();
             $table->decimal('per_salary', 20, 2)->default(0)->nullable();
