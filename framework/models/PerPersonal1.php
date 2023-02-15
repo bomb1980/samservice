@@ -95,6 +95,9 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
         $url = $params['apiUrl'] . "/oapi/open_api_users/callapi";
         // $url = "https://172.16.12.248/oapi/open_api_users/callapi";
+
+        // $url = "https://sso.dpis.go.th/oapi/open_api_users/callapi";
+
         $header = array(
             'Content-Type: application/x-www-form-urlencoded',
             'Authorization: ' . $accessToken
@@ -106,59 +109,17 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
         $total_api_rec = [];
         $total_new_rec = [];
-        for ($i = 1; $i <= 50; $i++) {
+        for ($i = 1; $i <= 20; $i++) {
 
             $param = array(
-                'endpoint' => 'sso_personal2',
-                'limit' => 1000,
+                'endpoint' => 'ssotest',
+                'limit' => 300,
                 'page' => $i
             );
 
             $data_result = self::calleservice($url, $header, $param);
 
-            //             SELECT
-            //     p.per_id,p.per_cardno,p.birth_date,concat(p.prename_th,p.per_name," ",p.per_surname) as fullname_th,
-            //     p.prename_th,
-            //     p.per_name,
-            //     per_surname,
-            //     p.prename_en,
-            //     p.per_eng_name,
-            //     per_eng_surname,
-            //     concat(p.prename_en,p.per_eng_name," ",p.per_eng_surname) as fullname_en,
-            //     p.per_startdate,
-            //     p.per_occupydate,
-            //     p.pertype_id,   
-            //     (select organize_th from organize where organize_id=p.organize_id_ass) as organize_th_ass,
-            //     p.per_status,
-            //     p.organize_id_ass,
-            //     p.pos_id,
-            //     p.per_level_id,
-            //     po.line_id,
-            //     tb_level.level_code,
-            //     tb_level.positiontype_id as level_positiontype_id,
-            //     tb_level.pertype_id as level_pertype_id,
-            //     tb_level.levelname_th,
 
-            //     tb_line.line_code,
-            //     tb_line.positiontype_id as line_positiontype_id,
-            //     tb_line.pertype_id as line_pertype_id,
-            //     tb_line.linename_th,
-
-            //     tb_pertype.pertype_code,
-            //     tb_pertype.pertype,
-            //     o.organize_code,
-            //     o.organize_th,
-            //     po.pertype_id as position_pertype_id,
-            //     po.organize_id,
-            //     po.pos_no,
-            //     po.pos_salary
-
-            // FROM per_personal p
-            // LEFT JOIN pos_position po ON p.pos_id=po.pos_id
-            // LEFT JOIN organize o ON po.organize_id=o.organize_id
-            // INNER JOIN tb_pertype ON p.pertype_id=tb_pertype.pertype_id 
-            // LEFT JOIN tb_line ON po.line_id=tb_line.line_id
-            // LEFT JOIN tb_level ON p.per_level_id=tb_level.level_id
 
             if (!isset($data_result['message']) || $data_result['message'] != "success") {
                 $arrsms = array(
@@ -172,6 +133,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
             $js = json_decode($decrypt_data);
 
+            // arr( $js );
             $cJs = count($js);
             if ($cJs == 0) {
 
@@ -202,11 +164,6 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                 $orgs = [];
 
                 foreach ([1, 2] as $kg => $vg) {
-
-
-                   
-
-
                     $sql = "
                         SELECT 
                             per_cardno,
@@ -287,17 +244,20 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                     $otcods[$vg] = [];
                     foreach ($cmd->queryAll() as $ka => $va) {
 
-                        $otcods[$vg][$va['OT_NAME']] = $va['OT_CODE'];
+                        $otcods[$vg][$va['ID']] = $va['OT_CODE'];
                     }
                 }
 
-                $sql = "SELECT level_no, level_name FROM per_level";
+                $sql = "SELECT level_no, level_name, id FROM per_level";
                 $cmd = $con->createCommand($sql);
                 $levels = [];
                 foreach ($cmd->queryAll() as $ka => $va) {
 
-                    $levels[$va['LEVEL_NAME']] = $va['LEVEL_NO'];
+                    $levels[$va['ID']] = $va['LEVEL_NO'];
                 }
+
+
+                // arr( $levels );
 
                 $sql = "SELECT * FROM per_prename ORDER BY PN_NAME ASC ";
                 $cmd = $con->createCommand($sql);
@@ -319,6 +279,9 @@ class PerPersonal1 extends \yii\db\ActiveRecord
             // $SqlOrgs = [];
 
             foreach ($js as $ka => $va) {
+                // if( $va->per_cardno == 5939900016532 ) {
+
+                // }
 
                 $setType = 2;
                 if (in_array($va->pertype_id, [5, 42, 43, 44])) {
@@ -326,100 +289,125 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                     $setType = 1;
                 }
 
-                if (!isset($total_api_rec[$setType])) {
-                    $total_api_rec[$setType] = 0;
+                // if (!isset($total_api_rec[$setType])) {
+                //     $total_api_rec[$setType] = 0;
+                // }
+
+                // ++$total_api_rec[$setType];
+
+                // if (empty($va->per_cardno)) {
+
+                //     continue;
+                // }
+
+                // $cards[$va->per_cardno] = 1;
+
+
+
+                // $concat = '';
+                // foreach ($arr as $kf => $vf) {
+                //     $concat .= trim($va->$vf) . '-';
+                // }
+
+
+                // if (isset($keep[$setType][$concat])) {
+                //     continue;
+                // }
+
+                // if (!isset($pn_codes[$va->prename_th])) {
+                //     $pn_codes[$va->prename_th] = '003';
+                // }
+
+
+
+
+
+                // if (!isset($total_new_rec[$setType])) {
+                //     $total_new_rec[$setType] = 0;
+                // }
+
+                // ++$total_new_rec[$setType];
+
+                // if ($setType == 1) {
+
+                //     $mymess[$setType] = 'มีข้อมูล <b>ข้าราชการ</b> ถูกดึงมาจำนวน <b>' . $total_api_rec[$setType] . '</b>เรคคอร์ด, ข้อมูลใหม่ <b>' . $total_new_rec[$setType] . '</b>เรคคอร์ด';
+                // } else {
+                //     $mymess[$setType] = 'มีข้อมูล <b>พนักงาน</b> ถูกดึงมาจำนวน <b>' . $total_api_rec[$setType] . '</b>เรคคอร์ด, ข้อมูลใหม่ <b>' . $total_new_rec[$setType] . '</b>เรคคอร์ด';
+                // }
+
+                // if (!isset($orgs[$setType][$va->organize_th_ass])) {
+
+                //     $orgs[$setType][$va->organize_th_ass] = json_encode(NULL);
+                // }
+
+
+
+                if (empty($va->d5_per_id)) {
+                    // continue;
+
+                    $per_id = $va->per_id;
+                } else {
+
+                    $per_id = $va->d5_per_id;
                 }
+                // $otcods[$setType];
 
-                ++$total_api_rec[$setType];
-
-                if (empty($va->per_cardno)) {
-
-                    continue;
-                }
-
-                $cards[$va->per_cardno] = 1;
+                // arr($otcods);
+                // arr( $va );
 
                 if ($setType == 1) {
 
-                    if (!isset($levels[$va->levelname_th])) {
 
-                        if (isset($old_level_nos[$setType][$va->per_cardno])) {
-
-                            $levels[$va->levelname_th] = $old_level_nos[$setType][$va->per_cardno];
-                        } else {
-
-                            $levels[$va->levelname_th] = 'O1';
-                        }
+                    if (!isset($otcods[$setType][$va->pertype_id])) {
+                        $otcods[$setType][$va->pertype_id] = '01';
                     }
                 } else {
 
-                    if (!isset($levels[$va->levelname_th])) {
-                        $levels[$va->levelname_th] = NULL;
+                    if (!isset($otcods[$setType][$va->pertype_id])) {
+                        $otcods[$setType][$va->pertype_id] = '11';
                     }
                 }
 
-                $concat = '';
-                foreach ($arr as $kf => $vf) {
-                    $concat .= trim($va->$vf) . '-';
-                }
-
-
-                if (isset($keep[$setType][$concat])) {
-                    continue;
-                }
-
-                if (!isset($pn_codes[$va->prename_th])) {
-                    $pn_codes[$va->prename_th] = '003';
-                }
+                // arr( $va );
 
                 if (!isset($genders[$va->prename_th])) {
                     $genders[$va->prename_th] = 1;
                 }
 
-                if ($setType == 1) {
-
-
-                    if (!isset($otcods[$setType][$va->pertype])) {
-                        $otcods[$setType][$va->pertype] = '01';
-                    }
-                } else {
-
-                    if (!isset($otcods[$setType][$va->pertype])) {
-                        $otcods[$setType][$va->pertype] = '11';
-                    }
-                }
-
-                if (!isset($total_new_rec[$setType])) {
-                    $total_new_rec[$setType] = 0;
-                }
-
-                ++$total_new_rec[$setType];
-
-                if ($setType == 1) {
-
-                    $mymess[$setType] = 'มีข้อมูล <b>ข้าราชการ</b> ถูกดึงมาจำนวน <b>' . $total_api_rec[$setType] . '</b>เรคคอร์ด, ข้อมูลใหม่ <b>' . $total_new_rec[$setType] . '</b>เรคคอร์ด';
-                } else {
-                    $mymess[$setType] = 'มีข้อมูล <b>พนักงาน</b> ถูกดึงมาจำนวน <b>' . $total_api_rec[$setType] . '</b>เรคคอร์ด, ข้อมูลใหม่ <b>' . $total_new_rec[$setType] . '</b>เรคคอร์ด';
-                }
-
-                if (!isset($orgs[$setType][$va->organize_th_ass])) {
-
-                    $orgs[$setType][$va->organize_th_ass] = json_encode(NULL);
-                }
-
                 if (empty($va->organize_id_ass)) {
-                    // organize_id_ass
 
                     $va->organize_id_ass = 0;
                 }
 
-                // arr( $va );
+                if ($setType == 1) {
+
+                    if (!isset($levels[$va->per_level_id])) {
+
+                        if (isset($old_level_nos[$setType][$va->per_cardno])) {
+
+                            $levels[$va->per_level_id] = $old_level_nos[$setType][$va->per_cardno];
+                        } else {
+
+                            $levels[$va->per_level_id] = 'O1';
+                        }
+                    }
+                } else {
+
+                    if (!isset($levels[$va->per_level_id])) {
+                        $levels[$va->per_level_id] = NULL;
+                    }
+                }
+
+
+                $gogo['levelname_th'] = $levels[$va->per_level_id];
+                $gogo['organize_th'] = 'dsdfsadf';
+                $gogo['organize_th_ass'] = 'dsdfsadf';
 
                 $SqlUnion[$setType][] = "
                     SELECT 
-                        '" . json_encode($va) . "' AS dpis6_data,
+                        " . $per_id . "  AS per_id,
+                        'dsd' AS dpis6_data,
                         '" . $va->pertype_id . "' AS pertype_id,
-                        " . ++$per_ids[$setType] . "  AS per_id,
                         '" . $va->per_name . "' AS per_name,
                         '" . $va->per_cardno . "' AS per_cardno,
                         '" . $va->per_surname . "' AS per_surname,
@@ -429,29 +417,30 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                         '" . $va->per_startdate . "' AS per_startdate,
                         '" . $va->per_occupydate . "' AS per_occupydate,
                         '" . $va->per_status . "' AS per_status,
-                        '2670' AS pos_id_,
                         '" . $va->pos_id . "' AS pos_id,
-                        '" . $va->level_code . "' AS level_no,
+                        '" . $levels[$va->per_level_id] . "' AS level_no,
+                        '" . $va->level_no_salary . "' AS level_no_salary,
                         '" . $genders[$va->prename_th] . "' AS per_gender,
                         '" . $pn_codes[$va->prename_th] . "' AS pn_code,
-                        '" . $otcods[$setType][$va->pertype] . "' AS ot_code,
-                        " . $orgs[$setType][$va->organize_th_ass] . " AS org_id_,
+                        '" . $otcods[$setType][$va->pertype_id] . "' AS ot_code,
                         " . $va->organize_id_ass . " AS org_id
                     FROM dual
                 ";
+                // arr('dsafdf');
+
 
                 foreach ($SqlUnion as $ks => $vs) {
 
-                    if (count($vs) == 1000) {
+                    if (count($vs) == 300) {
                         $sql = "
                             MERGE INTO per_personal d
                             USING ( 
                                 " . implode(' UNION ', $vs) . "
-                            ) s ON ( 1 = 0 )
+                            ) s ON ( d.per_id = s.per_id )
                             WHEN NOT MATCHED THEN
                             INSERT  ( 
-                                pos_id, dpis6_data, per_status, per_gender, org_id, ot_code, per_occupydate, per_startdate, per_birthdate, per_eng_surname, per_eng_name, per_surname, per_cardno, per_name, level_no_salary, level_no, per_id, per_type, pn_code, poem_id, per_orgmgt, per_salary, per_mgtsalary, per_spsalary, mr_code, per_offno, per_taxno, per_blood, re_code, per_retiredate, per_posdate, per_saldate, pn_code_f, per_fathername, per_fathersurname, pn_code_m, per_mothername, per_mothersurname, per_add1, per_add2, pv_code, mov_code, per_ordain, per_soldier, per_member, update_user, update_date, department_id, approve_per_id, replace_per_id, absent_flag, poems_id, per_hip_flag, per_cert_occ, per_nickname, per_home_tel, per_office_tel, per_fax, per_mobile, per_email, per_file_no, per_bank_account, per_id_ref, per_id_ass_ref, per_contact_person, per_remark, per_start_org, per_cooperative, per_cooperative_no, per_memberdate, per_seq_no, pay_id, es_code, pl_name_work, org_name_work, per_docno, per_docdate, per_effectivedate, per_pos_reason, per_pos_year, per_pos_doctype, per_pos_docno, per_pos_org, per_ordain_detail, per_pos_orgmgt, per_pos_docdate, per_pos_desc, per_pos_remark, per_book_no, per_book_date, per_contact_count, per_disability, pot_id, per_union, per_uniondate, per_job, org_id_1, org_id_2, org_id_3, org_id_4, org_id_5, per_union2, per_uniondate2, per_union3, per_uniondate3, per_union4, per_uniondate4, per_union5, per_uniondate5, per_set_ass, per_audit_flag, per_probation_flag, department_id_ass, per_birth_place, per_scar, per_renew, per_leveldate, per_postdate, per_ot_flag) 
-                            values ( s.pos_id, s.dpis6_data, s.per_status, s.per_gender, s.org_id, s.ot_code, s.per_occupydate, s.per_startdate, s.per_birthdate, s.per_eng_surname, s.per_eng_name, s.per_surname, s.per_cardno, s.per_name, s.level_no, s.level_no, s.per_id, 1, s.pn_code, null,  0, 0, 0, 0, 1, null, null, null, null, '-', null, null, null, null, null, null, null, null, null, null, null, '11894', 0, 0, 0, :user_id, TO_CHAR(CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS'), 3062, null, null, null, null, null, null, null, null, null, null, null, '-', null, null, null, null, null, null, null, 0, null, null, 3571, 3804, '02', null, null, '-', '-', null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1, null, 0, null, null, null, null, null, null, null, 0, null, 0, null, 0, null, 0, null, 1, 0, 0, 3062, null, null, 0, null, null, null )
+                                level_no_salary, level_no, pos_id, dpis6_data, per_status, per_gender, org_id, ot_code, per_occupydate, per_startdate, per_birthdate, per_eng_surname, per_eng_name, per_surname, per_cardno, per_name, per_id, per_type, pn_code, poem_id, per_orgmgt, per_salary, per_mgtsalary, per_spsalary, mr_code, per_offno, per_taxno, per_blood, re_code, per_retiredate, per_posdate, per_saldate, pn_code_f, per_fathername, per_fathersurname, pn_code_m, per_mothername, per_mothersurname, per_add1, per_add2, pv_code, mov_code, per_ordain, per_soldier, per_member, update_user, update_date, department_id, approve_per_id, replace_per_id, absent_flag, poems_id, per_hip_flag, per_cert_occ, per_nickname, per_home_tel, per_office_tel, per_fax, per_mobile, per_email, per_file_no, per_bank_account, per_id_ref, per_id_ass_ref, per_contact_person, per_remark, per_start_org, per_cooperative, per_cooperative_no, per_memberdate, per_seq_no, pay_id, es_code, pl_name_work, org_name_work, per_docno, per_docdate, per_effectivedate, per_pos_reason, per_pos_year, per_pos_doctype, per_pos_docno, per_pos_org, per_ordain_detail, per_pos_orgmgt, per_pos_docdate, per_pos_desc, per_pos_remark, per_book_no, per_book_date, per_contact_count, per_disability, pot_id, per_union, per_uniondate, per_job, org_id_1, org_id_2, org_id_3, org_id_4, org_id_5, per_union2, per_uniondate2, per_union3, per_uniondate3, per_union4, per_uniondate4, per_union5, per_uniondate5, per_set_ass, per_audit_flag, per_probation_flag, department_id_ass, per_birth_place, per_scar, per_renew, per_leveldate, per_postdate, per_ot_flag) 
+                            values ( s.level_no_salary, s.level_no, s.pos_id, s.dpis6_data, s.per_status, s.per_gender, s.org_id, s.ot_code, s.per_occupydate, s.per_startdate, s.per_birthdate, s.per_eng_surname, s.per_eng_name, s.per_surname, s.per_cardno, s.per_name, s.per_id, 1, s.pn_code, null,  0, 0, 0, 0, 1, null, null, null, null, '-', null, null, null, null, null, null, null, null, null, null, null, '11894', 0, 0, 0, :user_id, TO_CHAR(CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS'), 3062, null, null, null, null, null, null, null, null, null, null, null, '-', null, null, null, null, null, null, null, 0, null, null, 3571, 3804, '02', null, null, '-', '-', null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1, null, 0, null, null, null, null, null, null, null, 0, null, 0, null, 0, null, 0, null, 1, 0, 0, 3062, null, null, 0, null, null, null )
                             WHEN MATCHED THEN
                             UPDATE
                             SET     
@@ -467,7 +456,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                                 per_occupydate = s.per_occupydate,
                                 per_birthdate = s.per_birthdate,
                                 per_name = s.per_name,
-                                level_no_salary = s.level_no,
+                                level_no_salary = s.level_no_salary,
                                 level_no = s.level_no,
                                 per_surname = s.per_surname,
                                 per_startdate = s.per_startdate
@@ -497,58 +486,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
 
 
-        foreach ($SqlUnion as $ks => $vs) {
 
-            if (count($vs) > 0) {
-                $sql = "
-                    MERGE INTO per_personal d
-                    USING ( 
-                        " . implode(' UNION ', $vs) . "
-                    ) s ON ( 1 = 0 )
-                    WHEN NOT MATCHED THEN
-                    INSERT  ( 
-                        pos_id, dpis6_data, per_status, per_gender, org_id, ot_code, per_occupydate, per_startdate, per_birthdate, per_eng_surname, per_eng_name, per_surname, per_cardno, per_name, level_no_salary, level_no, per_id, per_type, pn_code, poem_id, per_orgmgt, per_salary, per_mgtsalary, per_spsalary, mr_code, per_offno, per_taxno, per_blood, re_code, per_retiredate, per_posdate, per_saldate, pn_code_f, per_fathername, per_fathersurname, pn_code_m, per_mothername, per_mothersurname, per_add1, per_add2, pv_code, mov_code, per_ordain, per_soldier, per_member, update_user, update_date, department_id, approve_per_id, replace_per_id, absent_flag, poems_id, per_hip_flag, per_cert_occ, per_nickname, per_home_tel, per_office_tel, per_fax, per_mobile, per_email, per_file_no, per_bank_account, per_id_ref, per_id_ass_ref, per_contact_person, per_remark, per_start_org, per_cooperative, per_cooperative_no, per_memberdate, per_seq_no, pay_id, es_code, pl_name_work, org_name_work, per_docno, per_docdate, per_effectivedate, per_pos_reason, per_pos_year, per_pos_doctype, per_pos_docno, per_pos_org, per_ordain_detail, per_pos_orgmgt, per_pos_docdate, per_pos_desc, per_pos_remark, per_book_no, per_book_date, per_contact_count, per_disability, pot_id, per_union, per_uniondate, per_job, org_id_1, org_id_2, org_id_3, org_id_4, org_id_5, per_union2, per_uniondate2, per_union3, per_uniondate3, per_union4, per_uniondate4, per_union5, per_uniondate5, per_set_ass, per_audit_flag, per_probation_flag, department_id_ass, per_birth_place, per_scar, per_renew, per_leveldate, per_postdate, per_ot_flag) 
-                    values ( s.pos_id, s.dpis6_data, s.per_status, s.per_gender, s.org_id, s.ot_code, s.per_occupydate, s.per_startdate, s.per_birthdate, s.per_eng_surname, s.per_eng_name, s.per_surname, s.per_cardno, s.per_name, s.level_no, s.level_no, s.per_id, 1, s.pn_code, null,  0, 0, 0, 0, 1, null, null, null, null, '-', null, null, null, null, null, null, null, null, null, null, null, '11894', 0, 0, 0, :user_id, TO_CHAR(CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS'), 3062, null, null, null, null, null, null, null, null, null, null, null, '-', null, null, null, null, null, null, null, 0, null, null, 3571, 3804, '02', null, null, '-', '-', null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1, null, 0, null, null, null, null, null, null, null, 0, null, 0, null, 0, null, 0, null, 1, 0, 0, 3062, null, null, 0, null, null, null )
-                    WHEN MATCHED THEN
-                    UPDATE
-                    SET     
-                        update_date = TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' ),
-                        update_user = :user_id,
-                        per_status = s.per_status,
-                        per_gender = s.per_gender,
-                        org_id = s.org_id,
-                        pn_code = s.pn_code,
-                        ot_code = s.ot_code,
-                        per_eng_surname = s.per_eng_surname,
-                        per_eng_name = s.per_eng_name,
-                        per_occupydate = s.per_occupydate,
-                        per_birthdate = s.per_birthdate,
-                        per_name = s.per_name,
-                        level_no_salary = s.level_no,
-                        level_no = s.level_no,
-                        per_surname = s.per_surname,
-                        per_startdate = s.per_startdate
-                        
-                ";
-
-                if ($ks == 1) {
-                    $cmd = $con->createCommand($sql);
-                } else {
-
-                    $cmd = $con2->createCommand($sql);
-                }
-
-                $cmd->bindValue(":user_id", $user_id);
-
-                $cmd->execute();
-
-                $SqlUnion[$ks] = [];
-
-                // arr('asfddsdfsasddasadsd');
-
-                // arr('xxxxx');
-            }
-        }
 
         $keep = [];
 

@@ -118,9 +118,13 @@ class ApiController extends Controller
                 p.dpis6_data,
                 p.level_no,
                 p.org_id as organize_th,
-                p.org_id as organize_th_ass
+                
+                lv.level_name,
+                a.org_name as organize_th_ass
 
             FROM per_personal p 
+            LEFT JOIN per_org_ass a ON p.org_id = a.id
+            LEFT JOIN per_level lv ON p.level_no = lv.level_no
             LEFT JOIN per_off_type t ON p.ot_code = t.ot_code
             [WHERE]
             [ORDER]
@@ -158,9 +162,9 @@ class ApiController extends Controller
 
             $json_decode = json_decode( $vd['DPIS6_DATA'] );
 
-            $vd['LEVEL_NO'] =  isset($json_decode->levelname_th) ? $json_decode->levelname_th:'';
-            $vd['ORGANIZE_TH'] =  isset($json_decode->organize_th) ? $json_decode->organize_th:'';
-            $vd['ORGANIZE_TH_ASS'] =  isset($json_decode->organize_th_ass) ? $json_decode->organize_th_ass:'';
+            // $vd['LEVEL_NO'] = isset($json_decode->levelname_th) ? $json_decode->levelname_th:'';
+            $vd['ORGANIZE_TH'] = isset($json_decode->organize_th) ? $json_decode->organize_th:'';
+            // $vd['ORGANIZE_TH_ASS'] = isset($json_decode->organize_th_ass) ? $json_decode->organize_th_ass:'';
             // $json_decode->levelname_th;
             // $vd['ORGANIZE_TH'] = $json_decode->organize_th;
             // $vd['ORGANIZE_TH_ASS'] = $json_decode->organize_th_ass;
