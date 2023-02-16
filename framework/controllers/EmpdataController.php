@@ -184,8 +184,7 @@ class EmpdataController extends Controller
                     FROM dual
                 ";
 
-                // [org_status] => 1, [organize_pid] => 17, [org_date] => , [org_start_date] => , [org_end_date] => , [organize_en] => , [organize_abbrth] => สำนักงานประกันสังคม, [organize_abbren] => 
-                // , [country_id] => 41,  [amphur_id] => , [tambon_id] => , [postcode] => , [risk_zone] => , [orglevel_id] => 2, [orgstat_id] => , [orgclass_id] => 1, [orgtype_id] => 1, [org_owner_id] => 0, [org_mode] => 1, [org_website] => , [org_gps] => , [ministrygroup_id] => , [sector_id] => , [org_chart_level] => , [command_no] => , [command_date] => , [canceldate] => , [telephone] => , [fax] => , [email] => , [remark] => , [sortorder] => , [parent_flag] => 1, [creator] => -1, [createdate] => 2020-02-05 11:02:19, [create_org] => 0, [updateuser] => 310210128083701, [updatedate] => 2022-12-14 14:05:44, [update_org] => 100000, [is_sync] => 0, [sync_datetime] => 2022-12-20 15:44:22, [sync_status_code] => NULL, [org_path] => /17/1640000/, [ministry_id] => 17, [ministry] => กระทรวงแรงงาน, [department] => สำนักงานประกันสังคม, [division_id] => , [division] => , [subdiv1] => , [subdiv2] => , [subdiv3] => , [subdiv4] => , [subdiv5] => , [subdiv6] => , [d5_org_id] => 0, [org_model_id] => , [org_model_dlt_id] => , [leader_pos_id] => 0, [org_path_name] => /กระทรวงแรงงาน/สำนักงานประกันสังคม/
+              
 
                 if (count($SqlOrgs) > 300) {
                     // TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' )
@@ -578,7 +577,419 @@ class EmpdataController extends Controller
         arr($js);
     }
 
-    public function actionPos_position()
+ public function actionPos_position( $user_id = 1 )
+    {
+
+        $con = Yii::$app->dbdpis;
+        $con2 = Yii::$app->dbdpisemp;
+
+        // echo 'dasffddsa';exit;
+
+
+        ini_set('memory_limit', '2048M');
+        //ini_set('max_execution_time', 0);
+        set_time_limit(0);
+        global $params;
+
+        $url_gettoken = $params['apiUrl'] . '/oapi/login'; //prd domain
+
+        // $url_gettoken = 'https://172.16.12.248/oapi/login'; //prd ip
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $url_gettoken,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => '{
+                    "username":"niras_s@hotmail.com",
+                    "password":"LcNRemVEmAbS4Cv"
+                }',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json'
+            ),
+        ));
+
+
+        $response = curl_exec($curl);
+        if (curl_errno($curl)) {
+
+            echo json_encode(['success' => 'fail', 'msg' => 'เชื่อมฐานข้อมูลไม่สำเร็จ']);
+            return false;
+        }
+
+        curl_close($curl);
+        $result = json_decode($response, true);
+
+
+        // arr( $result );
+        $accessToken = '';
+        $encrypt_key = '';
+
+        if (json_last_error() === JSON_ERROR_NONE) {
+            if (array_key_exists("error", $result)) {
+                $arrsms = array(
+                    'status' => 'error',
+                    'msg' => $result['error']['message'],
+                );
+                return $arrsms;
+            }
+            $accessToken = $result['accessToken'];
+            $encrypt_key = $result['encrypt_key'];
+        } else {
+            $arrsms = array(
+                'status' => 'error',
+                'msg' => "",
+            );
+            return $arrsms;
+        }
+        // $url = "https://dpis6uat.sso.go.th/oapi/open_api_users/callapi";
+        $url = $params['apiUrl'] ."/oapi/open_api_users/callapi";
+        $header = array(
+            'Content-Type: application/x-www-form-urlencoded',
+            'Authorization: ' . $accessToken
+        );
+
+
+        for( $p = 1; $p <= 100; ++$p ) {
+
+            $param = array(
+                'endpoint' => 'pos_position',
+                'limit' => 1000,
+                'page' => $p
+    
+            );
+    
+            $data_result = $this->calleservice( $url, $header, $param );
+    
+    
+            if ($data_result['message'] != "success") {
+                $arrsms = array(
+                    'status' => 'error',
+                    'msg' => "",
+                );
+                return $arrsms;
+            }
+    
+            $data = $data_result["data"];
+            $decrypt_data = $this->ssl_decrypt_api($data, $encrypt_key);
+            
+    
+            $js = json_decode($decrypt_data);
+
+
+            if( count($js) == 0 ) {
+                break;
+            }
+    
+            foreach( $js as $ka => $va ) {
+                
+                // arr(  $va );
+                // [pos_id] => 1
+                // [dcid] => 727784
+                // [pertype_id] => 5
+                // [organize_id] => 1640001
+                // [pos_no] => 1
+                // [pos_no_name] => 
+                // [pos_salary] => 65880.00
+                // [pos_mgtsalary] => 14500.00
+                // [min_salary] => 
+                // [max_salary] => 
+                // [group_salary] => 
+                // [pos_condition] => 
+                // [pos_doc_no] => 
+                // [pos_remark] => 
+                // [pos_date] => 2002-10-01
+                // [approve_name] => 
+                // [approve_docno] => 
+                // [approve_date] => 
+                // [pos_get_date] => 2002-10-01
+                // [pos_change_date] => 2021-10-01
+                // [pos_vacant_date] => 2021-10-01
+                // [pos_orgmgt] => 
+                // [line_id] => 1
+                // [mposition_id] => 4
+                // [colevel_id] => 93
+                // [level_id] => 24
+                // [level_id_min] => 
+                // [level_id_max] => 
+                // [flag_level] => 
+                // [condition_id] => 77
+                // [frametype_id] => 
+                // [skill_id] => 665
+                // [positionstat_id] => 
+                // [audit_flag] => 
+                
+                // [pos_south] => 
+                // [pos_spec] => 
+                // [pos_job_description] => 
+                // [d5_pg_code] => 
+                // [allow_decor] => 
+                // [practicetype_id] => 
+                // [self_ratio] => 
+                // [chief_ratio] => 
+                // [friend_ratio] => 
+                // [sub_ratio] => 
+                // [update_user] => 384060004041801
+                // [update_date] => 2023-02-02 14:18:14
+                // [is_sync] => 0
+                // [sync_datetime] => 2023-02-02 14:18:14
+                // [sync_status_code] => 200
+                // [recruit_plan] => 
+                // [creator] => -1
+                // [create_date] => 2022-12-02 20:31:59
+                // [exper_skill] => 
+                // [work_location_id] => 
+                // [governor_flag] => 0
+                // [province_id] => 0
+                // [d5_pos_id] => 1
+                // [org_owner] => 1640000
+                // [audit_by] => 
+                // [audit_date] => 
+                // [create_org] => 1640000
+                // [update_org] => 1640000
+                // [pos_value] => 
+                // [update_name] => Administrator
+                // [creator_name] => Administrator
+                // [pos_retire] => 
+                // [pos_retire_remark] => 
+                // [reserve_flag] => 
+                // [posreserve_id] => 
+                // [pos_reserve_desc] => 
+                // [pos_reserve_docno] => 
+                // [pos_reserve_date] => 
+
+                if( empty($va->d5_pos_id )) {
+
+                    $pos_id = $va->pos_id;
+                }
+                else {
+
+                    $pos_id = $va->d5_pos_id;
+                }
+
+                $SqlOrgs[] = "
+                    SELECT 
+                        ". $pos_id ." as pos_id, 
+                        '". $va->ppt_code ."' as ppt_code, 
+                        '". $va->pos_status ."' as pos_status, 
+                        '". $va->pos_no ."' as pos_no, 
+                        '". $va->pos_seq_no ."' as pos_seq_no, 
+                        ". $va->organize_id ." as org_id, 
+                        '". $va->pay_no ."' as pay_no, 
+                        'test' as skill_code, 
+                        ". $user_id ." as update_user, 
+                        'ggg' as cl_name,  
+                        'ddddd' as level_no, 
+                        1 as org_id_1, 
+                        1 as org_id_2, 
+                        1 as org_id_3, 
+                        1 as org_id_4, 
+                        1 as org_id_5, 
+                        'test' as ot_code, 
+                        'test' as pm_code, 
+                        'test' as pl_code, 
+                        'test' as pos_salary, 
+                        'test' as pos_mgtsalary, 
+                        'test' as pt_code, 
+                        'test' as pc_code, 
+                        'test' as pos_condition, 
+                        'test' as pos_doc_no, 
+                        'test' as pos_remark, 
+                        'test' as pos_date, 
+                        'test' as pos_get_date, 
+                        'test' as pos_change_date, 
+                         
+                        'test' as department_id, 
+                        'test' as pos_orgmgt, 
+                        'test' as pos_no_name, 
+                        'test' as audit_flag, 
+                        'test' as pos_retire, 
+                        'test' as pos_reserve, 
+                        'test' as pos_reserve_desc, 
+                        'test' as pos_reserve_docno, 
+                        'test' as pos_retire_remark, 
+                        'test' as pr_code, 
+                        'test' as pos_reserve2, 
+                        'test' as pos_vacant_date, 
+                        'test' as flag_level, 
+                        'test' as pn_code
+                    FROM dual
+                ";
+
+                if (count($SqlOrgs) == 100 ) {
+                    $sql = "
+                        MERGE INTO per_position d
+                        USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.pos_id = s.pos_id )
+                        WHEN NOT MATCHED THEN
+                        INSERT  ( update_date, pos_id, cl_name, level_no, org_id, org_id_1, org_id_2, org_id_3, org_id_4, org_id_5, pos_no, ot_code, pm_code, pl_code, pos_salary, pos_mgtsalary, skill_code, pt_code, pc_code, pos_condition, pos_doc_no, pos_remark, pos_date, pos_get_date, pos_change_date, pos_status, update_user,  department_id, pos_seq_no, pay_no, pos_orgmgt, pos_no_name, audit_flag, ppt_code, pos_retire, pos_reserve, pos_reserve_desc, pos_reserve_docno, pos_retire_remark, pr_code, pos_reserve2, pos_vacant_date, flag_level, pn_code) VALUES
+                        ( TO_CHAR( CURRENT_TIMESTAMP, 'YYYY-MM-DD HH24:MI:SS' ), s.pos_id, s.cl_name, s.level_no, s.org_id, s.org_id_1, s.org_id_2, s.org_id_3, s.org_id_4, s.org_id_5, s.pos_no, s.ot_code, s.pm_code, s.pl_code, s.pos_salary, s.pos_mgtsalary, s.skill_code, s.pt_code, s.pc_code, s.pos_condition, s.pos_doc_no, s.pos_remark, s.pos_date, s.pos_get_date, s.pos_change_date, s.pos_status, s.update_user, s. department_id, s.pos_seq_no, s.pay_no, s.pos_orgmgt, s.pos_no_name, s.audit_flag, s.ppt_code, s.pos_retire, s.pos_reserve, s.pos_reserve_desc, s.pos_reserve_docno, s.pos_retire_remark, s.pr_code, s.pos_reserve2, s.pos_vacant_date, s.flag_level, s.pn_code )
+                        
+                        WHEN MATCHED THEN
+                        UPDATE
+                        SET
+                            update_date = TO_CHAR( CURRENT_TIMESTAMP, 'YYYY-MM-DD HH24:MI:SS' ),
+                            cl_name = s.cl_name, 
+                            level_no = s.level_no, 
+                            org_id = s.org_id, 
+                            org_id_1 = s.org_id_1, 
+                            org_id_2 = s.org_id_2, 
+                            org_id_3 = s.org_id_3, 
+                            org_id_4 = s.org_id_4, 
+                            org_id_5 = s.org_id_5, 
+                            pos_no = s.pos_no, 
+                            ot_code = s.ot_code, 
+                            pm_code = s.pm_code, 
+                            pl_code = s.pl_code, 
+                            pos_salary = s.pos_salary, 
+                            pos_mgtsalary = s.pos_mgtsalary, 
+                            skill_code = s.skill_code, 
+                            pt_code = s.pt_code, 
+                            pc_code = s.pc_code, 
+                            pos_condition = s.pos_condition, 
+                            pos_doc_no = s.pos_doc_no, 
+                            pos_remark = s.pos_remark, 
+                            pos_date = s.pos_date, 
+                            pos_get_date = s.pos_get_date, 
+                            pos_change_date = s.pos_change_date, 
+                            pos_status = s.pos_status, 
+                            update_user = s.update_user, 
+                            department_id = s.department_id, 
+                            pos_seq_no = s.pos_seq_no, 
+                            pay_no = s.pay_no, 
+                            pos_orgmgt = s.pos_orgmgt, 
+                            pos_no_name = s.pos_no_name, 
+                            audit_flag = s.audit_flag, 
+                            ppt_code = s.ppt_code, 
+                            pos_retire = s.pos_retire, 
+                            pos_reserve = s.pos_reserve, 
+                            pos_reserve_desc = s.pos_reserve_desc, 
+                            pos_reserve_docno = s.pos_reserve_docno, 
+                            pos_retire_remark = s.pos_retire_remark, 
+                            pr_code = s.pr_code, 
+                            pos_reserve2 = s.pos_reserve2, 
+                            pos_vacant_date = s.pos_vacant_date, 
+                            flag_level = s.flag_level, 
+                            pn_code = s.pn_code
+                            
+                        
+                    ";
+
+                    foreach ([1, 2] as $kg => $vg) {
+
+                        if ($vg == 1) {
+                            $cmd = $con->createCommand($sql);
+
+                        } else {
+
+                            $cmd = $con2->createCommand($sql);
+                        }
+
+                        // $cmd->bindValue(":user_id", $user_id);
+
+                        $cmd->execute();
+                    }
+
+                    $SqlOrgs = [];
+
+                    // exit;
+                }
+            
+
+            }
+        }
+
+    
+        if (count($SqlOrgs) == 0 ) {
+            $sql = "
+                MERGE INTO per_position d
+                USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.pos_id = s.pos_id )
+                WHEN NOT MATCHED THEN
+                INSERT  ( update_date, pos_id, cl_name, level_no, org_id, org_id_1, org_id_2, org_id_3, org_id_4, org_id_5, pos_no, ot_code, pm_code, pl_code, pos_salary, pos_mgtsalary, skill_code, pt_code, pc_code, pos_condition, pos_doc_no, pos_remark, pos_date, pos_get_date, pos_change_date, pos_status, update_user,  department_id, pos_seq_no, pay_no, pos_orgmgt, pos_no_name, audit_flag, ppt_code, pos_retire, pos_reserve, pos_reserve_desc, pos_reserve_docno, pos_retire_remark, pr_code, pos_reserve2, pos_vacant_date, flag_level, pn_code) VALUES
+                ( TO_CHAR( CURRENT_TIMESTAMP, 'YYYY-MM-DD HH24:MI:SS' ), s.pos_id, s.cl_name, s.level_no, s.org_id, s.org_id_1, s.org_id_2, s.org_id_3, s.org_id_4, s.org_id_5, s.pos_no, s.ot_code, s.pm_code, s.pl_code, s.pos_salary, s.pos_mgtsalary, s.skill_code, s.pt_code, s.pc_code, s.pos_condition, s.pos_doc_no, s.pos_remark, s.pos_date, s.pos_get_date, s.pos_change_date, s.pos_status, s.update_user, s. department_id, s.pos_seq_no, s.pay_no, s.pos_orgmgt, s.pos_no_name, s.audit_flag, s.ppt_code, s.pos_retire, s.pos_reserve, s.pos_reserve_desc, s.pos_reserve_docno, s.pos_retire_remark, s.pr_code, s.pos_reserve2, s.pos_vacant_date, s.flag_level, s.pn_code )
+                
+                WHEN MATCHED THEN
+                UPDATE
+                SET
+                    update_date = TO_CHAR( CURRENT_TIMESTAMP, 'YYYY-MM-DD HH24:MI:SS' ),
+                    cl_name = s.cl_name, 
+                    level_no = s.level_no, 
+                    org_id = s.org_id, 
+                    org_id_1 = s.org_id_1, 
+                    org_id_2 = s.org_id_2, 
+                    org_id_3 = s.org_id_3, 
+                    org_id_4 = s.org_id_4, 
+                    org_id_5 = s.org_id_5, 
+                    pos_no = s.pos_no, 
+                    ot_code = s.ot_code, 
+                    pm_code = s.pm_code, 
+                    pl_code = s.pl_code, 
+                    pos_salary = s.pos_salary, 
+                    pos_mgtsalary = s.pos_mgtsalary, 
+                    skill_code = s.skill_code, 
+                    pt_code = s.pt_code, 
+                    pc_code = s.pc_code, 
+                    pos_condition = s.pos_condition, 
+                    pos_doc_no = s.pos_doc_no, 
+                    pos_remark = s.pos_remark, 
+                    pos_date = s.pos_date, 
+                    pos_get_date = s.pos_get_date, 
+                    pos_change_date = s.pos_change_date, 
+                    pos_status = s.pos_status, 
+                    update_user = s.update_user, 
+                    department_id = s.department_id, 
+                    pos_seq_no = s.pos_seq_no, 
+                    pay_no = s.pay_no, 
+                    pos_orgmgt = s.pos_orgmgt, 
+                    pos_no_name = s.pos_no_name, 
+                    audit_flag = s.audit_flag, 
+                    ppt_code = s.ppt_code, 
+                    pos_retire = s.pos_retire, 
+                    pos_reserve = s.pos_reserve, 
+                    pos_reserve_desc = s.pos_reserve_desc, 
+                    pos_reserve_docno = s.pos_reserve_docno, 
+                    pos_retire_remark = s.pos_retire_remark, 
+                    pr_code = s.pr_code, 
+                    pos_reserve2 = s.pos_reserve2, 
+                    pos_vacant_date = s.pos_vacant_date, 
+                    flag_level = s.flag_level, 
+                    pn_code = s.pn_code
+                    
+                
+            ";
+
+            foreach ([1, 2] as $kg => $vg) {
+
+                if ($vg == 1) {
+                    $cmd = $con->createCommand($sql);
+
+                } else {
+
+                    $cmd = $con2->createCommand($sql);
+                }
+
+                // $cmd->bindValue(":user_id", $user_id);
+
+                $cmd->execute();
+            }
+
+            $SqlOrgs = [];
+
+            // exit;
+        }
+
+        
+        $log_path = Yii::$app->getRuntimePath() . '\logs\log_pos_position_' . date('d-M-Y') . '.log';
+        $results = print_r($js, true);
+        \app\components\CommonFnc::write_log($log_path, $results);
+    }
+
+    public function actionPos_position___()
     {
 
         ini_set('memory_limit', '2048M');

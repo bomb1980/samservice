@@ -119,10 +119,12 @@ class ApiController extends Controller
                 p.level_no,
                 lv.level_name,
                 a.org_name as organize_th_ass,
-                pos.cl_name as organize_th
+                pos.cl_name as organize_th___,
+                ap.org_name as organize_th
 
             FROM per_personal p 
             LEFT JOIN per_position pos ON p.pos_id = pos.pos_id
+            LEFT JOIN per_org_ass ap ON pos.org_id = ap.org_id
             LEFT JOIN per_org_ass a ON p.org_id = a.org_id
             LEFT JOIN per_level lv ON p.level_no = lv.level_no
             LEFT JOIN per_off_type t ON p.ot_code = t.ot_code
