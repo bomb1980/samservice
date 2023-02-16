@@ -37,16 +37,16 @@ class EmpdataController extends Controller
             $user_id = Yii::$app->user->getId();
         }
 
-        $this->actionOganize( $user_id );
+        $this->actionOganize($user_id);
 
         echo PerPersonal1::getFromApi($user_id);
 
-        
+
 
         exit;
     }
 
-    public function actionOganize( $user_id = 1 )
+    public function actionOganize($user_id = 1)
     {
 
         // $user_id = Yii::$app->user->getId();
@@ -155,16 +155,15 @@ class EmpdataController extends Controller
                     continue;
                 }
 
- 
-                if( $va->orgclass_id == 1 ) {
+
+                if ($va->orgclass_id == 1) {
 
                     $ot_code = '01';
-                }
-                else {
+                } else {
                     $ot_code = '03';
                 }
 
-        
+
                 $SqlOrgs[] = "
                     SELECT 
                         " . $va->organize_id . " AS org_id,
@@ -185,8 +184,8 @@ class EmpdataController extends Controller
                     FROM dual
                 ";
 
-                  // [org_status] => 1, [organize_pid] => 17, [org_date] => , [org_start_date] => , [org_end_date] => , [organize_en] => , [organize_abbrth] => สำนักงานประกันสังคม, [organize_abbren] => 
-            // , [country_id] => 41,  [amphur_id] => , [tambon_id] => , [postcode] => , [risk_zone] => , [orglevel_id] => 2, [orgstat_id] => , [orgclass_id] => 1, [orgtype_id] => 1, [org_owner_id] => 0, [org_mode] => 1, [org_website] => , [org_gps] => , [ministrygroup_id] => , [sector_id] => , [org_chart_level] => , [command_no] => , [command_date] => , [canceldate] => , [telephone] => , [fax] => , [email] => , [remark] => , [sortorder] => , [parent_flag] => 1, [creator] => -1, [createdate] => 2020-02-05 11:02:19, [create_org] => 0, [updateuser] => 310210128083701, [updatedate] => 2022-12-14 14:05:44, [update_org] => 100000, [is_sync] => 0, [sync_datetime] => 2022-12-20 15:44:22, [sync_status_code] => NULL, [org_path] => /17/1640000/, [ministry_id] => 17, [ministry] => กระทรวงแรงงาน, [department] => สำนักงานประกันสังคม, [division_id] => , [division] => , [subdiv1] => , [subdiv2] => , [subdiv3] => , [subdiv4] => , [subdiv5] => , [subdiv6] => , [d5_org_id] => 0, [org_model_id] => , [org_model_dlt_id] => , [leader_pos_id] => 0, [org_path_name] => /กระทรวงแรงงาน/สำนักงานประกันสังคม/
+                // [org_status] => 1, [organize_pid] => 17, [org_date] => , [org_start_date] => , [org_end_date] => , [organize_en] => , [organize_abbrth] => สำนักงานประกันสังคม, [organize_abbren] => 
+                // , [country_id] => 41,  [amphur_id] => , [tambon_id] => , [postcode] => , [risk_zone] => , [orglevel_id] => 2, [orgstat_id] => , [orgclass_id] => 1, [orgtype_id] => 1, [org_owner_id] => 0, [org_mode] => 1, [org_website] => , [org_gps] => , [ministrygroup_id] => , [sector_id] => , [org_chart_level] => , [command_no] => , [command_date] => , [canceldate] => , [telephone] => , [fax] => , [email] => , [remark] => , [sortorder] => , [parent_flag] => 1, [creator] => -1, [createdate] => 2020-02-05 11:02:19, [create_org] => 0, [updateuser] => 310210128083701, [updatedate] => 2022-12-14 14:05:44, [update_org] => 100000, [is_sync] => 0, [sync_datetime] => 2022-12-20 15:44:22, [sync_status_code] => NULL, [org_path] => /17/1640000/, [ministry_id] => 17, [ministry] => กระทรวงแรงงาน, [department] => สำนักงานประกันสังคม, [division_id] => , [division] => , [subdiv1] => , [subdiv2] => , [subdiv3] => , [subdiv4] => , [subdiv5] => , [subdiv6] => , [d5_org_id] => 0, [org_model_id] => , [org_model_dlt_id] => , [leader_pos_id] => 0, [org_path_name] => /กระทรวงแรงงาน/สำนักงานประกันสังคม/
 
                 if (count($SqlOrgs) > 300) {
                     // TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' )
@@ -284,7 +283,7 @@ class EmpdataController extends Controller
 
             $SqlOrgs = [];
         }
-        
+
 
 
         $log_path = Yii::$app->getRuntimePath() . '\logs\log_SSO_Organize_' . date('d-M-Y') . '.log';
@@ -578,6 +577,395 @@ class EmpdataController extends Controller
         $js = json_decode($decrypt_data, true);
         arr($js);
     }
+
+    public function actionPos_position()
+    {
+
+        ini_set('memory_limit', '2048M');
+        //ini_set('max_execution_time', 0);
+        set_time_limit(0);
+        global $params;
+
+        $url_gettoken = $params['apiUrl'] . '/oapi/login'; //prd domain
+
+        // $url_gettoken = 'https://172.16.12.248/oapi/login'; //prd ip
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $url_gettoken,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => '{
+                    "username":"niras_s@hotmail.com",
+                    "password":"LcNRemVEmAbS4Cv"
+                }',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json'
+            ),
+        ));
+
+
+        $response = curl_exec($curl);
+        if (curl_errno($curl)) {
+
+            echo json_encode(['success' => 'fail', 'msg' => 'เชื่อมฐานข้อมูลไม่สำเร็จ']);
+            return false;
+        }
+
+        curl_close($curl);
+        $result = json_decode($response, true);
+
+
+        // arr( $result );
+        $accessToken = '';
+        $encrypt_key = '';
+
+        if (json_last_error() === JSON_ERROR_NONE) {
+            if (array_key_exists("error", $result)) {
+                $arrsms = array(
+                    'status' => 'error',
+                    'msg' => $result['error']['message'],
+                );
+                return $arrsms;
+            }
+            $accessToken = $result['accessToken'];
+            $encrypt_key = $result['encrypt_key'];
+        } else {
+            $arrsms = array(
+                'status' => 'error',
+                'msg' => "",
+            );
+            return $arrsms;
+        }
+        $url = "https://dpis6uat.sso.go.th/oapi/open_api_users/callapi";
+        $url = "https://sso.dpis.go.th/oapi/open_api_users/callapi";
+        $header = array(
+            'Content-Type: application/x-www-form-urlencoded',
+            'Authorization: ' . $accessToken
+        );
+        $param = array(
+            'endpoint' => 'pos_position',
+            'limit' => 10000,
+        );
+
+        $data_result = $this->calleservice($url, $header, $param);
+
+        if ($data_result['message'] != "success") {
+            $arrsms = array(
+                'status' => 'error',
+                'msg' => "",
+            );
+            return $arrsms;
+        }
+
+        $data = $data_result["data"];
+        $decrypt_data = $this->ssl_decrypt_api($data, $encrypt_key);
+        
+
+        $js = json_decode($decrypt_data, true);
+        
+        $log_path = Yii::$app->getRuntimePath() . '\logs\log_pos_position_' . date('d-M-Y') . '.log';
+        $results = print_r($js, true);
+        \app\components\CommonFnc::write_log($log_path, $results);
+    }
+
+    public function actionTb_pertype()
+    {
+
+        ini_set('memory_limit', '2048M');
+        //ini_set('max_execution_time', 0);
+        set_time_limit(0);
+        global $params;
+
+        $url_gettoken = $params['apiUrl'] . '/oapi/login'; //prd domain
+
+        // $url_gettoken = 'https://172.16.12.248/oapi/login'; //prd ip
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $url_gettoken,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => '{
+                    "username":"niras_s@hotmail.com",
+                    "password":"LcNRemVEmAbS4Cv"
+                }',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json'
+            ),
+        ));
+
+
+        $response = curl_exec($curl);
+        if (curl_errno($curl)) {
+
+            echo json_encode(['success' => 'fail', 'msg' => 'เชื่อมฐานข้อมูลไม่สำเร็จ']);
+            return false;
+        }
+
+        curl_close($curl);
+        $result = json_decode($response, true);
+
+
+        // arr( $result );
+        $accessToken = '';
+        $encrypt_key = '';
+
+        if (json_last_error() === JSON_ERROR_NONE) {
+            if (array_key_exists("error", $result)) {
+                $arrsms = array(
+                    'status' => 'error',
+                    'msg' => $result['error']['message'],
+                );
+                return $arrsms;
+            }
+            $accessToken = $result['accessToken'];
+            $encrypt_key = $result['encrypt_key'];
+        } else {
+            $arrsms = array(
+                'status' => 'error',
+                'msg' => "",
+            );
+            return $arrsms;
+        }
+        $url = "https://dpis6uat.sso.go.th/oapi/open_api_users/callapi";
+        $url = "https://sso.dpis.go.th/oapi/open_api_users/callapi";
+        $header = array(
+            'Content-Type: application/x-www-form-urlencoded',
+            'Authorization: ' . $accessToken
+        );
+        $param = array(
+            'endpoint' => 'tb_pertype',
+            'limit' => 1000,
+        );
+
+        $data_result = $this->calleservice($url, $header, $param);
+
+        if ($data_result['message'] != "success") {
+            $arrsms = array(
+                'status' => 'error',
+                'msg' => "",
+            );
+            return $arrsms;
+        }
+
+        $data = $data_result["data"];
+        $decrypt_data = $this->ssl_decrypt_api($data, $encrypt_key);
+        
+
+        $js = json_decode($decrypt_data, true);
+        
+        $log_path = Yii::$app->getRuntimePath() . '\logs\log_tb_pertype_' . date('d-M-Y') . '.log';
+        $results = print_r($js, true);
+        \app\components\CommonFnc::write_log($log_path, $results);
+    }
+
+    public function actionTb_line()
+    {
+
+        ini_set('memory_limit', '2048M');
+        //ini_set('max_execution_time', 0);
+        set_time_limit(0);
+        global $params;
+
+        $url_gettoken = $params['apiUrl'] . '/oapi/login'; //prd domain
+
+        // $url_gettoken = 'https://172.16.12.248/oapi/login'; //prd ip
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $url_gettoken,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => '{
+                    "username":"niras_s@hotmail.com",
+                    "password":"LcNRemVEmAbS4Cv"
+                }',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json'
+            ),
+        ));
+
+
+        $response = curl_exec($curl);
+        if (curl_errno($curl)) {
+
+            echo json_encode(['success' => 'fail', 'msg' => 'เชื่อมฐานข้อมูลไม่สำเร็จ']);
+            return false;
+        }
+
+        curl_close($curl);
+        $result = json_decode($response, true);
+
+
+        // arr( $result );
+        $accessToken = '';
+        $encrypt_key = '';
+
+        if (json_last_error() === JSON_ERROR_NONE) {
+            if (array_key_exists("error", $result)) {
+                $arrsms = array(
+                    'status' => 'error',
+                    'msg' => $result['error']['message'],
+                );
+                return $arrsms;
+            }
+            $accessToken = $result['accessToken'];
+            $encrypt_key = $result['encrypt_key'];
+        } else {
+            $arrsms = array(
+                'status' => 'error',
+                'msg' => "",
+            );
+            return $arrsms;
+        }
+        $url = "https://dpis6uat.sso.go.th/oapi/open_api_users/callapi";
+        $url = "https://sso.dpis.go.th/oapi/open_api_users/callapi";
+        $header = array(
+            'Content-Type: application/x-www-form-urlencoded',
+            'Authorization: ' . $accessToken
+        );
+        $param = array(
+            'endpoint' => 'tb_line',
+            'limit' => 10000,
+        );
+
+        $data_result = $this->calleservice($url, $header, $param);
+
+        if ($data_result['message'] != "success") {
+            $arrsms = array(
+                'status' => 'error',
+                'msg' => "",
+            );
+            return $arrsms;
+        }
+
+        $data = $data_result["data"];
+        $decrypt_data = $this->ssl_decrypt_api($data, $encrypt_key);
+        
+
+        $js = json_decode($decrypt_data, true);
+        
+        $log_path = Yii::$app->getRuntimePath() . '\logs\log_tb_line_' . date('d-M-Y') . '.log';
+        $results = print_r($js, true);
+        \app\components\CommonFnc::write_log($log_path, $results);
+    }
+
+    public function actionTb_level()
+    {
+
+        ini_set('memory_limit', '2048M');
+        //ini_set('max_execution_time', 0);
+        set_time_limit(0);
+        global $params;
+
+        $url_gettoken = $params['apiUrl'] . '/oapi/login'; //prd domain
+
+        // $url_gettoken = 'https://172.16.12.248/oapi/login'; //prd ip
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $url_gettoken,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => '{
+                    "username":"niras_s@hotmail.com",
+                    "password":"LcNRemVEmAbS4Cv"
+                }',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json'
+            ),
+        ));
+
+
+        $response = curl_exec($curl);
+        if (curl_errno($curl)) {
+
+            echo json_encode(['success' => 'fail', 'msg' => 'เชื่อมฐานข้อมูลไม่สำเร็จ']);
+            return false;
+        }
+
+        curl_close($curl);
+        $result = json_decode($response, true);
+
+
+        // arr( $result );
+        $accessToken = '';
+        $encrypt_key = '';
+
+        if (json_last_error() === JSON_ERROR_NONE) {
+            if (array_key_exists("error", $result)) {
+                $arrsms = array(
+                    'status' => 'error',
+                    'msg' => $result['error']['message'],
+                );
+                return $arrsms;
+            }
+            $accessToken = $result['accessToken'];
+            $encrypt_key = $result['encrypt_key'];
+        } else {
+            $arrsms = array(
+                'status' => 'error',
+                'msg' => "",
+            );
+            return $arrsms;
+        }
+        $url = "https://dpis6uat.sso.go.th/oapi/open_api_users/callapi";
+        $url = "https://sso.dpis.go.th/oapi/open_api_users/callapi";
+        $header = array(
+            'Content-Type: application/x-www-form-urlencoded',
+            'Authorization: ' . $accessToken
+        );
+        $param = array(
+            'endpoint' => 'tb_level',
+            'limit' => 1000,
+        );
+
+        $data_result = $this->calleservice($url, $header, $param);
+
+        if ($data_result['message'] != "success") {
+            $arrsms = array(
+                'status' => 'error',
+                'msg' => "",
+            );
+            return $arrsms;
+        }
+
+        $data = $data_result["data"];
+        $decrypt_data = $this->ssl_decrypt_api($data, $encrypt_key);
+        
+
+        $js = json_decode($decrypt_data, true);
+        
+        $log_path = Yii::$app->getRuntimePath() . '\logs\log_tb_level_' . date('d-M-Y') . '.log';
+        $results = print_r($js, true);
+        \app\components\CommonFnc::write_log($log_path, $results);
+    }
+
 
     public function actionTest()
     {
