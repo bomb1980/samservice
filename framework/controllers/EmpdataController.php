@@ -1280,8 +1280,10 @@ class EmpdataController extends Controller
         \app\components\CommonFnc::write_log($log_path, $results);
     }
 
-    public function actionTb_level()
+    public function actionTb_level( $user_id = 1 )
     {
+
+        // echo 'dasdss';exit;
 
         $con = Yii::$app->dbdpis;
         $con2 = Yii::$app->dbdpisemp;
@@ -1354,169 +1356,111 @@ class EmpdataController extends Controller
             'Content-Type: application/x-www-form-urlencoded',
             'Authorization: ' . $accessToken
         );
-        $param = array(
-            'endpoint' => 'tb_level',
-            'limit' => 1000,
-        );
 
-        $data_result = $this->calleservice($url, $header, $param);
+        for( $p = 1; $p <= 1; ++$p ) {
 
-        if ($data_result['message'] != "success") {
-            $arrsms = array(
-                'status' => 'error',
-                'msg' => "",
+            $param = array(
+                'endpoint' => 'tb_level',
+                'limit' => 1000,
+                'page' => $p
             );
-            return $arrsms;
-        }
-
-        $data = $data_result["data"];
-        $decrypt_data = $this->ssl_decrypt_api($data, $encrypt_key);
-        
-
-        $js = json_decode($decrypt_data, true);
-
-        
-        if (count($js) == 0) {
-
-            // echo $p;
-
-            break;
-        }
-
-        foreach ($js as $ka => $va) {
-
-
-            if ($va->department_id != 1640000) {
-                continue;
-            }
-
-
-            if ($va->orgclass_id == 1) {
-
-                $ot_code = '01';
-            } else {
-                $ot_code = '03';
-            }
-
-
-            $SqlOrgs[] = "
-                SELECT 
-                    " . $va->level_id . " AS id,
-                    '" . $va->level_code . "' AS level_no,
-                    '" . $va->levelname_th . "' AS level_name,
-
-                    '" . $va->updatedate . "' AS update_date,
-
-                    '" . $va->org_id_ass . "' AS org_id_ass,
-                    '" . $va->org_seq_no . "' AS org_seq_no,
-                    '" . $va->organize_add1 . "' AS org_addr1,
-                    '" . $va->organize_add2 . "' AS org_addr2,
-                    '" . $va->organize_add3 . "' AS org_addr3,
-                    '" . $va->organize_job . "' AS org_job,
-                    '" . $va->org_dopa_code . "' AS org_dopa_code,
-                    '" . $ot_code . "' AS ot_code,
-                    '" . $va->province_id . "' AS pv_code,
-                    '" . $va->latitude . "' AS pos_lat,
-                    '" . $va->longitude . "' AS pos_long
-                FROM dual
-            ";
-
-            // [org_status] => 1, [organize_pid] => 17, [org_date] => , [org_start_date] => , [org_end_date] => , [organize_en] => , [organize_abbrth] => สำนักงานประกันสังคม, [organize_abbren] => 
-            // , [country_id] => 41,  [amphur_id] => , [tambon_id] => , [postcode] => , [risk_zone] => , [orglevel_id] => 2, [orgstat_id] => , [orgclass_id] => 1, [orgtype_id] => 1, [org_owner_id] => 0, [org_mode] => 1, [org_website] => , [org_gps] => , [ministrygroup_id] => , [sector_id] => , [org_chart_level] => , [command_no] => , [command_date] => , [canceldate] => , [telephone] => , [fax] => , [email] => , [remark] => , [sortorder] => , [parent_flag] => 1, [creator] => -1, [createdate] => 2020-02-05 11:02:19, [create_org] => 0, [updateuser] => 310210128083701, [updatedate] => 2022-12-14 14:05:44, [update_org] => 100000, [is_sync] => 0, [sync_datetime] => 2022-12-20 15:44:22, [sync_status_code] => NULL, [org_path] => /17/1640000/, [ministry_id] => 17, [ministry] => กระทรวงแรงงาน, [department] => สำนักงานประกันสังคม, [division_id] => , [division] => , [subdiv1] => , [subdiv2] => , [subdiv3] => , [subdiv4] => , [subdiv5] => , [subdiv6] => , [d5_org_id] => 0, [org_model_id] => , [org_model_dlt_id] => , [leader_pos_id] => 0, [org_path_name] => /กระทรวงแรงงาน/สำนักงานประกันสังคม/
-
-            if (count($SqlOrgs) > 300) {
-                // TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' )
-                $sql = "
-                    MERGE INTO per_org_ass d
-                    USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.org_id = s.org_id )
-                    WHEN NOT MATCHED THEN
-                    INSERT ( pos_lat, pos_long, pv_code, ot_code, org_dopa_code, org_job, org_addr2, org_addr3, org_addr1, department_id, update_user, update_date, org_id, org_code, org_name, org_short, ol_code, ap_code, ct_code, org_date, org_id_ref, org_active, org_website, org_seq_no, org_eng_name, dt_code, mg_code, pg_code, org_zone, org_id_ass ) VALUES
-                    (  s.pos_lat, s.pos_long, s.pv_code, s.ot_code, s.org_dopa_code, s.org_job, s.org_addr2, s.org_addr3, s.org_addr1, s.department_id, :user_id, TO_CHAR( CURRENT_TIMESTAMP , 'YYYY-MM-DD HH24:MI:SS' ), s.org_id, s.org_code, s.org_name, '-', '-', NULL, '-', NULL, '0', '1', NULL, s.org_seq_no, NULL, NULL, NULL, NULL, NULL, s.org_id_ass )
-                    WHEN MATCHED THEN
-                    UPDATE
-                    SET
-                        update_date = TO_CHAR( CURRENT_TIMESTAMP, 'YYYY-MM-DD HH24:MI:SS' ),
-                        org_code = s.org_code,
-                        org_name = s.org_name,
-                        department_id = s.department_id,
-                        org_id_ass = s.org_id_ass,
-                        org_seq_no = s.org_seq_no,
-                        org_addr1 = s.org_addr1,
-                        org_addr2 = s.org_addr2,
-                        org_addr3 = s.org_addr3,
-                        org_job = s.org_job,
-                        org_dopa_code = s.org_dopa_code,
-                        ot_code = s.ot_code,
-                        pv_code = s.pv_code,
-                        pos_lat = s.pos_lat,
-                        pos_long = s.pos_long,
-                        update_user = :user_id
-                ";
-
-                foreach ([1, 2] as $kg => $vg) {
-
-                    if ($vg == 1) {
-
-                        $cmd = $con->createCommand($sql);
-                    } else {
-
-                        $cmd = $con2->createCommand($sql);
-                    }
-
-                    $cmd->bindValue(":user_id", $user_id);
-
-                    $cmd->execute();
-                }
-
-                $SqlOrgs = [];
-            }
-        }
     
-        if (count($SqlOrgs) > 0) {
-            // TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' )
-            $sql = "
-                MERGE INTO per_org_ass d
-                USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.org_id = s.org_id )
-                WHEN NOT MATCHED THEN
-                INSERT ( pos_lat, pos_long, pv_code, ot_code, org_dopa_code, org_job, org_addr2, org_addr3, org_addr1, department_id, update_user, update_date, org_id, org_code, org_name, org_short, ol_code, ap_code, ct_code, org_date, org_id_ref, org_active, org_website, org_seq_no, org_eng_name, dt_code, mg_code, pg_code, org_zone, org_id_ass ) VALUES
-                (  s.pos_lat, s.pos_long, s.pv_code, s.ot_code, s.org_dopa_code, s.org_job, s.org_addr2, s.org_addr3, s.org_addr1, s.department_id, :user_id, TO_CHAR( CURRENT_TIMESTAMP , 'YYYY-MM-DD HH24:MI:SS' ), s.org_id, s.org_code, s.org_name, '-', '-', NULL, '-', NULL, '0', '1', NULL, s.org_seq_no, NULL, NULL, NULL, NULL, NULL, s.org_id_ass )
-                WHEN MATCHED THEN
-                UPDATE
-                SET
-                    update_date = TO_CHAR( CURRENT_TIMESTAMP, 'YYYY-MM-DD HH24:MI:SS' ),
-                    org_code = s.org_code,
-                    org_name = s.org_name,
-                    department_id = s.department_id,
-                    org_id_ass = s.org_id_ass,
-                    org_seq_no = s.org_seq_no,
-                    org_addr1 = s.org_addr1,
-                    org_addr2 = s.org_addr2,
-                    org_addr3 = s.org_addr3,
-                    org_job = s.org_job,
-                    org_dopa_code = s.org_dopa_code,
-                    ot_code = s.ot_code,
-                    pv_code = s.pv_code,
-                    pos_lat = s.pos_lat,
-                    pos_long = s.pos_long,
-                    update_user = :user_id
-            ";
-
-            foreach ([1, 2] as $kg => $vg) {
-
-                if ($vg == 1) {
-                    $cmd = $con->createCommand($sql);
-                } else {
-                    $cmd = $con2->createCommand($sql);
-                }
-
-                $cmd->bindValue(":user_id", $user_id);
-
-                $cmd->execute();
+            $data_result = $this->calleservice($url, $header, $param);
+    
+            if ($data_result['message'] != "success") {
+                $arrsms = array(
+                    'status' => 'error',
+                    'msg' => "",
+                );
+                return $arrsms;
             }
+    
+            $data = $data_result["data"];
+            $decrypt_data = $this->ssl_decrypt_api($data, $encrypt_key);
+            
+    
+            $js = json_decode($decrypt_data);
+    
+
+            // arr( $js );
+            
+            if (count($js) == 0) {
+    
+                // echo $p;
+    
+                break;
+            }
+    
+            foreach ($js as $ka => $va) {
+    
+           
+                $SqlOrgs[] = "
+                    SELECT 
+                        ". $va->level_id ." as id, 
+                        454 as update_user, 
+                        '". $va->level_code ."' as level_no, 
+                        '". $va->levelname_th ."' as level_name, 
+                        '". $va->pertype_id ."' as per_type, 
+                        1 as level_active, 
+                        'test' as level_shortname, 
+                        1 as level_seq_no, 
+                        'test' as position_type, 
+                        'test' as position_level, 
+                        'test' as level_othername, 
+                        'test' as level_engname
+                    FROM dual
+                ";
+    
+                if (count($SqlOrgs) > 0) {
+
+                    //   level_abbr] => 1,  levelname_en] => , positiontype_id] => 0,  flag_executive] => 0, region_calc_flag] => N, pos_value] => 0.00, sortorder] => 14, flag] => 1, creator] => -1, createdate] => 2020-03-02 15:46:09, create_org] => 0, updateuser] => 310210128083701, updatedate] => 2022-04-21 00:00:01, update_org] => 100000, recode_id] => 1, is_sync] => 0, sync_datetime] => 2022-12-20 15:50:29, sync_status_code] => , is_delete] => 0, org_owner] => 0, org_visible] => 1
+
+                    // TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' )
+                    $sql = "
+                        MERGE INTO per_level d
+                        USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.id = s.id )
+                        WHEN NOT MATCHED THEN
+                        INSERT ( update_date, update_user, level_no, level_name, level_active, per_type, level_shortname, level_seq_no, position_type, position_level, level_othername, level_engname) VALUES
+                        ( TO_CHAR( CURRENT_TIMESTAMP, 'YYYY-MM-DD HH24:MI:SS' ), s.update_user, s.level_no, s.level_name, s.level_active, s. per_type, s.level_shortname, s.level_seq_no, s.position_type, s.position_level, s.level_othername, s.level_engname )               
+                        WHEN MATCHED THEN
+                        UPDATE
+                        SET
+                            update_date = TO_CHAR( CURRENT_TIMESTAMP, 'YYYY-MM-DD HH24:MI:SS' ),
+                            update_user = s.update_user,
+                            level_no = s.level_no, 
+                            level_name = s.level_name, 
+                            level_active = s.level_active, 
+                            per_type = s.per_type, 
+                            level_seq_no = s.level_seq_no, 
+                            position_type = s.position_type  
+                    ";
+    
+                    foreach ([1, 2] as $kg => $vg) {
+    
+                        if ($vg == 1) {
+    
+                            $cmd = $con->createCommand($sql);
+                        } else {
+    
+                            $cmd = $con2->createCommand($sql);
+                        }
+    
+                        // $cmd->bindValue(":user_id", $user_id);
+    
+                        $cmd->execute();
+                    }
+    
+                    $SqlOrgs = [];
 
 
-            $SqlOrgs = [];
+                    // exit;
+                }
+            }
+        
+            
         }
+
+
 
         
         $log_path = Yii::$app->getRuntimePath() . '\logs\log_tb_level_' . date('d-M-Y') . '.log';
