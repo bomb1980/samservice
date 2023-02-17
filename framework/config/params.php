@@ -51,7 +51,7 @@ if( $_SERVER["HTTP_HOST"] == 'samservice') {
     $dbhostdpis = 'oci:dbname=//localhost:1521/eis;charset=UTF8';
     $apiUrl = 'https://sso.dpis.go.th';
     $dbInserts = [1,2];
-    $dbInserts = [1];
+    // $dbInserts = [1];
 }
 else {
     
