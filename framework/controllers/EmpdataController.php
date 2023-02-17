@@ -43,7 +43,7 @@ class EmpdataController extends Controller
         $this->actionTb_pertype($user_id);
         $this->actionTb_level($user_id);
 
-        echo PerPersonal1::getFromApi($user_id);
+        // echo PerPersonal1::getFromApi($user_id);
 
 
 
@@ -1721,6 +1721,7 @@ class EmpdataController extends Controller
         \app\components\CommonFnc::write_log($log_path, $results);
     }
 
+    // http://samservice/empdata/tb_level
     public function actionTb_level($user_id = 1)
     {
 
@@ -1835,48 +1836,90 @@ class EmpdataController extends Controller
             foreach ($js as $ka => $va) {
 
 
+                // foreach ($va as $kc => $vc) {
+
+                //     echo $kc . ',<br>';
+                //     // echo $kc . ',';
+                // }
+
+
+                // exit;
+
+                // arr( $va );
+
+
+
                 $SqlOrgs[] = "
                     SELECT 
-                        " . $va->level_id . " as id, 
-                        454 as update_user, 
-                        '" . $va->level_code . "' as level_no, 
-                        '" . $va->levelname_th . "' as level_name, 
-                        '" . $va->pertype_id . "' as per_type, 
-                        1 as level_active, 
-                        'test' as level_shortname, 
-                        1 as level_seq_no, 
-                        'test' as position_type, 
-                        'test' as position_level, 
-                        'test' as level_othername, 
-                        'test' as level_engname
+                        '". $va->level_id ."' as level_id,
+                        '". $va->level_code ."' as level_code,
+                        '". $va->level_abbr ."' as level_abbr,
+                        '". $va->levelname_th ."' as levelname_th,
+                        '". $va->levelname_en ."' as levelname_en,
+                        '". $va->positiontype_id ."' as positiontype_id,
+                        '". $va->pertype_id ."' as pertype_id,
+                        '". $va->flag_executive ."' as flag_executive,
+                        '". $va->region_calc_flag ."' as region_calc_flag,
+                        '". $va->pos_value ."' as pos_value,
+                        '". $va->sortorder ."' as sortorder,
+                        '". $va->flag ."' as flag,
+                        '". $va->creator ."' as creator,
+                        '". $va->createdate ."' as createdate,
+                        '". $va->create_org ."' as create_org,
+                        '". $va->updateuser ."' as updateuser,
+                        '". $va->updatedate ."' as updatedate,
+                        '". $va->update_org ."' as update_org,
+                        '". $va->recode_id ."' as recode_id,
+                        '". $va->is_sync ."' as is_sync,
+                        '". $va->sync_datetime ."' as sync_datetime,
+                        '". $va->sync_status_code ."' as sync_status_code,
+                        '". $va->is_delete ."' as is_delete,
+                        '". $va->org_owner ."' as org_owner,
+                        '". $va->org_visible ."' as org_visible
                     FROM dual
                 ";
 
-                if (count($SqlOrgs) > 0) {
+                if (count($SqlOrgs) > 100) {
 
                     //   level_abbr] => 1,  levelname_en] => , positiontype_id] => 0,  flag_executive] => 0, region_calc_flag] => N, pos_value] => 0.00, sortorder] => 14, flag] => 1, creator] => -1, createdate] => 2020-03-02 15:46:09, create_org] => 0, updateuser] => 310210128083701, updatedate] => 2022-04-21 00:00:01, update_org] => 100000, recode_id] => 1, is_sync] => 0, sync_datetime] => 2022-12-20 15:50:29, sync_status_code] => , is_delete] => 0, org_owner] => 0, org_visible] => 1
 
                     // TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' )
                     $sql = "
-                        MERGE INTO per_level d
-                        USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.id = s.id )
+                        MERGE INTO per_level_news d
+                        USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.level_id = s.level_id )
                         WHEN NOT MATCHED THEN
-                        INSERT ( update_date, update_user, level_no, level_name, level_active, per_type, level_shortname, level_seq_no, position_type, position_level, level_othername, level_engname) VALUES
-                        ( TO_CHAR( CURRENT_TIMESTAMP, 'YYYY-MM-DD HH24:MI:SS' ), s.update_user, s.level_no, s.level_name, s.level_active, s. per_type, s.level_shortname, s.level_seq_no, s.position_type, s.position_level, s.level_othername, s.level_engname )               
+                        INSERT ( level_id,level_code,level_abbr,levelname_th,levelname_en,positiontype_id,pertype_id,flag_executive,region_calc_flag,pos_value,sortorder,flag,creator,createdate,create_org,updateuser,updatedate,update_org,recode_id,is_sync,sync_datetime,sync_status_code,is_delete,org_owner,org_visible ) VALUES
+                        ( s.level_id, s.level_code, s.level_abbr, s.levelname_th, s.levelname_en, s.positiontype_id, s.pertype_id, s.flag_executive, s.region_calc_flag, s.pos_value, s.sortorder, s.flag, s.creator, s.createdate, s.create_org, s.updateuser, s.updatedate, s.update_org, s.recode_id, s.is_sync, s.sync_datetime, s.sync_status_code, s.is_delete, s.org_owner, s.org_visible )               
                         WHEN MATCHED THEN
                         UPDATE
                         SET
-                            update_date = TO_CHAR( CURRENT_TIMESTAMP, 'YYYY-MM-DD HH24:MI:SS' ),
-                            update_user = s.update_user,
-                            level_no = s.level_no, 
-                            level_name = s.level_name, 
-                            level_active = s.level_active, 
-                            per_type = s.per_type, 
-                            level_seq_no = s.level_seq_no, 
-                            position_type = s.position_type  
+                            level_code = s.level_code,
+                            level_abbr = s.level_abbr,
+                            levelname_th = s.levelname_th,
+                            levelname_en = s.levelname_en,
+                            positiontype_id = s.positiontype_id,
+                            pertype_id = s.pertype_id,
+                            flag_executive = s.flag_executive,
+                            region_calc_flag = s.region_calc_flag,
+                            pos_value = s.pos_value,
+                            sortorder = s.sortorder,
+                            flag = s.flag,
+                            creator = s.creator,
+                            createdate = s.createdate,
+                            create_org = s.create_org,
+                            updateuser = s.updateuser,
+                            updatedate = s.updatedate,
+                            update_org = s.update_org,
+                            recode_id = s.recode_id,
+                            is_sync = s.is_sync,
+                            sync_datetime = s.sync_datetime,
+                            sync_status_code = s.sync_status_code,
+                            is_delete = s.is_delete,
+                            org_owner = s.org_owner,
+                            org_visible = s.org_visible
                     ";
 
-                    foreach ([1, 2] as $kg => $vg) {
+                    foreach ( $params['dbInserts'] as $kg => $vg) {
 
                         if ($vg == 1) {
 
@@ -1897,6 +1940,67 @@ class EmpdataController extends Controller
                     // exit;
                 }
             }
+        }
+
+        if (count($SqlOrgs) > 0) {
+
+            //   level_abbr] => 1,  levelname_en] => , positiontype_id] => 0,  flag_executive] => 0, region_calc_flag] => N, pos_value] => 0.00, sortorder] => 14, flag] => 1, creator] => -1, createdate] => 2020-03-02 15:46:09, create_org] => 0, updateuser] => 310210128083701, updatedate] => 2022-04-21 00:00:01, update_org] => 100000, recode_id] => 1, is_sync] => 0, sync_datetime] => 2022-12-20 15:50:29, sync_status_code] => , is_delete] => 0, org_owner] => 0, org_visible] => 1
+
+            // TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' )
+            $sql = "
+                MERGE INTO per_level_news d
+                USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.level_id = s.level_id )
+                WHEN NOT MATCHED THEN
+                INSERT ( level_id,level_code,level_abbr,levelname_th,levelname_en,positiontype_id,pertype_id,flag_executive,region_calc_flag,pos_value,sortorder,flag,creator,createdate,create_org,updateuser,updatedate,update_org,recode_id,is_sync,sync_datetime,sync_status_code,is_delete,org_owner,org_visible ) VALUES
+                ( s.level_id, s.level_code, s.level_abbr, s.levelname_th, s.levelname_en, s.positiontype_id, s.pertype_id, s.flag_executive, s.region_calc_flag, s.pos_value, s.sortorder, s.flag, s.creator, s.createdate, s.create_org, s.updateuser, s.updatedate, s.update_org, s.recode_id, s.is_sync, s.sync_datetime, s.sync_status_code, s.is_delete, s.org_owner, s.org_visible )               
+                WHEN MATCHED THEN
+                UPDATE
+                SET
+                    level_code = s.level_code,
+                    level_abbr = s.level_abbr,
+                    levelname_th = s.levelname_th,
+                    levelname_en = s.levelname_en,
+                    positiontype_id = s.positiontype_id,
+                    pertype_id = s.pertype_id,
+                    flag_executive = s.flag_executive,
+                    region_calc_flag = s.region_calc_flag,
+                    pos_value = s.pos_value,
+                    sortorder = s.sortorder,
+                    flag = s.flag,
+                    creator = s.creator,
+                    createdate = s.createdate,
+                    create_org = s.create_org,
+                    updateuser = s.updateuser,
+                    updatedate = s.updatedate,
+                    update_org = s.update_org,
+                    recode_id = s.recode_id,
+                    is_sync = s.is_sync,
+                    sync_datetime = s.sync_datetime,
+                    sync_status_code = s.sync_status_code,
+                    is_delete = s.is_delete,
+                    org_owner = s.org_owner,
+                    org_visible = s.org_visible
+            ";
+
+            foreach ( $params['dbInserts'] as $kg => $vg) {
+
+                if ($vg == 1) {
+
+                    $cmd = $con->createCommand($sql);
+                } else {
+
+                    $cmd = $con2->createCommand($sql);
+                }
+
+                // $cmd->bindValue(":user_id", $user_id);
+
+                $cmd->execute();
+            }
+
+            $SqlOrgs = [];
+
+
+            // exit;
         }
 
 
