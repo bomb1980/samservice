@@ -30,20 +30,39 @@ class EmpdataController extends Controller
     public function actionGogo()
     {
 
-        $user_id = 1;
-        if (Yii::$app->user->getId()) {
+        if( true ) {
 
+            $user_id = 1;
+            if (Yii::$app->user->getId()) {
+    
+    
+                $user_id = Yii::$app->user->getId();
+            }
+    
+         
+    
+            echo PerPersonal1::getFromApi($user_id);
+        }
+        else {
 
-            $user_id = Yii::$app->user->getId();
+            $user_id = 1;
+            if (Yii::$app->user->getId()) {
+    
+    
+                $user_id = Yii::$app->user->getId();
+            }
+    
+            $this->actionTb_line($user_id);
+            $this->actionPos_position($user_id);
+            $this->actionOganize($user_id);
+            $this->actionTb_pertype($user_id);
+            $this->actionTb_level($user_id);
+    
+            echo PerPersonal1::getFromApi($user_id);
+
         }
 
-        $this->actionTb_line($user_id);
-        $this->actionPos_position($user_id);
-        $this->actionOganize($user_id);
-        $this->actionTb_pertype($user_id);
-        $this->actionTb_level($user_id);
 
-        // echo PerPersonal1::getFromApi($user_id);
 
 
 
