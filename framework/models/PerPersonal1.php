@@ -84,7 +84,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
 
         $url = $params['apiUrl'] . "/oapi/open_api_users/callapi";
-       
+
 
         $header = array(
             'Content-Type: application/x-www-form-urlencoded',
@@ -93,12 +93,12 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
         $SqlUnion = [];
 
-        
+
         for ($i = 1; $i <= 100; $i++) {
 
             $param = array(
-                'endpoint' => 'ssotest',
-                'limit' => 300,
+                'endpoint' => 'sso_personal2',
+                'limit' => 100,
                 'page' => $i
             );
 
@@ -138,7 +138,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
 
                 // exit;
-               
+
 
                 $setType = 2;
                 if (in_array($va->pertype_id, [5, 42, 43, 44])) {
@@ -148,153 +148,153 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
                 $SqlUnion[$setType][] = "
                     SELECT 
-                        '". trim($va->per_id)."' as per_id,
-                        '". trim($va->org_owner)."' as org_owner,
-                        '". trim($va->per_cardno)."' as per_cardno,
-                        '". trim($va->per_name)."' as per_name,
-                        '". trim($va->per_surname)."' as per_surname,
-                        '". trim($va->d5_per_id)."' as d5_per_id,
-                        '". trim($va->pos_id)."' as pos_id,
-                        '". trim($va->pos_no)."' as pos_no,
-                        '". trim($va->per_status)."' as per_status,
-                        '". trim($va->per_offno)."' as per_offno,
-                        '". trim($va->per_renew)."' as per_renew,
-                        '". trim($va->per_taxno)."' as per_taxno,
-                        '". trim($va->per_start_org)."' as per_start_org,
-                        '". trim($va->per_startdate)."' as per_startdate,
-                        '". trim($va->per_occupydate)."' as per_occupydate,
-                        '". trim($va->per_effectivedate)."' as per_effectivedate,
-                        '". trim($va->per_gender)."' as per_gender,
-                        '". trim($va->blood_id)."' as blood_id,
-                        '". trim($va->scar)."' as scar,
-                        '". trim($va->birth_place)."' as birth_place,
-                        '". trim($va->is_ordain)."' as is_ordain,
-                        '". trim($va->ordain_date)."' as ordain_date,
-                        '". trim($va->ordain_detail)."' as ordain_detail,
-                        '". trim($va->is_disability)."' as is_disability,
-                        '". trim($va->is_soldier_service)."' as is_soldier_service,
-                        '". trim($va->per_saldate)."' as per_saldate,
-                        '". trim($va->probation_startdate)."' as probation_startdate,
-                        '". trim($va->probation_enddate)."' as probation_enddate,
-                        '". trim($va->probation_passdate)."' as probation_passdate,
-                        '". trim($va->per_posdate)."' as per_posdate,
-                        '". trim($va->approve_per_id)."' as approve_per_id,
-                        '". trim($va->replace_per_id)."' as replace_per_id,
-                        '". trim($va->absent_flag)."' as absent_flag,
-                        '". trim($va->level_no_salary)."' as level_no_salary,
-                        '". trim($va->per_mobile)."' as per_mobile,
-                        '". trim($va->per_email)."' as per_email,
-                        '". trim($va->per_file_no)."' as per_file_no,
-                        '". trim($va->per_bank_account)."' as per_bank_account,
-                        '". trim($va->per_license_no)."' as per_license_no,
-                        '". trim($va->per_id_ref)."' as per_id_ref,
-                        '". trim($va->per_nickname)."' as per_nickname,
-                        '". trim($va->per_contact_person)."' as per_contact_person,
-                        '". trim($va->per_id_ass_ref)."' as per_id_ass_ref,
-                        '". trim($va->per_cooperative)."' as per_cooperative,
-                        '". trim($va->per_cooperative_no)."' as per_cooperative_no,
-                        '". trim($va->per_seq_no)."' as per_seq_no,
-                        '". trim($va->per_pos_reason)."' as per_pos_reason,
-                        '". trim($va->per_pos_year)."' as per_pos_year,
-                        '". trim($va->per_remark)."' as per_remark,
-                        '". trim($va->per_pos_docno)."' as per_pos_docno,
-                        '". trim($va->per_pos_org)."' as per_pos_org,
-                        '". trim($va->per_pos_orgmgt)."' as per_pos_orgmgt,
-                        '". trim($va->per_pos_docdate)."' as per_pos_docdate,
-                        '". trim($va->per_pos_doctype)."' as per_pos_doctype,
-                        '". trim($va->per_pos_remark)."' as per_pos_remark,
-                        '". trim($va->per_book_no)."' as per_book_no,
-                        '". trim($va->per_book_date)."' as per_book_date,
-                        '". trim($va->per_contract_count)."' as per_contract_count,
-                        '". trim($va->disability_id)."' as disability_id,
-                        '". trim($va->per_pos_desc)."' as per_pos_desc,
-                        '". trim($va->per_job)."' as per_job,
-                        '". trim($va->is_auditor)."' as is_auditor,
-                        '". trim($va->per_ot_flag)."' as per_ot_flag,
-                        '". trim($va->per_type_2535)."' as per_type_2535,
-                        '". trim($va->prename_id)."' as prename_id,
-                        '". trim($va->prename_th)."' as prename_th,
-                        '". trim($va->prename_en)."' as prename_en,
-                        '". trim($va->per_eng_name)."' as per_eng_name,
-                        '". trim($va->per_eng_surname)."' as per_eng_surname,
-                        '". trim($va->married_id)."' as married_id,
-                        '". trim($va->religion_id)."' as religion_id,
-                        '". trim($va->pertype_id)."' as pertype_id,
-                        '". trim($va->department_id)."' as department_id,
-                        '". trim($va->province_id)."' as province_id,
-                        '". trim($va->movement_id)."' as movement_id,
-                        '". trim($va->pay_no)."' as pay_no,
-                        '". trim($va->per_orgmgt)."' as per_orgmgt,
-                        '". trim($va->per_level_id)."' as per_level_id,
-                        '". trim($va->posstatus_id)."' as posstatus_id,
-                        '". trim($va->probation_flag)."' as probation_flag,
-                        '". trim($va->per_salary)."' as per_salary,
-                        '". trim($va->per_mgtsalary)."' as per_mgtsalary,
-                        '". trim($va->per_spsalary)."' as per_spsalary,
-                        '". trim($va->retired_date)."' as retired_date,
-                        '". trim($va->nbs_flag)."' as nbs_flag,
-                        '". trim($va->hip_flag)."' as hip_flag,
-                        '". trim($va->newwave_flag)."' as newwave_flag,
-                        '". trim($va->tena)."' as tena,
-                        '". trim($va->per_union)."' as per_union,
-                        '". trim($va->per_uniondate)."' as per_uniondate,
-                        '". trim($va->per_union2)."' as per_union2,
-                        '". trim($va->per_uniondate2)."' as per_uniondate2,
-                        '". trim($va->per_union3)."' as per_union3,
-                        '". trim($va->per_uniondate3)."' as per_uniondate3,
-                        '". trim($va->per_union4)."' as per_union4,
-                        '". trim($va->per_uniondate4)."' as per_uniondate4,
-                        '". trim($va->per_union5)."' as per_union5,
-                        '". trim($va->per_uniondate5)."' as per_uniondate5,
-                        '". trim($va->per_member)."' as per_member,
-                        '". trim($va->per_memberdate)."' as per_memberdate,
-                        '". trim($va->is_sync)."' as is_sync,
-                        '". trim($va->sync_datetime)."' as sync_datetime,
-                        '". trim($va->dcid)."' as dcid,
-                        '". trim($va->sync_status_code)."' as sync_status_code,
-                        '". trim($va->per_set_ass)."' as per_set_ass,
-                        '". trim($va->organize_id_ass)."' as organize_id_ass,
-                        '". trim($va->organize_id_work)."' as organize_id_work,
-                        '". trim($va->organize_id_kpi)."' as organize_id_kpi,
-                        '". trim($va->organize_id_salary)."' as organize_id_salary,
-                        '". trim($va->scholar_flag)."' as scholar_flag,
-                        '". trim($va->relocation_type)."' as relocation_type,
-                        '". trim($va->relocation_name)."' as relocation_name,
-                        '". trim($va->audit_flag)."' as audit_flag,
-                        '". trim($va->audit_by)."' as audit_by,
-                        '". trim($va->audit_date)."' as audit_date,
-                        '". trim($va->department_id_ass)."' as department_id_ass,
-                        '". trim($va->create_date)."' as create_date,
-                        '". trim($va->creator)."' as creator,
-                        '". trim($va->create_org)."' as create_org,
-                        '". trim($va->update_date)."' as update_date,
-                        '". trim($va->update_user)."' as update_user,
-                        '". trim($va->update_name)."' as update_name,
-                        '". trim($va->allow_sync)."' as allow_sync,
-                        '". trim($va->edit_req_no)."' as edit_req_no,
-                        '". trim($va->update_org)."' as update_org,
-                        '". trim($va->birth_date)."' as birth_date,
-                        '". trim($va->creator_name)."' as creator_name,
-                        '". trim($va->audit_name)."' as audit_name,
-                        '". trim($va->is_delete)."' as is_delete,
-                        '". trim($va->exam_register_id)."' as exam_register_id,
-                        '". trim($va->father_name)."' as father_name,
-                        '". trim($va->father_surname)."' as father_surname,
-                        '". trim($va->father_prename_th)."' as father_prename_th,
-                        '". trim($va->father_prename_id)."' as father_prename_id,
-                        '". trim($va->mother_name)."' as mother_name,
-                        '". trim($va->mother_surname)."' as mother_surname,
-                        '". trim($va->mother_prename_th)."' as mother_prename_th,
-                        '". trim($va->mother_prename_id)."' as mother_prename_id,
-                        '". trim($va->is_draft)."' as is_draft,
-                        '". trim($va->biometric_id)."' as biometric_id,
-                        '". trim($va->area_province_id)."' as area_province_id,
-                        '". trim($va->decoration_date)."' as decoration_date,
-                        '". trim($va->decoration_id)."' as decoration_id,
-                        '". trim($va->decoration_th)."' as decoration_th,
-                        '". trim($va->decoration_abbr)."' as decoration_abbr,
-                        '". trim($va->per_level_date)."' as per_level_date,
-                        '". trim($va->per_line_date)."' as per_line_date
+                        '" . trim($va->per_id) . "' as per_id,
+                        '" . trim($va->org_owner) . "' as org_owner,
+                        '" . trim($va->per_cardno) . "' as per_cardno,
+                        '" . trim($va->per_name) . "' as per_name,
+                        '" . trim($va->per_surname) . "' as per_surname,
+                        '" . trim($va->d5_per_id) . "' as d5_per_id,
+                        '" . trim($va->pos_id) . "' as pos_id,
+                        '" . trim($va->pos_no) . "' as pos_no,
+                        '" . trim($va->per_status) . "' as per_status,
+                        '" . trim($va->per_offno) . "' as per_offno,
+                        '" . trim($va->per_renew) . "' as per_renew,
+                        '" . trim($va->per_taxno) . "' as per_taxno,
+                        '" . trim($va->per_start_org) . "' as per_start_org,
+                        '" . trim($va->per_startdate) . "' as per_startdate,
+                        '" . trim($va->per_occupydate) . "' as per_occupydate,
+                        '" . trim($va->per_effectivedate) . "' as per_effectivedate,
+                        '" . trim($va->per_gender) . "' as per_gender,
+                        '" . trim($va->blood_id) . "' as blood_id,
+                        '" . trim($va->scar) . "' as scar,
+                        '" . trim($va->birth_place) . "' as birth_place,
+                        '" . trim($va->is_ordain) . "' as is_ordain,
+                        '" . trim($va->ordain_date) . "' as ordain_date,
+                        '" . trim($va->ordain_detail) . "' as ordain_detail,
+                        '" . trim($va->is_disability) . "' as is_disability,
+                        '" . trim($va->is_soldier_service) . "' as is_soldier_service,
+                        '" . trim($va->per_saldate) . "' as per_saldate,
+                        '" . trim($va->probation_startdate) . "' as probation_startdate,
+                        '" . trim($va->probation_enddate) . "' as probation_enddate,
+                        '" . trim($va->probation_passdate) . "' as probation_passdate,
+                        '" . trim($va->per_posdate) . "' as per_posdate,
+                        '" . trim($va->approve_per_id) . "' as approve_per_id,
+                        '" . trim($va->replace_per_id) . "' as replace_per_id,
+                        '" . trim($va->absent_flag) . "' as absent_flag,
+                        '" . trim($va->level_no_salary) . "' as level_no_salary,
+                        '" . trim($va->per_mobile) . "' as per_mobile,
+                        '" . trim($va->per_email) . "' as per_email,
+                        '" . trim($va->per_file_no) . "' as per_file_no,
+                        '" . trim($va->per_bank_account) . "' as per_bank_account,
+                        '" . trim($va->per_license_no) . "' as per_license_no,
+                        '" . trim($va->per_id_ref) . "' as per_id_ref,
+                        '" . trim($va->per_nickname) . "' as per_nickname,
+                        '" . trim($va->per_contact_person) . "' as per_contact_person,
+                        '" . trim($va->per_id_ass_ref) . "' as per_id_ass_ref,
+                        '" . trim($va->per_cooperative) . "' as per_cooperative,
+                        '" . trim($va->per_cooperative_no) . "' as per_cooperative_no,
+                        '" . trim($va->per_seq_no) . "' as per_seq_no,
+                        '" . trim($va->per_pos_reason) . "' as per_pos_reason,
+                        '" . trim($va->per_pos_year) . "' as per_pos_year,
+                        '" . trim($va->per_remark) . "' as per_remark,
+                        '" . trim($va->per_pos_docno) . "' as per_pos_docno,
+                        '" . trim($va->per_pos_org) . "' as per_pos_org,
+                        '" . trim($va->per_pos_orgmgt) . "' as per_pos_orgmgt,
+                        '" . trim($va->per_pos_docdate) . "' as per_pos_docdate,
+                        '" . trim($va->per_pos_doctype) . "' as per_pos_doctype,
+                        '" . trim($va->per_pos_remark) . "' as per_pos_remark,
+                        '" . trim($va->per_book_no) . "' as per_book_no,
+                        '" . trim($va->per_book_date) . "' as per_book_date,
+                        '" . trim($va->per_contract_count) . "' as per_contract_count,
+                        '" . trim($va->disability_id) . "' as disability_id,
+                        '" . trim($va->per_pos_desc) . "' as per_pos_desc,
+                        '" . trim($va->per_job) . "' as per_job,
+                        '" . trim($va->is_auditor) . "' as is_auditor,
+                        '" . trim($va->per_ot_flag) . "' as per_ot_flag,
+                        '" . trim($va->per_type_2535) . "' as per_type_2535,
+                        '" . trim($va->prename_id) . "' as prename_id,
+                        '" . trim($va->prename_th) . "' as prename_th,
+                        '" . trim($va->prename_en) . "' as prename_en,
+                        '" . trim($va->per_eng_name) . "' as per_eng_name,
+                        '" . trim($va->per_eng_surname) . "' as per_eng_surname,
+                        '" . trim($va->married_id) . "' as married_id,
+                        '" . trim($va->religion_id) . "' as religion_id,
+                        '" . trim($va->pertype_id) . "' as pertype_id,
+                        '" . trim($va->department_id) . "' as department_id,
+                        '" . trim($va->province_id) . "' as province_id,
+                        '" . trim($va->movement_id) . "' as movement_id,
+                        '" . trim($va->pay_no) . "' as pay_no,
+                        '" . trim($va->per_orgmgt) . "' as per_orgmgt,
+                        '" . trim($va->per_level_id) . "' as per_level_id,
+                        '" . trim($va->posstatus_id) . "' as posstatus_id,
+                        '" . trim($va->probation_flag) . "' as probation_flag,
+                        '" . trim($va->per_salary) . "' as per_salary,
+                        '" . trim($va->per_mgtsalary) . "' as per_mgtsalary,
+                        '" . trim($va->per_spsalary) . "' as per_spsalary,
+                        '" . trim($va->retired_date) . "' as retired_date,
+                        '" . trim($va->nbs_flag) . "' as nbs_flag,
+                        '" . trim($va->hip_flag) . "' as hip_flag,
+                        '" . trim($va->newwave_flag) . "' as newwave_flag,
+                        '" . trim($va->tena) . "' as tena,
+                        '" . trim($va->per_union) . "' as per_union,
+                        '" . trim($va->per_uniondate) . "' as per_uniondate,
+                        '" . trim($va->per_union2) . "' as per_union2,
+                        '" . trim($va->per_uniondate2) . "' as per_uniondate2,
+                        '" . trim($va->per_union3) . "' as per_union3,
+                        '" . trim($va->per_uniondate3) . "' as per_uniondate3,
+                        '" . trim($va->per_union4) . "' as per_union4,
+                        '" . trim($va->per_uniondate4) . "' as per_uniondate4,
+                        '" . trim($va->per_union5) . "' as per_union5,
+                        '" . trim($va->per_uniondate5) . "' as per_uniondate5,
+                        '" . trim($va->per_member) . "' as per_member,
+                        '" . trim($va->per_memberdate) . "' as per_memberdate,
+                        '" . trim($va->is_sync) . "' as is_sync,
+                        '" . trim($va->sync_datetime) . "' as sync_datetime,
+                        '" . trim($va->dcid) . "' as dcid,
+                        '" . trim($va->sync_status_code) . "' as sync_status_code,
+                        '" . trim($va->per_set_ass) . "' as per_set_ass,
+                        '" . trim($va->organize_id_ass) . "' as organize_id_ass,
+                        '" . trim($va->organize_id_work) . "' as organize_id_work,
+                        '" . trim($va->organize_id_kpi) . "' as organize_id_kpi,
+                        '" . trim($va->organize_id_salary) . "' as organize_id_salary,
+                        '" . trim($va->scholar_flag) . "' as scholar_flag,
+                        '" . trim($va->relocation_type) . "' as relocation_type,
+                        '" . trim($va->relocation_name) . "' as relocation_name,
+                        '" . trim($va->audit_flag) . "' as audit_flag,
+                        '" . trim($va->audit_by) . "' as audit_by,
+                        '" . trim($va->audit_date) . "' as audit_date,
+                        '" . trim($va->department_id_ass) . "' as department_id_ass,
+                        '" . trim($va->create_date) . "' as create_date,
+                        '" . trim($va->creator) . "' as creator,
+                        '" . trim($va->create_org) . "' as create_org,
+                        '" . trim($va->update_date) . "' as update_date,
+                        '" . trim($va->update_user) . "' as update_user,
+                        '" . trim($va->update_name) . "' as update_name,
+                        '" . trim($va->allow_sync) . "' as allow_sync,
+                        '" . trim($va->edit_req_no) . "' as edit_req_no,
+                        '" . trim($va->update_org) . "' as update_org,
+                        '" . trim($va->birth_date) . "' as birth_date,
+                        '" . trim($va->creator_name) . "' as creator_name,
+                        '" . trim($va->audit_name) . "' as audit_name,
+                        '" . trim($va->is_delete) . "' as is_delete,
+                        '" . trim($va->exam_register_id) . "' as exam_register_id,
+                        '" . trim($va->father_name) . "' as father_name,
+                        '" . trim($va->father_surname) . "' as father_surname,
+                        '" . trim($va->father_prename_th) . "' as father_prename_th,
+                        '" . trim($va->father_prename_id) . "' as father_prename_id,
+                        '" . trim($va->mother_name) . "' as mother_name,
+                        '" . trim($va->mother_surname) . "' as mother_surname,
+                        '" . trim($va->mother_prename_th) . "' as mother_prename_th,
+                        '" . trim($va->mother_prename_id) . "' as mother_prename_id,
+                        '" . trim($va->is_draft) . "' as is_draft,
+                        '" . trim($va->biometric_id) . "' as biometric_id,
+                        '" . trim($va->area_province_id) . "' as area_province_id,
+                        '" . trim($va->decoration_date) . "' as decoration_date,
+                        '" . trim($va->decoration_id) . "' as decoration_id,
+                        '" . trim($va->decoration_th) . "' as decoration_th,
+                        '" . trim($va->decoration_abbr) . "' as decoration_abbr,
+                        '" . trim($va->per_level_date) . "' as per_level_date,
+                        '" . trim($va->per_line_date) . "' as per_line_date
                     FROM dual
                 ";
                 // arr('dsafdf');
@@ -466,20 +466,16 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
                         if ($ks == 1) {
                             $cmd = $con->createCommand($sql);
-    
-    
+
+                            $cmd->execute();
+                            $SqlUnion[$ks] = [];
                         } else {
 
-                            $cmd = $con2->createCommand($sql);
-    
-                            
+                            //$cmd = $con2->createCommand($sql);
+
+                            // $cmd->execute();
+                            // $SqlUnion[$ks] = [];
                         }
-                        
-                        $cmd->execute();
-                        $SqlUnion[$ks] = [];
-
-
-                   
                     }
                 }
             }
@@ -653,19 +649,16 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                 if ($ks == 1) {
                     $cmd = $con->createCommand($sql);
 
-
+                    $cmd->execute();
+                    $SqlUnion[$ks] = [];
                 } else {
 
-                    $cmd = $con2->createCommand($sql);
+                    //$cmd = $con2->createCommand($sql);
 
-                    
+                    // $cmd->execute();
+                    // $SqlUnion[$ks] = [];
                 }
-                
-                $cmd->execute();
-                $SqlUnion[$ks] = [];
 
-
-           
             }
         }
 
@@ -700,7 +693,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
     public static function getFromApi_backup($user_id = 1)
     {
 
-        
+
         global $params;
 
         ini_set("default_socket_timeout", 20000);
@@ -756,7 +749,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
         $result = json_decode($response, true);
 
 
-        arr( $result );
+        arr($result);
         $accessToken = '';
         $encrypt_key = '';
 
@@ -844,7 +837,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
             ++$file_pass;
 
-            
+
 
 
             // file_put_contents($save_file, $data_result["data"]);
@@ -891,7 +884,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                 //     continue;
                 // }
 
-                
+
 
 
 
@@ -958,7 +951,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
                     if (!isset($levels[$va->per_level_id])) {
 
-                        
+
                         $levels[$va->per_level_id] = 'O1';
                     }
                 } else {

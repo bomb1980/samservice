@@ -30,7 +30,7 @@ class EmpdataController extends Controller
     public function actionGogo()
     {
 
-        if( true ) {
+        if( false ) {
 
             $user_id = 1;
             if (Yii::$app->user->getId()) {
@@ -52,11 +52,11 @@ class EmpdataController extends Controller
                 $user_id = Yii::$app->user->getId();
             }
     
-            $this->actionTb_line($user_id);
-            $this->actionPos_position($user_id);
-            $this->actionOganize($user_id);
-            $this->actionTb_pertype($user_id);
-            $this->actionTb_level($user_id);
+            // $this->actionTb_line($user_id);
+            // $this->actionPos_position($user_id);
+            // $this->actionOganize($user_id);
+            // $this->actionTb_pertype($user_id);
+            // $this->actionTb_level($user_id);
     
             echo PerPersonal1::getFromApi($user_id);
 
@@ -182,9 +182,9 @@ class EmpdataController extends Controller
 
                 // exit;
 
-                // if ($va->department_id != 1640000) {
-                //     continue;
-                // }
+                if ($va->department_id != 1640000) {
+                    continue;
+                }
 
 
                 // if ($va->orgclass_id == 1) {
