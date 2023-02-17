@@ -5,9 +5,39 @@ namespace App\Http\Controllers;
 use App\Models\dasdfsdsadf;
 use App\Http\Requests\StoredasdfsdsadfRequest;
 use App\Http\Requests\UpdatedasdfsdsadfRequest;
+use App\Models\per_org;
 
 class DasdfsdsadfController extends Controller
 {
+
+    function createSeedText($modelName = null)
+    {
+        $skip = ['remember_token',];
+
+        $load = 'App\\Models\\' . $modelName . '';
+
+        $model = new $load();
+
+        // foreach ($model->get()->skip(0)->take(10) as $km => $vm) {
+        foreach ($model->get() as $km => $vm) {
+            $keep = [];
+            foreach ($model->getFillable() as $kf => $name) {
+                if (in_array($name, $skip)) {
+                    continue;
+                }
+
+                if (empty($vm->$name)) {
+                    //continue;
+                    $keep[] = '"' . $name . '" => NULL';
+                } else {
+                    $keep[] = '"' . $name . '" => "' . addslashes($vm->$name) . '"';
+                }
+            }
+
+            echo '[' . implode(', ', $keep) . '],<br>';
+        }
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -15,6 +45,14 @@ class DasdfsdsadfController extends Controller
      */
     public function index()
     {
+
+        foreach(per_org::get() as $ka => $va ){
+
+            dd($va);
+        }
+
+        echo 'dsaafdds';
+
         //
     }
 
