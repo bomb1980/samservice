@@ -13,13 +13,13 @@ class CreatePerLineNewsTable extends Migration
      */
     public function up()
     {
-
-
         Schema::create('per_line_news', function (Blueprint $table) {
-            $table->string('line_id')->nullable();
+            $table->integer('line_id')->autoIncrement();
+
+            // $table->string('line_id')->nullable();
             $table->string('line_code')->nullable();
             $table->string('linename_abbr')->nullable();
-            $table->string('linename_th')->nullable();
+            $table->string('linename_th', 1000)->nullable();
             $table->string('linename_en')->nullable();
             $table->string('linegroup_id')->nullable();
             $table->string('positiontype_id')->nullable();
