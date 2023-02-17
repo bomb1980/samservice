@@ -7,6 +7,8 @@ $cf_themes_url = 'http://localhost:8080/themes';
 $cf_themes_path = 'C:\xampp\htdocs\themes'; 
 */
 
+
+
 if (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] != "off") {
     $protocol = "https://";
 } else {
@@ -48,17 +50,21 @@ if( $_SERVER["HTTP_HOST"] == 'samservice') {
     $dbhost = 'mysql:host=127.0.0.1;';
     $dbhostdpis = 'oci:dbname=//localhost:1521/eis;charset=UTF8';
     $apiUrl = 'https://sso.dpis.go.th';
+    $dbInserts = [1,2];
+    $dbInserts = [1];
 }
 else {
-
+    
     $dbhost = 'mysql:host=127.0.0.1;';
     $dbhostdpis = 'oci:dbname=172.20.91.111:1521/D62SORA;charset=UTF8';
-
+    
+    $dbInserts = [1];
     $apiUrl = 'https://172.16.12.248';
 }
 
 
 return [
+    'dbInserts' => $dbInserts,
     'apiUrl' => $apiUrl,
     'adminEmail' => 'admin@example.com',
     'senderEmail' => 'noreply@example.com',
