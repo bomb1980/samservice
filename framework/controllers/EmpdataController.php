@@ -155,70 +155,191 @@ class EmpdataController extends Controller
 
             foreach ($js as $ka => $va) {
 
+                // foreach( $va as $kc => $vc ){
 
-                if ($va->department_id != 1640000) {
-                    continue;
-                }
+                //     echo $kc . ', ';
+                // }
 
 
-                if ($va->orgclass_id == 1) {
+                // exit;
 
-                    $ot_code = '01';
-                } else {
-                    $ot_code = '03';
-                }
+                // if ($va->department_id != 1640000) {
+                //     continue;
+                // }
+
+
+                // if ($va->orgclass_id == 1) {
+
+                //     $ot_code = '01';
+                // } else {
+                //     $ot_code = '03';
+                // }
 
 
                 $SqlOrgs[] = "
                     SELECT 
-                        " . $va->organize_id . " AS org_id,
-                        '" . $va->organize_code . "' AS org_code,
-                        '" . $va->organize_th . "' AS org_name,
-                        '" . $va->department_id . "' AS department_id,
-                        '" . $va->org_id_ass . "' AS org_id_ass,
-                        '" . $va->org_seq_no . "' AS org_seq_no,
-                        '" . $va->organize_add1 . "' AS org_addr1,
-                        '" . $va->organize_add2 . "' AS org_addr2,
-                        '" . $va->organize_add3 . "' AS org_addr3,
-                        '" . $va->organize_job . "' AS org_job,
-                        '" . $va->org_dopa_code . "' AS org_dopa_code,
-                        '" . $ot_code . "' AS ot_code,
-                        '" . $va->province_id . "' AS pv_code,
-                        '" . $va->latitude . "' AS pos_lat,
-                        '" . $va->longitude . "' AS pos_long
+                        '" . $va->organize_id . "' as organize_id, 
+                        '" . $va->org_status . "' as org_status, 
+                        '" . $va->organize_pid . "' as organize_pid, 
+                        '" . $va->organize_code . "' as organize_code, 
+                        '" . $va->org_date . "' as org_date, 
+                        '" . $va->org_start_date . "' as org_start_date, 
+                        '" . $va->org_end_date . "' as org_end_date, 
+                        '" . $va->organize_th . "' as organize_th, 
+                        '" . $va->organize_en . "' as organize_en, 
+                        '" . $va->organize_abbrth . "' as organize_abbrth, 
+                        '" . $va->organize_abbren . "' as organize_abbren, 
+                        '" . $va->organize_add1 . "' as organize_add1, 
+                        '" . $va->organize_add2 . "' as organize_add2, 
+                        '" . $va->organize_add3 . "' as organize_add3, 
+                        '" . $va->country_id . "' as country_id, 
+                        '" . $va->province_id . "' as province_id, 
+                        '" . $va->amphur_id . "' as amphur_id, 
+                        '" . $va->tambon_id . "' as tambon_id, 
+                        '" . $va->postcode . "' as postcode, 
+                        '" . $va->risk_zone . "' as risk_zone, 
+                        '" . $va->orglevel_id . "' as orglevel_id, 
+                        '" . $va->orgstat_id . "' as orgstat_id, 
+                        '" . $va->orgclass_id . "' as orgclass_id, 
+                        '" . $va->orgtype_id . "' as orgtype_id, 
+                        '" . $va->organize_job . "' as organize_job, 
+                        '" . $va->org_owner_id . "' as org_owner_id, 
+                        '" . $va->org_mode . "' as org_mode, 
+                        '" . $va->org_website . "' as org_website, 
+                        '" . $va->org_gps . "' as org_gps, 
+                        '" . $va->latitude . "' as latitude, 
+                        '" . $va->longitude . "' as longitude, 
+                        '" . $va->org_dopa_code . "' as org_dopa_code, 
+                        '" . $va->ministrygroup_id . "' as ministrygroup_id, 
+                        '" . $va->sector_id . "' as sector_id, 
+                        '" . $va->org_id_ass . "' as org_id_ass, 
+                        '" . $va->org_chart_level . "' as org_chart_level, 
+                        '" . $va->command_no . "' as command_no, 
+                        '" . $va->command_date . "' as command_date, 
+                        '" . $va->canceldate . "' as canceldate, 
+                        '" . $va->telephone . "' as telephone, 
+                        '" . $va->fax . "' as fax, 
+                        '" . $va->email . "' as email, 
+                        '" . $va->remark . "' as remark, 
+                        '" . $va->sortorder . "' as sortorder, 
+                        '" . $va->parent_flag . "' as parent_flag, 
+                        '" . $va->creator . "' as creator, 
+                        '" . $va->createdate . "' as createdate, 
+                        '" . $va->create_org . "' as create_org, 
+                        '" . $va->updateuser . "' as updateuser, 
+                        '" . $va->updatedate . "' as updatedate, 
+                        '" . $va->update_org . "' as update_org, 
+                        '" . $va->is_sync . "' as is_sync, 
+                        '" . $va->sync_datetime . "' as sync_datetime, 
+                        '" . $va->sync_status_code . "' as sync_status_code, 
+                        '" . $va->org_path . "' as org_path, 
+                        '" . $va->org_seq_no . "' as org_seq_no, 
+                        '" . $va->ministry_id . "' as ministry_id, 
+                        '" . $va->ministry . "' as ministry, 
+                        '" . $va->department_id . "' as department_id, 
+                        '" . $va->department . "' as department, 
+                        '" . $va->division_id . "' as division_id, 
+                        '" . $va->division . "' as division, 
+                        '" . $va->subdiv1 . "' as subdiv1, 
+                        '" . $va->subdiv2 . "' as subdiv2, 
+                        '" . $va->subdiv3 . "' as subdiv3, 
+                        '" . $va->subdiv4 . "' as subdiv4, 
+                        '" . $va->subdiv5 . "' as subdiv5, 
+                        '" . $va->subdiv6 . "' as subdiv6, 
+                        '" . $va->d5_org_id . "' as d5_org_id, 
+                        '" . $va->org_model_id . "' as org_model_id, 
+                        '" . $va->org_model_dlt_id . "' as org_model_dlt_id, 
+                        '" . $va->leader_pos_id . "' as leader_pos_id, 
+                        '" . $va->org_path_name . "' as org_path_name
                     FROM dual
                 ";
 
-                if (count($SqlOrgs) > 300) {
+                if (count($SqlOrgs) > 100) {
                     // TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' )
                     $sql = "
-                        MERGE INTO per_org_ass d
-                        USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.org_id = s.org_id )
+                        MERGE INTO per_org_ass_news d
+                        USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.organize_id = s.organize_id )
                         WHEN NOT MATCHED THEN
-                        INSERT ( pos_lat, pos_long, pv_code, ot_code, org_dopa_code, org_job, org_addr2, org_addr3, org_addr1, department_id, update_user, update_date, org_id, org_code, org_name, org_short, ol_code, ap_code, ct_code, org_date, org_id_ref, org_active, org_website, org_seq_no, org_eng_name, dt_code, mg_code, pg_code, org_zone, org_id_ass ) VALUES
-                        (  s.pos_lat, s.pos_long, s.pv_code, s.ot_code, s.org_dopa_code, s.org_job, s.org_addr2, s.org_addr3, s.org_addr1, s.department_id, :user_id, TO_CHAR( CURRENT_TIMESTAMP , 'YYYY-MM-DD HH24:MI:SS' ), s.org_id, s.org_code, s.org_name, '-', '-', NULL, '-', NULL, '0', '1', NULL, s.org_seq_no, NULL, NULL, NULL, NULL, NULL, s.org_id_ass )
+                        INSERT ( organize_id, org_status, organize_pid, organize_code, org_date, org_start_date, org_end_date, organize_th, organize_en, organize_abbrth, organize_abbren, organize_add1, organize_add2, organize_add3, country_id, province_id, amphur_id, tambon_id, postcode, risk_zone, orglevel_id, orgstat_id, orgclass_id, orgtype_id, organize_job, org_owner_id, org_mode, org_website, org_gps, latitude, longitude, org_dopa_code, ministrygroup_id, sector_id, org_id_ass, org_chart_level, command_no, command_date, canceldate, telephone, fax, email, remark, sortorder, parent_flag, creator, createdate, create_org, updateuser, updatedate, update_org, is_sync, sync_datetime, sync_status_code, org_path, org_seq_no, ministry_id, ministry, department_id, department, division_id, division, subdiv1, subdiv2, subdiv3, subdiv4, subdiv5, subdiv6, d5_org_id, org_model_id, org_model_dlt_id, leader_pos_id, org_path_name ) VALUES
+                        ( s.organize_id, s.org_status, s.organize_pid, s.organize_code, s.org_date, s.org_start_date, s.org_end_date, s.organize_th, s.organize_en, s.organize_abbrth, s.organize_abbren, s.organize_add1, s.organize_add2, s.organize_add3, s.country_id, s.province_id, s.amphur_id, s.tambon_id, s.postcode, s.risk_zone, s.orglevel_id, s.orgstat_id, s.orgclass_id, s.orgtype_id, s.organize_job, s.org_owner_id, s.org_mode, s.org_website, s.org_gps, s.latitude, s.longitude, s.org_dopa_code, s.ministrygroup_id, s.sector_id, s.org_id_ass, s.org_chart_level, s.command_no, s.command_date, s.canceldate, s.telephone, s.fax, s.email, s.remark, s.sortorder, s.parent_flag, s.creator, s.createdate, s.create_org, s.updateuser, s.updatedate, s.update_org, s.is_sync, s.sync_datetime, s.sync_status_code, s.org_path, s.org_seq_no, s.ministry_id, s.ministry, s.department_id, s.department, s.division_id, s.division, s.subdiv1, s.subdiv2, s.subdiv3, s.subdiv4, s.subdiv5, s.subdiv6, s.d5_org_id, s.org_model_id, s.org_model_dlt_id, s.leader_pos_id, s.org_path_name )
                         WHEN MATCHED THEN
                         UPDATE
                         SET
-                            update_date = TO_CHAR( CURRENT_TIMESTAMP, 'YYYY-MM-DD HH24:MI:SS' ),
-                            org_code = s.org_code,
-                            org_name = s.org_name,
-                            department_id = s.department_id,
-                            org_id_ass = s.org_id_ass,
-                            org_seq_no = s.org_seq_no,
-                            org_addr1 = s.org_addr1,
-                            org_addr2 = s.org_addr2,
-                            org_addr3 = s.org_addr3,
-                            org_job = s.org_job,
-                            org_dopa_code = s.org_dopa_code,
-                            ot_code = s.ot_code,
-                            pv_code = s.pv_code,
-                            pos_lat = s.pos_lat,
-                            pos_long = s.pos_long,
-                            update_user = :user_id
+                            org_status = s.org_status, 
+                            organize_pid = s.organize_pid, 
+                            organize_code = s.organize_code, 
+                            org_date = s.org_date, 
+                            org_start_date = s.org_start_date, 
+                            org_end_date = s.org_end_date, 
+                            organize_th = s.organize_th, 
+                            organize_en = s.organize_en, 
+                            organize_abbrth = s.organize_abbrth, 
+                            organize_abbren = s.organize_abbren, 
+                            organize_add1 = s.organize_add1, 
+                            organize_add2 = s.organize_add2, 
+                            organize_add3 = s.organize_add3, 
+                            country_id = s.country_id, 
+                            province_id = s.province_id, 
+                            amphur_id = s.amphur_id, 
+                            tambon_id = s.tambon_id, 
+                            postcode = s.postcode, 
+                            risk_zone = s.risk_zone, 
+                            orglevel_id = s.orglevel_id, 
+                            orgstat_id = s.orgstat_id, 
+                            orgclass_id = s.orgclass_id, 
+                            orgtype_id = s.orgtype_id, 
+                            organize_job = s.organize_job, 
+                            org_owner_id = s.org_owner_id, 
+                            org_mode = s.org_mode, 
+                            org_website = s.org_website, 
+                            org_gps = s.org_gps, 
+                            latitude = s.latitude, 
+                            longitude = s.longitude, 
+                            org_dopa_code = s.org_dopa_code, 
+                            ministrygroup_id = s.ministrygroup_id, 
+                            sector_id = s.sector_id, 
+                            org_id_ass = s.org_id_ass, 
+                            org_chart_level = s.org_chart_level, 
+                            command_no = s.command_no, 
+                            command_date = s.command_date, 
+                            canceldate = s.canceldate, 
+                            telephone = s.telephone, 
+                            fax = s.fax, 
+                            email = s.email, 
+                            remark = s.remark, 
+                            sortorder = s.sortorder, 
+                            parent_flag = s.parent_flag, 
+                            creator = s.creator, 
+                            createdate = s.createdate, 
+                            create_org = s.create_org, 
+                            updateuser = s.updateuser, 
+                            updatedate = s.updatedate, 
+                            update_org = s.update_org, 
+                            is_sync = s.is_sync, 
+                            sync_datetime = s.sync_datetime, 
+                            sync_status_code = s.sync_status_code, 
+                            org_path = s.org_path, 
+                            org_seq_no = s.org_seq_no, 
+                            ministry_id = s.ministry_id, 
+                            ministry = s.ministry, 
+                            department_id = s.department_id, 
+                            department = s.department, 
+                            division_id = s.division_id, 
+                            division = s.division, 
+                            subdiv1 = s.subdiv1, 
+                            subdiv2 = s.subdiv2, 
+                            subdiv3 = s.subdiv3, 
+                            subdiv4 = s.subdiv4, 
+                            subdiv5 = s.subdiv5, 
+                            subdiv6 = s.subdiv6, 
+                            d5_org_id = s.d5_org_id, 
+                            org_model_id = s.org_model_id, 
+                            org_model_dlt_id = s.org_model_dlt_id, 
+                            leader_pos_id = s.leader_pos_id, 
+                            org_path_name = s.org_path_name
                     ";
 
-                    foreach ([1, 2] as $kg => $vg) {
+                    foreach ($params['dbInserts'] as $kg => $vg) {
 
                         if ($vg == 1) {
 
@@ -228,12 +349,14 @@ class EmpdataController extends Controller
                             $cmd = $con2->createCommand($sql);
                         }
 
-                        $cmd->bindValue(":user_id", $user_id);
+                        // $cmd->bindValue(":user_id", $user_id);
 
                         $cmd->execute();
                     }
 
                     $SqlOrgs = [];
+
+                    // exit;
                 }
             }
         }
@@ -241,33 +364,89 @@ class EmpdataController extends Controller
         if (count($SqlOrgs) > 0) {
             // TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' )
             $sql = "
-                MERGE INTO per_org_ass d
-                USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.org_id = s.org_id )
+                MERGE INTO per_org_ass_news d
+                USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.organize_id = s.organize_id )
                 WHEN NOT MATCHED THEN
-                INSERT ( pos_lat, pos_long, pv_code, ot_code, org_dopa_code, org_job, org_addr2, org_addr3, org_addr1, department_id, update_user, update_date, org_id, org_code, org_name, org_short, ol_code, ap_code, ct_code, org_date, org_id_ref, org_active, org_website, org_seq_no, org_eng_name, dt_code, mg_code, pg_code, org_zone, org_id_ass ) VALUES
-                (  s.pos_lat, s.pos_long, s.pv_code, s.ot_code, s.org_dopa_code, s.org_job, s.org_addr2, s.org_addr3, s.org_addr1, s.department_id, :user_id, TO_CHAR( CURRENT_TIMESTAMP , 'YYYY-MM-DD HH24:MI:SS' ), s.org_id, s.org_code, s.org_name, '-', '-', NULL, '-', NULL, '0', '1', NULL, s.org_seq_no, NULL, NULL, NULL, NULL, NULL, s.org_id_ass )
+                INSERT ( organize_id, org_status, organize_pid, organize_code, org_date, org_start_date, org_end_date, organize_th, organize_en, organize_abbrth, organize_abbren, organize_add1, organize_add2, organize_add3, country_id, province_id, amphur_id, tambon_id, postcode, risk_zone, orglevel_id, orgstat_id, orgclass_id, orgtype_id, organize_job, org_owner_id, org_mode, org_website, org_gps, latitude, longitude, org_dopa_code, ministrygroup_id, sector_id, org_id_ass, org_chart_level, command_no, command_date, canceldate, telephone, fax, email, remark, sortorder, parent_flag, creator, createdate, create_org, updateuser, updatedate, update_org, is_sync, sync_datetime, sync_status_code, org_path, org_seq_no, ministry_id, ministry, department_id, department, division_id, division, subdiv1, subdiv2, subdiv3, subdiv4, subdiv5, subdiv6, d5_org_id, org_model_id, org_model_dlt_id, leader_pos_id, org_path_name ) VALUES
+                ( s.organize_id, s.org_status, s.organize_pid, s.organize_code, s.org_date, s.org_start_date, s.org_end_date, s.organize_th, s.organize_en, s.organize_abbrth, s.organize_abbren, s.organize_add1, s.organize_add2, s.organize_add3, s.country_id, s.province_id, s.amphur_id, s.tambon_id, s.postcode, s.risk_zone, s.orglevel_id, s.orgstat_id, s.orgclass_id, s.orgtype_id, s.organize_job, s.org_owner_id, s.org_mode, s.org_website, s.org_gps, s.latitude, s.longitude, s.org_dopa_code, s.ministrygroup_id, s.sector_id, s.org_id_ass, s.org_chart_level, s.command_no, s.command_date, s.canceldate, s.telephone, s.fax, s.email, s.remark, s.sortorder, s.parent_flag, s.creator, s.createdate, s.create_org, s.updateuser, s.updatedate, s.update_org, s.is_sync, s.sync_datetime, s.sync_status_code, s.org_path, s.org_seq_no, s.ministry_id, s.ministry, s.department_id, s.department, s.division_id, s.division, s.subdiv1, s.subdiv2, s.subdiv3, s.subdiv4, s.subdiv5, s.subdiv6, s.d5_org_id, s.org_model_id, s.org_model_dlt_id, s.leader_pos_id, s.org_path_name )
                 WHEN MATCHED THEN
                 UPDATE
                 SET
-                    update_date = TO_CHAR( CURRENT_TIMESTAMP, 'YYYY-MM-DD HH24:MI:SS' ),
-                    org_code = s.org_code,
-                    org_name = s.org_name,
-                    department_id = s.department_id,
-                    org_id_ass = s.org_id_ass,
-                    org_seq_no = s.org_seq_no,
-                    org_addr1 = s.org_addr1,
-                    org_addr2 = s.org_addr2,
-                    org_addr3 = s.org_addr3,
-                    org_job = s.org_job,
-                    org_dopa_code = s.org_dopa_code,
-                    ot_code = s.ot_code,
-                    pv_code = s.pv_code,
-                    pos_lat = s.pos_lat,
-                    pos_long = s.pos_long,
-                    update_user = :user_id
+                    org_status = s.org_status, 
+                    organize_pid = s.organize_pid, 
+                    organize_code = s.organize_code, 
+                    org_date = s.org_date, 
+                    org_start_date = s.org_start_date, 
+                    org_end_date = s.org_end_date, 
+                    organize_th = s.organize_th, 
+                    organize_en = s.organize_en, 
+                    organize_abbrth = s.organize_abbrth, 
+                    organize_abbren = s.organize_abbren, 
+                    organize_add1 = s.organize_add1, 
+                    organize_add2 = s.organize_add2, 
+                    organize_add3 = s.organize_add3, 
+                    country_id = s.country_id, 
+                    province_id = s.province_id, 
+                    amphur_id = s.amphur_id, 
+                    tambon_id = s.tambon_id, 
+                    postcode = s.postcode, 
+                    risk_zone = s.risk_zone, 
+                    orglevel_id = s.orglevel_id, 
+                    orgstat_id = s.orgstat_id, 
+                    orgclass_id = s.orgclass_id, 
+                    orgtype_id = s.orgtype_id, 
+                    organize_job = s.organize_job, 
+                    org_owner_id = s.org_owner_id, 
+                    org_mode = s.org_mode, 
+                    org_website = s.org_website, 
+                    org_gps = s.org_gps, 
+                    latitude = s.latitude, 
+                    longitude = s.longitude, 
+                    org_dopa_code = s.org_dopa_code, 
+                    ministrygroup_id = s.ministrygroup_id, 
+                    sector_id = s.sector_id, 
+                    org_id_ass = s.org_id_ass, 
+                    org_chart_level = s.org_chart_level, 
+                    command_no = s.command_no, 
+                    command_date = s.command_date, 
+                    canceldate = s.canceldate, 
+                    telephone = s.telephone, 
+                    fax = s.fax, 
+                    email = s.email, 
+                    remark = s.remark, 
+                    sortorder = s.sortorder, 
+                    parent_flag = s.parent_flag, 
+                    creator = s.creator, 
+                    createdate = s.createdate, 
+                    create_org = s.create_org, 
+                    updateuser = s.updateuser, 
+                    updatedate = s.updatedate, 
+                    update_org = s.update_org, 
+                    is_sync = s.is_sync, 
+                    sync_datetime = s.sync_datetime, 
+                    sync_status_code = s.sync_status_code, 
+                    org_path = s.org_path, 
+                    org_seq_no = s.org_seq_no, 
+                    ministry_id = s.ministry_id, 
+                    ministry = s.ministry, 
+                    department_id = s.department_id, 
+                    department = s.department, 
+                    division_id = s.division_id, 
+                    division = s.division, 
+                    subdiv1 = s.subdiv1, 
+                    subdiv2 = s.subdiv2, 
+                    subdiv3 = s.subdiv3, 
+                    subdiv4 = s.subdiv4, 
+                    subdiv5 = s.subdiv5, 
+                    subdiv6 = s.subdiv6, 
+                    d5_org_id = s.d5_org_id, 
+                    org_model_id = s.org_model_id, 
+                    org_model_dlt_id = s.org_model_dlt_id, 
+                    leader_pos_id = s.leader_pos_id, 
+                    org_path_name = s.org_path_name
             ";
 
-            foreach ([1, 2] as $kg => $vg) {
+            foreach ($params['dbInserts'] as $kg => $vg) {
 
                 if ($vg == 1) {
 
@@ -277,13 +456,14 @@ class EmpdataController extends Controller
                     $cmd = $con2->createCommand($sql);
                 }
 
-                $cmd->bindValue(":user_id", $user_id);
+                // $cmd->bindValue(":user_id", $user_id);
 
                 $cmd->execute();
             }
 
-
             $SqlOrgs = [];
+
+            // exit;
         }
 
 
@@ -689,163 +869,178 @@ class EmpdataController extends Controller
 
             foreach ($js as $ka => $va) {
 
-                // arr(  $va );
-                // [pos_id] => 1
-                // [dcid] => 727784
-                // [pertype_id] => 5
-                // [organize_id] => 1640001
-                // [pos_no] => 1
-                // [pos_no_name] => 
-                // [pos_salary] => 65880.00
-                // [pos_mgtsalary] => 14500.00
-                // [min_salary] => 
-                // [max_salary] => 
-                // [group_salary] => 
-                // [pos_condition] => 
-                // [pos_doc_no] => 
-                // [pos_remark] => 
-                // [pos_date] => 2002-10-01
-                // [approve_name] => 
-                // [approve_docno] => 
-                // [approve_date] => 
-                // [pos_get_date] => 2002-10-01
-                // [pos_change_date] => 2021-10-01
-                // [pos_vacant_date] => 2021-10-01
-                // [pos_orgmgt] => 
-                // [line_id] => 1
-                // [mposition_id] => 4
-                // [colevel_id] => 93
-                // [level_id] => 24
-                // [level_id_min] => 
-                // [level_id_max] => 
-                // [flag_level] => 
-                // [condition_id] => 77
-                // [frametype_id] => 
-                // [skill_id] => 665
-                // [positionstat_id] => 
-                // [audit_flag] => 
-
-                // [pos_south] => 
-                // [pos_spec] => 
-                // [pos_job_description] => 
-                // [d5_pg_code] => 
-                // [allow_decor] => 
-                // [practicetype_id] => 
-                // [self_ratio] => 
-                // [chief_ratio] => 
-                // [friend_ratio] => 
-                // [sub_ratio] => 
-                // [update_user] => 384060004041801
-                // [update_date] => 2023-02-02 14:18:14
-                // [is_sync] => 0
-                // [sync_datetime] => 2023-02-02 14:18:14
-                // [sync_status_code] => 200
-                // [recruit_plan] => 
-                // [creator] => -1
-                // [create_date] => 2022-12-02 20:31:59
-                // [exper_skill] => 
-                // [work_location_id] => 
-                // [governor_flag] => 0
-                // [province_id] => 0
-                // [d5_pos_id] => 1
-                // [org_owner] => 1640000
-                // [audit_by] => 
-                // [audit_date] => 
-                // [create_org] => 1640000
-                // [update_org] => 1640000
-                // [pos_value] => 
-                // [update_name] => Administrator
-                // [creator_name] => Administrator
-                // [pos_retire] => 
-                // [pos_retire_remark] => 
-                // [reserve_flag] => 
-                // [posreserve_id] => 
-                // [pos_reserve_desc] => 
-                // [pos_reserve_docno] => 
-                // [pos_reserve_date] => 
-
-                if (empty($va->d5_pos_id)) {
-
-                    $pos_id = $va->pos_id;
-                } else {
-
-                    $pos_id = $va->d5_pos_id;
-                }
 
                 $SqlOrgs[] = "
                     SELECT 
-                        " . $pos_id . " as pos_id, 
-                        '" . $va->ppt_code . "' as ppt_code, 
-                        '" . $va->pos_status . "' as pos_status, 
-                        '" . $va->pos_no . "' as pos_no, 
-                        '" . $va->pos_seq_no . "' as pos_seq_no, 
-                        " . $va->organize_id . " as org_id, 
-                        '" . $va->pay_no . "' as pay_no, 
-                        " . $user_id . " as update_user, 
-                        1 as org_id_1, 
-                        1 as org_id_2, 
-                        1 as org_id_3, 
-                        1 as org_id_4, 
-                        1 as org_id_5, 
-                        '-' as cl_name,  
-                        '-' as level_no, 
-                        '-' as skill_code, 
-                        '-' as ot_code, 
-                        '-' as pm_code, 
-                        '-' as pl_code, 
-                        '-' as pos_salary, 
-                        '-' as pos_mgtsalary, 
-                        '-' as pt_code, 
-                        '-' as pc_code, 
-                        '-' as pos_condition, 
-                        '-' as pos_doc_no, 
-                        '-' as pos_remark, 
-                        '-' as pos_date, 
-                        '-' as pos_get_date, 
-                        '-' as pos_change_date, 
-                         
-                        '1' as department_id, 
-                        '-' as pos_orgmgt, 
-                        '-' as pos_no_name, 
-                        '-' as audit_flag, 
-                        '-' as pos_retire, 
-                        '-' as pos_reserve, 
-                        '-' as pos_reserve_desc, 
-                        '-' as pos_reserve_docno, 
-                        '-' as pos_retire_remark, 
-                        '-' as pr_code, 
-                        '-' as pos_reserve2, 
-                        '-' as pos_vacant_date, 
-                        '-' as flag_level, 
-                        '-' as pn_code
+                   '" . $va->pos_id . "' as pos_id,
+                   '" . $va->dcid . "' as dcid,
+                   '" . $va->pertype_id . "' as pertype_id,
+                   '" . $va->organize_id . "' as organize_id,
+                   '" . $va->pos_no . "' as pos_no,
+                   '" . $va->pos_no_name . "' as pos_no_name,
+                   '" . $va->pos_salary . "' as pos_salary,
+                   '" . $va->pos_mgtsalary . "' as pos_mgtsalary,
+                   '" . $va->min_salary . "' as min_salary,
+                   '" . $va->max_salary . "' as max_salary,
+                   '" . $va->group_salary . "' as group_salary,
+                   '" . $va->pos_condition . "' as pos_condition,
+                   '" . $va->pos_doc_no . "' as pos_doc_no,
+                   '" . $va->pos_remark . "' as pos_remark,
+                   '" . $va->pos_date . "' as pos_date,
+                   '" . $va->approve_name . "' as approve_name,
+                   '" . $va->approve_docno . "' as approve_docno,
+                   '" . $va->approve_date . "' as approve_date,
+                   '" . $va->pos_get_date . "' as pos_get_date,
+                   '" . $va->pos_change_date . "' as pos_change_date,
+                   '" . $va->pos_vacant_date . "' as pos_vacant_date,
+                   '" . $va->pos_status . "' as pos_status,
+                   '" . $va->pos_seq_no . "' as pos_seq_no,
+                   '" . $va->pay_no . "' as pay_no,
+                   '" . $va->pos_orgmgt . "' as pos_orgmgt,
+                   '" . $va->line_id . "' as line_id,
+                   '" . $va->mposition_id . "' as mposition_id,
+                   '" . $va->colevel_id . "' as colevel_id,
+                   '" . $va->level_id . "' as level_id,
+                   '" . $va->level_id_min . "' as level_id_min,
+                   '" . $va->level_id_max . "' as level_id_max,
+                   '" . $va->flag_level . "' as flag_level,
+                   '" . $va->condition_id . "' as condition_id,
+                   '" . $va->frametype_id . "' as frametype_id,
+                   '" . $va->skill_id . "' as skill_id,
+                   '" . $va->positionstat_id . "' as positionstat_id,
+                   '" . $va->audit_flag . "' as audit_flag,
+                   '" . $va->ppt_code . "' as ppt_code,
+                   '" . $va->pos_retire . "' as pos_retire,
+                   '" . $va->pos_retire_remark . "' as pos_retire_remark,
+                   '" . $va->reserve_flag . "' as reserve_flag,
+                   '" . $va->posreserve_id . "' as posreserve_id,
+                   '" . $va->pos_reserve_desc . "' as pos_reserve_desc,
+                   '" . $va->pos_reserve_docno . "' as pos_reserve_docno,
+                   '" . $va->pos_reserve_date . "' as pos_reserve_date,
+                   '" . $va->pos_south . "' as pos_south,
+                   '" . $va->pos_spec . "' as pos_spec,
+                   '" . $va->pos_job_description . "' as pos_job_description,
+                   '" . $va->d5_pg_code . "' as d5_pg_code,
+                   '" . $va->allow_decor . "' as allow_decor,
+                   '" . $va->practicetype_id . "' as practicetype_id,
+                   '" . $va->self_ratio . "' as self_ratio,
+                   '" . $va->chief_ratio . "' as chief_ratio,
+                   '" . $va->friend_ratio . "' as friend_ratio,
+                   '" . $va->sub_ratio . "' as sub_ratio,
+                   '" . $va->update_user . "' as update_user,
+                   '" . $va->update_date . "' as update_date,
+                   '" . $va->is_sync . "' as is_sync,
+                   '" . $va->sync_datetime . "' as sync_datetime,
+                   '" . $va->sync_status_code . "' as sync_status_code,
+                   '" . $va->recruit_plan . "' as recruit_plan,
+                   '" . $va->creator . "' as creator,
+                   '" . $va->create_date . "' as create_date,
+                   '" . $va->exper_skill . "' as exper_skill,
+                   '" . $va->work_location_id . "' as work_location_id,
+                   '" . $va->governor_flag . "' as governor_flag,
+                   '" . $va->province_id . "' as province_id,
+                   '" . $va->d5_pos_id . "' as d5_pos_id,
+                   '" . $va->org_owner . "' as org_owner,
+                   '" . $va->audit_by . "' as audit_by,
+                   '" . $va->audit_date . "' as audit_date,
+                   '" . $va->create_org . "' as create_org,
+                   '" . $va->update_org . "' as update_org,
+                   '" . $va->pos_value . "' as pos_value,
+                   '" . $va->update_name . "' as update_name,
+                   '" . $va->creator_name . "' as creator_name
                     FROM dual
                 ";
 
-                if (count($SqlOrgs) == 100) {
+                if (count($SqlOrgs) > 100) {
                     $sql = "
-                        MERGE INTO per_position d
+                        MERGE INTO per_position_news d
                         USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.pos_id = s.pos_id )
                         WHEN NOT MATCHED THEN
-                        INSERT  ( update_date, pos_id, cl_name, level_no, org_id, org_id_1, org_id_2, org_id_3, org_id_4, org_id_5, pos_no, ot_code, pm_code, pl_code, pos_salary, pos_mgtsalary, skill_code, pt_code, pc_code, pos_condition, pos_doc_no, pos_remark, pos_date, pos_get_date, pos_change_date, pos_status, update_user,  department_id, pos_seq_no, pay_no, pos_orgmgt, pos_no_name, audit_flag, ppt_code, pos_retire, pos_reserve, pos_reserve_desc, pos_reserve_docno, pos_retire_remark, pr_code, pos_reserve2, pos_vacant_date, flag_level, pn_code) VALUES
-                        ( TO_CHAR( CURRENT_TIMESTAMP, 'YYYY-MM-DD HH24:MI:SS' ), s.pos_id, s.cl_name, s.level_no, s.org_id, s.org_id_1, s.org_id_2, s.org_id_3, s.org_id_4, s.org_id_5, s.pos_no, s.ot_code, s.pm_code, s.pl_code, s.pos_salary, s.pos_mgtsalary, s.skill_code, s.pt_code, s.pc_code, s.pos_condition, s.pos_doc_no, s.pos_remark, s.pos_date, s.pos_get_date, s.pos_change_date, s.pos_status, s.update_user, s. department_id, s.pos_seq_no, s.pay_no, s.pos_orgmgt, s.pos_no_name, s.audit_flag, s.ppt_code, s.pos_retire, s.pos_reserve, s.pos_reserve_desc, s.pos_reserve_docno, s.pos_retire_remark, s.pr_code, s.pos_reserve2, s.pos_vacant_date, s.flag_level, s.pn_code )
-            
+                            INSERT  ( pos_id, dcid, pertype_id, organize_id, pos_no, pos_no_name, pos_salary, pos_mgtsalary, min_salary, max_salary, group_salary, pos_condition, pos_doc_no, pos_remark, pos_date, approve_name, approve_docno, approve_date, pos_get_date, pos_change_date, pos_vacant_date, pos_status, pos_seq_no, pay_no, pos_orgmgt, line_id, mposition_id, colevel_id, level_id, level_id_min, level_id_max, flag_level, condition_id, frametype_id, skill_id, positionstat_id, audit_flag, ppt_code, pos_retire, pos_retire_remark, reserve_flag, posreserve_id, pos_reserve_desc, pos_reserve_docno, pos_reserve_date, pos_south, pos_spec, pos_job_description, d5_pg_code, allow_decor, practicetype_id, self_ratio, chief_ratio, friend_ratio, sub_ratio, update_user, update_date, is_sync, sync_datetime, sync_status_code, recruit_plan, creator, create_date, exper_skill, work_location_id, governor_flag, province_id, d5_pos_id, org_owner, audit_by, audit_date, create_org, update_org, pos_value, update_name, creator_name ) 
+                        VALUES
+                            ( s.pos_id, s.dcid, s.pertype_id, s.organize_id, s.pos_no, s.pos_no_name, s.pos_salary, s.pos_mgtsalary, s.min_salary, s.max_salary, s.group_salary, s.pos_condition, s.pos_doc_no, s.pos_remark, s.pos_date, s.approve_name, s.approve_docno, s.approve_date, s.pos_get_date, s.pos_change_date, s.pos_vacant_date, s.pos_status, s.pos_seq_no, s.pay_no, s.pos_orgmgt, s.line_id, s.mposition_id, s.colevel_id, s.level_id, s.level_id_min, s.level_id_max, s.flag_level, s.condition_id, s.frametype_id, s.skill_id, s.positionstat_id, s.audit_flag, s.ppt_code, s.pos_retire, s.pos_retire_remark, s.reserve_flag, s.posreserve_id, s.pos_reserve_desc, s.pos_reserve_docno, s.pos_reserve_date, s.pos_south, s.pos_spec, s.pos_job_description, s.d5_pg_code, s.allow_decor, s.practicetype_id, s.self_ratio, s.chief_ratio, s.friend_ratio, s.sub_ratio, s.update_user, s.update_date, s.is_sync, s.sync_datetime, s.sync_status_code, s.recruit_plan, s.creator, s.create_date, s.exper_skill, s.work_location_id, s.governor_flag, s.province_id, s.d5_pos_id, s.org_owner, s.audit_by, s.audit_date, s.create_org, s.update_org, s.pos_value, s.update_name, s.creator_name )
                         WHEN MATCHED THEN
                         UPDATE
                         SET
-                            ppt_code = s.ppt_code, 
-                            pos_no = s.pos_no, 
-                            pos_seq_no = s.pos_seq_no, 
-                            org_id = s.org_id, 
-                            pay_no = s.pay_no, 
-                            pos_status = s.pos_status, 
+                            dcid = s.dcid,
+                            pertype_id = s.pertype_id,
+                            organize_id = s.organize_id,
+                            pos_no = s.pos_no,
+                            pos_no_name = s.pos_no_name,
+                            pos_salary = s.pos_salary,
+                            pos_mgtsalary = s.pos_mgtsalary,
+                            min_salary = s.min_salary,
+                            max_salary = s.max_salary,
+                            group_salary = s.group_salary,
+                            pos_condition = s.pos_condition,
+                            pos_doc_no = s.pos_doc_no,
+                            pos_remark = s.pos_remark,
+                            pos_date = s.pos_date,
+                            approve_name = s.approve_name,
+                            approve_docno = s.approve_docno,
+                            approve_date = s.approve_date,
+                            pos_get_date = s.pos_get_date,
+                            pos_change_date = s.pos_change_date,
+                            pos_vacant_date = s.pos_vacant_date,
+                            pos_status = s.pos_status,
+                            pos_seq_no = s.pos_seq_no,
+                            pay_no = s.pay_no,
+                            pos_orgmgt = s.pos_orgmgt,
+                            line_id = s.line_id,
+                            mposition_id = s.mposition_id,
+                            colevel_id = s.colevel_id,
+                            level_id = s.level_id,
+                            level_id_min = s.level_id_min,
+                            level_id_max = s.level_id_max,
+                            flag_level = s.flag_level,
+                            condition_id = s.condition_id,
+                            frametype_id = s.frametype_id,
+                            skill_id = s.skill_id,
+                            positionstat_id = s.positionstat_id,
+                            audit_flag = s.audit_flag,
+                            ppt_code = s.ppt_code,
+                            pos_retire = s.pos_retire,
+                            pos_retire_remark = s.pos_retire_remark,
+                            reserve_flag = s.reserve_flag,
+                            posreserve_id = s.posreserve_id,
+                            pos_reserve_desc = s.pos_reserve_desc,
+                            pos_reserve_docno = s.pos_reserve_docno,
+                            pos_reserve_date = s.pos_reserve_date,
+                            pos_south = s.pos_south,
+                            pos_spec = s.pos_spec,
+                            pos_job_description = s.pos_job_description,
+                            d5_pg_code = s.d5_pg_code,
+                            allow_decor = s.allow_decor,
+                            practicetype_id = s.practicetype_id,
+                            self_ratio = s.self_ratio,
+                            chief_ratio = s.chief_ratio,
+                            friend_ratio = s.friend_ratio,
+                            sub_ratio = s.sub_ratio,
                             update_user = s.update_user,
-                            update_date = TO_CHAR( CURRENT_TIMESTAMP, 'YYYY-MM-DD HH24:MI:SS' )
-                            
-                            
-                        
+                            update_date = s.update_date,
+                            is_sync = s.is_sync,
+                            sync_datetime = s.sync_datetime,
+                            sync_status_code = s.sync_status_code,
+                            recruit_plan = s.recruit_plan,
+                            creator = s.creator,
+                            create_date = s.create_date,
+                            exper_skill = s.exper_skill,
+                            work_location_id = s.work_location_id,
+                            governor_flag = s.governor_flag,
+                            province_id = s.province_id,
+                            d5_pos_id = s.d5_pos_id,
+                            org_owner = s.org_owner,
+                            audit_by = s.audit_by,
+                            audit_date = s.audit_date,
+                            create_org = s.create_org,
+                            update_org = s.update_org,
+                            pos_value = s.pos_value,
+                            update_name = s.update_name,
+                            creator_name = s.creator_name
+                             
                     ";
 
-                    foreach ([1, 2] as $kg => $vg) {
+                    foreach ($params['dbInserts'] as $kg => $vg) {
 
                         if ($vg == 1) {
                             $cmd = $con->createCommand($sql);
@@ -867,31 +1062,96 @@ class EmpdataController extends Controller
         }
 
 
-        if (count($SqlOrgs) == 0) {
+        if (count($SqlOrgs) > 0) {
             $sql = "
-                MERGE INTO per_position d
+                MERGE INTO per_position_news d
                 USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.pos_id = s.pos_id )
                 WHEN NOT MATCHED THEN
-                INSERT  ( update_date, pos_id, cl_name, level_no, org_id, org_id_1, org_id_2, org_id_3, org_id_4, org_id_5, pos_no, ot_code, pm_code, pl_code, pos_salary, pos_mgtsalary, skill_code, pt_code, pc_code, pos_condition, pos_doc_no, pos_remark, pos_date, pos_get_date, pos_change_date, pos_status, update_user,  department_id, pos_seq_no, pay_no, pos_orgmgt, pos_no_name, audit_flag, ppt_code, pos_retire, pos_reserve, pos_reserve_desc, pos_reserve_docno, pos_retire_remark, pr_code, pos_reserve2, pos_vacant_date, flag_level, pn_code) VALUES
-                ( TO_CHAR( CURRENT_TIMESTAMP, 'YYYY-MM-DD HH24:MI:SS' ), s.pos_id, s.cl_name, s.level_no, s.org_id, s.org_id_1, s.org_id_2, s.org_id_3, s.org_id_4, s.org_id_5, s.pos_no, s.ot_code, s.pm_code, s.pl_code, s.pos_salary, s.pos_mgtsalary, s.skill_code, s.pt_code, s.pc_code, s.pos_condition, s.pos_doc_no, s.pos_remark, s.pos_date, s.pos_get_date, s.pos_change_date, s.pos_status, s.update_user, s. department_id, s.pos_seq_no, s.pay_no, s.pos_orgmgt, s.pos_no_name, s.audit_flag, s.ppt_code, s.pos_retire, s.pos_reserve, s.pos_reserve_desc, s.pos_reserve_docno, s.pos_retire_remark, s.pr_code, s.pos_reserve2, s.pos_vacant_date, s.flag_level, s.pn_code )
-    
+                    INSERT  ( pos_id, dcid, pertype_id, organize_id, pos_no, pos_no_name, pos_salary, pos_mgtsalary, min_salary, max_salary, group_salary, pos_condition, pos_doc_no, pos_remark, pos_date, approve_name, approve_docno, approve_date, pos_get_date, pos_change_date, pos_vacant_date, pos_status, pos_seq_no, pay_no, pos_orgmgt, line_id, mposition_id, colevel_id, level_id, level_id_min, level_id_max, flag_level, condition_id, frametype_id, skill_id, positionstat_id, audit_flag, ppt_code, pos_retire, pos_retire_remark, reserve_flag, posreserve_id, pos_reserve_desc, pos_reserve_docno, pos_reserve_date, pos_south, pos_spec, pos_job_description, d5_pg_code, allow_decor, practicetype_id, self_ratio, chief_ratio, friend_ratio, sub_ratio, update_user, update_date, is_sync, sync_datetime, sync_status_code, recruit_plan, creator, create_date, exper_skill, work_location_id, governor_flag, province_id, d5_pos_id, org_owner, audit_by, audit_date, create_org, update_org, pos_value, update_name, creator_name ) 
+                VALUES
+                    ( s.pos_id, s.dcid, s.pertype_id, s.organize_id, s.pos_no, s.pos_no_name, s.pos_salary, s.pos_mgtsalary, s.min_salary, s.max_salary, s.group_salary, s.pos_condition, s.pos_doc_no, s.pos_remark, s.pos_date, s.approve_name, s.approve_docno, s.approve_date, s.pos_get_date, s.pos_change_date, s.pos_vacant_date, s.pos_status, s.pos_seq_no, s.pay_no, s.pos_orgmgt, s.line_id, s.mposition_id, s.colevel_id, s.level_id, s.level_id_min, s.level_id_max, s.flag_level, s.condition_id, s.frametype_id, s.skill_id, s.positionstat_id, s.audit_flag, s.ppt_code, s.pos_retire, s.pos_retire_remark, s.reserve_flag, s.posreserve_id, s.pos_reserve_desc, s.pos_reserve_docno, s.pos_reserve_date, s.pos_south, s.pos_spec, s.pos_job_description, s.d5_pg_code, s.allow_decor, s.practicetype_id, s.self_ratio, s.chief_ratio, s.friend_ratio, s.sub_ratio, s.update_user, s.update_date, s.is_sync, s.sync_datetime, s.sync_status_code, s.recruit_plan, s.creator, s.create_date, s.exper_skill, s.work_location_id, s.governor_flag, s.province_id, s.d5_pos_id, s.org_owner, s.audit_by, s.audit_date, s.create_org, s.update_org, s.pos_value, s.update_name, s.creator_name )
                 WHEN MATCHED THEN
                 UPDATE
                 SET
-                    ppt_code = s.ppt_code, 
-                    pos_no = s.pos_no, 
-                    pos_seq_no = s.pos_seq_no, 
-                    org_id = s.org_id, 
-                    pay_no = s.pay_no, 
-                    pos_status = s.pos_status, 
+                    dcid = s.dcid,
+                    pertype_id = s.pertype_id,
+                    organize_id = s.organize_id,
+                    pos_no = s.pos_no,
+                    pos_no_name = s.pos_no_name,
+                    pos_salary = s.pos_salary,
+                    pos_mgtsalary = s.pos_mgtsalary,
+                    min_salary = s.min_salary,
+                    max_salary = s.max_salary,
+                    group_salary = s.group_salary,
+                    pos_condition = s.pos_condition,
+                    pos_doc_no = s.pos_doc_no,
+                    pos_remark = s.pos_remark,
+                    pos_date = s.pos_date,
+                    approve_name = s.approve_name,
+                    approve_docno = s.approve_docno,
+                    approve_date = s.approve_date,
+                    pos_get_date = s.pos_get_date,
+                    pos_change_date = s.pos_change_date,
+                    pos_vacant_date = s.pos_vacant_date,
+                    pos_status = s.pos_status,
+                    pos_seq_no = s.pos_seq_no,
+                    pay_no = s.pay_no,
+                    pos_orgmgt = s.pos_orgmgt,
+                    line_id = s.line_id,
+                    mposition_id = s.mposition_id,
+                    colevel_id = s.colevel_id,
+                    level_id = s.level_id,
+                    level_id_min = s.level_id_min,
+                    level_id_max = s.level_id_max,
+                    flag_level = s.flag_level,
+                    condition_id = s.condition_id,
+                    frametype_id = s.frametype_id,
+                    skill_id = s.skill_id,
+                    positionstat_id = s.positionstat_id,
+                    audit_flag = s.audit_flag,
+                    ppt_code = s.ppt_code,
+                    pos_retire = s.pos_retire,
+                    pos_retire_remark = s.pos_retire_remark,
+                    reserve_flag = s.reserve_flag,
+                    posreserve_id = s.posreserve_id,
+                    pos_reserve_desc = s.pos_reserve_desc,
+                    pos_reserve_docno = s.pos_reserve_docno,
+                    pos_reserve_date = s.pos_reserve_date,
+                    pos_south = s.pos_south,
+                    pos_spec = s.pos_spec,
+                    pos_job_description = s.pos_job_description,
+                    d5_pg_code = s.d5_pg_code,
+                    allow_decor = s.allow_decor,
+                    practicetype_id = s.practicetype_id,
+                    self_ratio = s.self_ratio,
+                    chief_ratio = s.chief_ratio,
+                    friend_ratio = s.friend_ratio,
+                    sub_ratio = s.sub_ratio,
                     update_user = s.update_user,
-                    update_date = TO_CHAR( CURRENT_TIMESTAMP, 'YYYY-MM-DD HH24:MI:SS' )
-                    
-                    
-                
+                    update_date = s.update_date,
+                    is_sync = s.is_sync,
+                    sync_datetime = s.sync_datetime,
+                    sync_status_code = s.sync_status_code,
+                    recruit_plan = s.recruit_plan,
+                    creator = s.creator,
+                    create_date = s.create_date,
+                    exper_skill = s.exper_skill,
+                    work_location_id = s.work_location_id,
+                    governor_flag = s.governor_flag,
+                    province_id = s.province_id,
+                    d5_pos_id = s.d5_pos_id,
+                    org_owner = s.org_owner,
+                    audit_by = s.audit_by,
+                    audit_date = s.audit_date,
+                    create_org = s.create_org,
+                    update_org = s.update_org,
+                    pos_value = s.pos_value,
+                    update_name = s.update_name,
+                    creator_name = s.creator_name
+                     
             ";
 
-            foreach ([1, 2] as $kg => $vg) {
+            foreach ($params['dbInserts'] as $kg => $vg) {
 
                 if ($vg == 1) {
                     $cmd = $con->createCommand($sql);
@@ -910,6 +1170,8 @@ class EmpdataController extends Controller
             // exit;
         }
 
+
+
         $log_path = Yii::$app->getRuntimePath() . '\logs\log_pos_position_' . date('d-M-Y') . '.log';
         $results = print_r($js, true);
         \app\components\CommonFnc::write_log($log_path, $results);
@@ -917,7 +1179,7 @@ class EmpdataController extends Controller
 
 
     //http://samservice/empdata/tb_pertype
-    public function actionTb_pertype( $user_id = 1 )
+    public function actionTb_pertype($user_id = 1)
     {
 
         $con = Yii::$app->dbdpis;
@@ -985,22 +1247,22 @@ class EmpdataController extends Controller
             return $arrsms;
         }
         // $url = "https://dpis6uat.sso.go.th/oapi/open_api_users/callapi";
-        $url = $params['apiUrl'] ."/oapi/open_api_users/callapi";
+        $url = $params['apiUrl'] . "/oapi/open_api_users/callapi";
         $header = array(
             'Content-Type: application/x-www-form-urlencoded',
             'Authorization: ' . $accessToken
         );
 
-        for( $p = 1; $p <= 10; ++$p) {
+        for ($p = 1; $p <= 10; ++$p) {
 
             $param = array(
                 'endpoint' => 'tb_pertype',
                 'limit' => 1000,
                 'page' => $p,
             );
-    
+
             $data_result = $this->calleservice($url, $header, $param);
-    
+
             if ($data_result['message'] != "success") {
                 $arrsms = array(
                     'status' => 'error',
@@ -1008,63 +1270,97 @@ class EmpdataController extends Controller
                 );
                 return $arrsms;
             }
-    
+
             $data = $data_result["data"];
             $decrypt_data = $this->ssl_decrypt_api($data, $encrypt_key);
-    
-    
+
+
             $js = json_decode($decrypt_data);
-    
-    
+
+
             // arr( $js );
 
-            if(count($js) == 0) {
+            if (count($js) == 0) {
                 break;
-
             }
 
             foreach ($js as $ka => $va) {
+
+                //  foreach( $va as $kc => $vc ){
+
+                //     echo $kc . ',<br>';
+                //     // echo $kc . ',';
+                // }
+
+
+                // exit;
 
                 // arr( $va );
 
 
                 $SqlOrgs[] = "
                     SELECT 
-                        " . $va->pertype_id . " as id,
-                        " . $user_id . " as update_user,
-                        '". $va->pertype_code ."' as ot_code, 
-                        '". $va->pertype ."' as ot_name, 
-                        '-' as ot_active, 
-                        '-' as ot_seq_no, 
-                        '-' as ot_othername
+                        '" . $va->pertype_id . "' as pertype_id,
+                        '" . $va->pertype_pid . "' as pertype_pid,
+                        '" . $va->pertype_code . "' as pertype_code,
+                        '" . $va->pertype_abbr . "' as pertype_abbr,
+                        '" . $va->pertype . "' as pertype,
+                        '" . $va->sortorder . "' as sortorder,
+                        '" . $va->flag . "' as flag,
+                        '" . $va->creator . "' as creator,
+                        '" . $va->createdate . "' as createdate,
+                        '" . $va->create_org . "' as create_org,
+                        '" . $va->updateuser . "' as updateuser,
+                        '" . $va->updatedate . "' as updatedate,
+                        '" . $va->recode_id . "' as recode_id,
+                        '" . $va->is_delete . "' as is_delete,
+                        '" . $va->require_cmd . "' as require_cmd,
+                        '" . $va->is_sync . "' as is_sync,
+                        '" . $va->sync_datetime . "' as sync_datetime,
+                        '" . $va->sync_status_code . "' as sync_status_code,
+                        '" . $va->update_org . "' as update_org,
+                        '" . $va->org_owner . "' as org_owner,
+                        '" . $va->org_visible . "' as org_visible
                     FROM dual
                 ";
-//  [pertype_pid] => 0 [pertype_code] => 10000 [pertype_abbr] => ขรก. [pertype] => ข้าราชการ [sortorder] => 1 [flag] => 1 [creator] => -1 [createdate] => 2020-02-03 16:07:55 [create_org] => 0 [updateuser] => -1 [updatedate] => 2020-02-03 16:07:55 [recode_id] => 1 [is_delete] => 0 [require_cmd] => 0 [is_sync] => 0 [sync_datetime] => 2022-12-20 15:53:21 [sync_status_code] =>  [update_org] => 0 [org_owner] => 0 [org_visible] => 0
+                //  [pertype_pid] => 0 [pertype_code] => 10000 [pertype_abbr] => ขรก. [pertype] => ข้าราชการ [sortorder] => 1 [flag] => 1 [creator] => -1 [createdate] => 2020-02-03 16:07:55 [create_org] => 0 [updateuser] => -1 [updatedate] => 2020-02-03 16:07:55 [recode_id] => 1 [is_delete] => 0 [require_cmd] => 0 [is_sync] => 0 [sync_datetime] => 2022-12-20 15:53:21 [sync_status_code] =>  [update_org] => 0 [org_owner] => 0 [org_visible] => 0
 
-                if (count($SqlOrgs) > 10) {
+                if (count($SqlOrgs) > 100) {
 
                     $sql = "
-                        MERGE INTO per_off_type d
-                        USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.id = s.id )
+                        MERGE INTO per_off_type_news d
+                        USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.pertype_id = s.pertype_id )
                         WHEN NOT MATCHED THEN
-                        INSERT ( update_date, update_user, ot_code, ot_name, ot_active, ot_seq_no, ot_othername, id ) 
+                        INSERT ( pertype_id,pertype_pid,pertype_code,pertype_abbr,pertype,sortorder,flag,creator,createdate,create_org,updateuser,updatedate,recode_id,is_delete,require_cmd,is_sync,sync_datetime,sync_status_code,update_org,org_owner,org_visible ) 
                         VALUES
-                        ( TO_CHAR( CURRENT_TIMESTAMP, 'YYYY-MM-DD HH24:MI:SS' ), s.update_user, s.ot_code, s.ot_name, s.ot_active, s.ot_seq_no, s.ot_othername, s.id  )               
+                        ( s.pertype_id, s.pertype_pid, s.pertype_code, s.pertype_abbr, s.pertype, s.sortorder, s.flag, s.creator, s.createdate, s.create_org, s.updateuser, s.updatedate, s.recode_id, s.is_delete, s.require_cmd, s.is_sync, s.sync_datetime, s.sync_status_code, s.update_org, s.org_owner, s.org_visible )               
                         WHEN MATCHED THEN
                         UPDATE
                         SET
-                            update_date = TO_CHAR( CURRENT_TIMESTAMP, 'YYYY-MM-DD HH24:MI:SS' ),
-                            update_user = s.update_user,
-                            ot_code = s.ot_code, 
-                            ot_name = s.ot_name
+                            pertype_pid = s.pertype_pid,
+                            pertype_code = s.pertype_code,
+                            pertype_abbr = s.pertype_abbr,
+                            pertype = s.pertype,
+                            sortorder = s.sortorder,
+                            flag = s.flag,
+                            creator = s.creator,
+                            createdate = s.createdate,
+                            create_org = s.create_org,
+                            updateuser = s.updateuser,
+                            updatedate = s.updatedate,
+                            recode_id = s.recode_id,
+                            is_delete = s.is_delete,
+                            require_cmd = s.require_cmd,
+                            is_sync = s.is_sync,
+                            sync_datetime = s.sync_datetime,
+                            sync_status_code = s.sync_status_code,
+                            update_org = s.update_org,
+                            org_owner = s.org_owner,
+                            org_visible = s.org_visible
                             
-                          
-                         
-                          
-                           
                     ";
 
-                    foreach ([1, 2] as $kg => $vg) {
+                    foreach ($params['dbInserts'] as $kg => $vg) {
 
                         if ($vg == 1) {
 
@@ -1085,34 +1381,44 @@ class EmpdataController extends Controller
                     // exit;
                 }
             }
-
-
         }
 
         if (count($SqlOrgs) > 0) {
 
             $sql = "
-                MERGE INTO per_off_type d
-                USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.id = s.id )
+                MERGE INTO per_off_type_news d
+                USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.pertype_id = s.pertype_id )
                 WHEN NOT MATCHED THEN
-                INSERT ( update_date, update_user, ot_code, ot_name, ot_active, ot_seq_no, ot_othername, id ) 
+                INSERT ( pertype_id,pertype_pid,pertype_code,pertype_abbr,pertype,sortorder,flag,creator,createdate,create_org,updateuser,updatedate,recode_id,is_delete,require_cmd,is_sync,sync_datetime,sync_status_code,update_org,org_owner,org_visible ) 
                 VALUES
-                ( TO_CHAR( CURRENT_TIMESTAMP, 'YYYY-MM-DD HH24:MI:SS' ), s.update_user, s.ot_code, s.ot_name, s.ot_active, s.ot_seq_no, s.ot_othername, s.id  )               
+                ( s.pertype_id, s.pertype_pid, s.pertype_code, s.pertype_abbr, s.pertype, s.sortorder, s.flag, s.creator, s.createdate, s.create_org, s.updateuser, s.updatedate, s.recode_id, s.is_delete, s.require_cmd, s.is_sync, s.sync_datetime, s.sync_status_code, s.update_org, s.org_owner, s.org_visible )               
                 WHEN MATCHED THEN
                 UPDATE
                 SET
-                    update_date = TO_CHAR( CURRENT_TIMESTAMP, 'YYYY-MM-DD HH24:MI:SS' ),
-                    update_user = s.update_user,
-                    ot_code = s.ot_code, 
-                    ot_name = s.ot_name
+                    pertype_pid = s.pertype_pid,
+                    pertype_code = s.pertype_code,
+                    pertype_abbr = s.pertype_abbr,
+                    pertype = s.pertype,
+                    sortorder = s.sortorder,
+                    flag = s.flag,
+                    creator = s.creator,
+                    createdate = s.createdate,
+                    create_org = s.create_org,
+                    updateuser = s.updateuser,
+                    updatedate = s.updatedate,
+                    recode_id = s.recode_id,
+                    is_delete = s.is_delete,
+                    require_cmd = s.require_cmd,
+                    is_sync = s.is_sync,
+                    sync_datetime = s.sync_datetime,
+                    sync_status_code = s.sync_status_code,
+                    update_org = s.update_org,
+                    org_owner = s.org_owner,
+                    org_visible = s.org_visible
                     
-                  
-                 
-                  
-                   
             ";
 
-            foreach ([1, 2] as $kg => $vg) {
+            foreach ($params['dbInserts'] as $kg => $vg) {
 
                 if ($vg == 1) {
 
@@ -1133,7 +1439,6 @@ class EmpdataController extends Controller
             // exit;
         }
 
-        
 
         $log_path = Yii::$app->getRuntimePath() . '\logs\log_tb_pertype_' . date('d-M-Y') . '.log';
         $results = print_r($js, true);
@@ -1249,37 +1554,37 @@ class EmpdataController extends Controller
 
                 $SqlOrgs[] = "
                     SELECT 
-                        ". $va->line_id ." as  line_id, 
-                        '". $va->line_code ."' as line_code, 
-                        '". $va->linename_abbr ."' as linename_abbr, 
-                        '". $va->linename_th ."' as linename_th, 
-                        '". $va->linename_en ."' as linename_en, 
-                        '". $va->linegroup_id ."' as linegroup_id, 
-                        '". $va->positiontype_id ."' as positiontype_id, 
-                        '". $va->pertype_id ."' as pertype_id, 
-                        '". $va->level_min ."' as level_min, 
-                        '". $va->level_max ."' as level_max, 
-                        '". $va->sortorder ."' as sortorder, 
-                        '". $va->flag ."' as flag, 
-                        '". $va->std_code ."' as std_code, 
-                        '". $va->creator ."' as creator, 
-                        '". $va->createdate ."' as createdate, 
-                        '". $va->updateuser ."' as updateuser, 
-                        '". $va->updatedate ."' as updatedate, 
-                        '". $va->create_org ."' as create_org, 
-                        '". $va->recode_id ."' as recode_id, 
-                        '". $va->is_sync ."' as is_sync, 
-                        '". $va->sync_datetime ."' as sync_datetime, 
-                        '". $va->sync_status_code ."' as sync_status_code, 
-                        '". $va->is_delete ."' as is_delete, 
-                        '". $va->update_org ."' as update_org, 
-                        '". $va->org_owner ."' as org_owner, 
-                        '". $va->org_visible ."' as org_visible
+                        " . $va->line_id . " as  line_id, 
+                        '" . $va->line_code . "' as line_code, 
+                        '" . $va->linename_abbr . "' as linename_abbr, 
+                        '" . $va->linename_th . "' as linename_th, 
+                        '" . $va->linename_en . "' as linename_en, 
+                        '" . $va->linegroup_id . "' as linegroup_id, 
+                        '" . $va->positiontype_id . "' as positiontype_id, 
+                        '" . $va->pertype_id . "' as pertype_id, 
+                        '" . $va->level_min . "' as level_min, 
+                        '" . $va->level_max . "' as level_max, 
+                        '" . $va->sortorder . "' as sortorder, 
+                        '" . $va->flag . "' as flag, 
+                        '" . $va->std_code . "' as std_code, 
+                        '" . $va->creator . "' as creator, 
+                        '" . $va->createdate . "' as createdate, 
+                        '" . $va->updateuser . "' as updateuser, 
+                        '" . $va->updatedate . "' as updatedate, 
+                        '" . $va->create_org . "' as create_org, 
+                        '" . $va->recode_id . "' as recode_id, 
+                        '" . $va->is_sync . "' as is_sync, 
+                        '" . $va->sync_datetime . "' as sync_datetime, 
+                        '" . $va->sync_status_code . "' as sync_status_code, 
+                        '" . $va->is_delete . "' as is_delete, 
+                        '" . $va->update_org . "' as update_org, 
+                        '" . $va->org_owner . "' as org_owner, 
+                        '" . $va->org_visible . "' as org_visible
                     FROM dual
                 ";
 
                 if (count($SqlOrgs) > 100) {
-                    
+
                     $sql = "
                         MERGE INTO per_line_news d
                         USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.line_id = s.line_id )
@@ -1321,9 +1626,9 @@ class EmpdataController extends Controller
                     ";
 
 
-                 
 
-                    foreach ([1, 2] as $kg => $vg) {
+
+                    foreach ($params['dbInserts'] as $kg => $vg) {
 
                         if ($vg == 1) {
 
@@ -1348,7 +1653,7 @@ class EmpdataController extends Controller
 
 
         if (count($SqlOrgs) > 0) {
-                    
+
             $sql = "
                 MERGE INTO per_line_news d
                 USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.line_id = s.line_id )
@@ -1388,7 +1693,7 @@ class EmpdataController extends Controller
                     org_visible = s.org_visible               
             ";
 
-            foreach ([1, 2] as $kg => $vg) {
+            foreach ($params['dbInserts'] as $kg => $vg) {
 
                 if ($vg == 1) {
 
