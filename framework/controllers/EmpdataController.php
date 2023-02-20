@@ -52,19 +52,15 @@ class EmpdataController extends Controller
                 $user_id = Yii::$app->user->getId();
             }
     
-            // $this->actionTb_line($user_id);
-            // $this->actionPos_position($user_id);
-            // $this->actionOganize($user_id);
-            // $this->actionTb_pertype($user_id);
-            // $this->actionTb_level($user_id);
+            $this->actionTb_line($user_id);
+            $this->actionPos_position($user_id);
+            $this->actionOganize($user_id);
+            $this->actionTb_pertype($user_id);
+            $this->actionTb_level($user_id);
     
             echo PerPersonal1::getFromApi($user_id);
 
         }
-
-
-
-
 
         exit;
     }
@@ -1342,6 +1338,7 @@ class EmpdataController extends Controller
                         '" . $va->org_visible . "' as org_visible
                     FROM dual
                 ";
+
                 //  [pertype_pid] => 0 [pertype_code] => 10000 [pertype_abbr] => ขรก. [pertype] => ข้าราชการ [sortorder] => 1 [flag] => 1 [creator] => -1 [createdate] => 2020-02-03 16:07:55 [create_org] => 0 [updateuser] => -1 [updatedate] => 2020-02-03 16:07:55 [recode_id] => 1 [is_delete] => 0 [require_cmd] => 0 [is_sync] => 0 [sync_datetime] => 2022-12-20 15:53:21 [sync_status_code] =>  [update_org] => 0 [org_owner] => 0 [org_visible] => 0
 
                 if (count($SqlOrgs) > 100) {
@@ -2044,18 +2041,10 @@ class EmpdataController extends Controller
         \app\models\CommonAction::AddEventLog($createby, "Update", $log_page, $log_description);
     }
 
+
     public function actionSyndata()
     {
-
-        // arr( Yii::$app->params['prg_ctrl'] );
-
         $datas['columns'] = [
-            // [
-            //     'name' => 'PER_ID',
-            //     'label' => 'id',
-            //     'className' => "text-center",
-            //     'orderable' => false
-            // ],
             [
                 'name' => 'PER_CARDNO',
                 'label' => 'เลขบัตร',
@@ -2092,19 +2081,6 @@ class EmpdataController extends Controller
                 'className' => "text-center",
                 'orderable' => false
             ],
-            // [
-            //     'name' => 'PER_STARTDATE',
-            //     'label' => 'เริ่มงานเมื่อ',
-            //     'className' => "text-center",
-            //     'orderable' => false
-            // ],
-
-            // [
-            //     'name' => 'UPDATE_DATE_',
-            //     'label' => 'อัพเดทเมื่อ',
-            //     'className' => "text-center",
-            //     'orderable' => false
-            // ],
             [
                 'name' => 'OT_NAME',
                 'label' => 'ประเภทบุคลากร',
@@ -2117,20 +2093,12 @@ class EmpdataController extends Controller
                 'className' => "text-center",
                 'orderable' => false
             ],
-
-
-
         ];
-
 
         $LogEvents = LogEvent::find(['log_page' => 'syndata'])->orderBy(['log_id' => SORT_DESC])->limit(1)->all();
 
-
         $datas['last_user'] = NULL;
         foreach ($LogEvents as $ka => $LogEvent) {
-
-            // arr( $LogEvent );
-
             if ($LogEvent['log_user'] == yii::$app->user->getId()) {
 
                 $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">' . $LogEvent->log_date . '</b> โดย <b style="color: #a53f6f;">คุณ</b> </div>';
