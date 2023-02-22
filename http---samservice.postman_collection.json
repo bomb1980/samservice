@@ -25,14 +25,7 @@
 				"header": [],
 				"body": {
 					"mode": "urlencoded",
-					"urlencoded": [
-						{
-							"key": "username",
-							"value": "ksukrit",
-							"type": "text",
-							"disabled": true
-						}
-					],
+					"urlencoded": [],
 					"options": {
 						"raw": {
 							"language": "json"
@@ -82,14 +75,7 @@
 				"header": [],
 				"body": {
 					"mode": "urlencoded",
-					"urlencoded": [
-						{
-							"key": "username",
-							"value": "ksukrit",
-							"type": "text",
-							"disabled": true
-						}
-					],
+					"urlencoded": [],
 					"options": {
 						"raw": {
 							"language": "json"
@@ -139,14 +125,7 @@
 				"header": [],
 				"body": {
 					"mode": "urlencoded",
-					"urlencoded": [
-						{
-							"key": "username",
-							"value": "ksukrit",
-							"type": "text",
-							"disabled": true
-						}
-					],
+					"urlencoded": [],
 					"options": {
 						"raw": {
 							"language": "json"
@@ -154,13 +133,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{url}}/cronemp/level?ciphering=AES-256-CBC&encryption_iv=1234567891011121",
+					"raw": "{{url}}/cronemp/line?ciphering=AES-256-CBC&encryption_iv=1234567891011121",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
 						"cronemp",
-						"level"
+						"line"
 					],
 					"query": [
 						{
@@ -196,14 +175,7 @@
 				"header": [],
 				"body": {
 					"mode": "urlencoded",
-					"urlencoded": [
-						{
-							"key": "username",
-							"value": "ksukrit",
-							"type": "text",
-							"disabled": true
-						}
-					],
+					"urlencoded": [],
 					"options": {
 						"raw": {
 							"language": "json"
@@ -253,14 +225,7 @@
 				"header": [],
 				"body": {
 					"mode": "urlencoded",
-					"urlencoded": [
-						{
-							"key": "username",
-							"value": "ksukrit",
-							"type": "text",
-							"disabled": true
-						}
-					],
+					"urlencoded": [],
 					"options": {
 						"raw": {
 							"language": "json"
@@ -268,10 +233,9 @@
 					}
 				},
 				"url": {
-					"raw": "http://samservice/cronemp/oganize?ciphering=AES-256-CBC&encryption_iv=1234567891011121",
-					"protocol": "http",
+					"raw": "{{url}}/cronemp/oganize?ciphering=AES-256-CBC&encryption_iv=1234567891011121",
 					"host": [
-						"samservice"
+						"{{url}}"
 					],
 					"path": [
 						"cronemp",
@@ -311,14 +275,7 @@
 				"header": [],
 				"body": {
 					"mode": "urlencoded",
-					"urlencoded": [
-						{
-							"key": "username",
-							"value": "ksukrit",
-							"type": "text",
-							"disabled": true
-						}
-					],
+					"urlencoded": [],
 					"options": {
 						"raw": {
 							"language": "json"
@@ -326,10 +283,9 @@
 					}
 				},
 				"url": {
-					"raw": "http://samservice/cronemp/pertype?ciphering=AES-256-CBC&encryption_iv=1234567891011121",
-					"protocol": "http",
+					"raw": "{{url}}/cronemp/pertype?ciphering=AES-256-CBC&encryption_iv=1234567891011121",
 					"host": [
-						"samservice"
+						"{{url}}"
 					],
 					"path": [
 						"cronemp",

@@ -49,7 +49,7 @@ class CronempController extends Controller
 
 		exit;
 	}
-	
+
 	public function actionPosition()
 	{
 
@@ -197,9 +197,6 @@ class CronempController extends Controller
 
 		exit;
 	}
-
-
-
 
 	// http://samservice/cronemp/perpersonal/?ciphering=AES-256-CBC&encryption_iv=1234567891011121
 	public function actionPerpersonal()
