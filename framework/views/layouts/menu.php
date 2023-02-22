@@ -6,20 +6,50 @@
           <ul class="site-menu" data-plugin="menu">
             <li class="site-menu-category"></li>
             <li class="site-menu-item">
-              <a href="<?php echo Yii::$app->urlManager->createUrl('dashboard'); ?>">
+              <a href="dashboard">
                 <i class="site-menu-icon fas fa-home" aria-hidden="true"></i>
                 <span class="site-menu-title">หน้าแรก</span>
               </a>
             </li>
 
-            
+
             <li class="site-menu-category">จัดการข้อมูล</li>
 
 
             <li class="site-menu-item">
-              <a href="<?php echo Yii::$app->urlManager->createUrl('empdata/syndata'); ?>">
+              <a href="empdata/syndata">
                 <i class="site-menu-icon icon fas fa-people-arrows" aria-hidden="true"></i>
                 <span class="site-menu-title">ข้อมูลเจ้าหน้าที่</span>
+              </a>
+            </li>
+            <li class="site-menu-item">
+              <a href="empdata/updatelevel">
+                <i class="site-menu-icon icon fas fa-people-arrows" aria-hidden="true"></i>
+                <span class="site-menu-title">ข้อมูลระดับชั้น</span>
+              </a>
+            </li>
+            <li class="site-menu-item">
+              <a href="empdata/updateline">
+                <i class="site-menu-icon icon fas fa-people-arrows" aria-hidden="true"></i>
+                <span class="site-menu-title">ข้อมูล LINE</span>
+              </a>
+            </li>
+            <li class="site-menu-item">
+              <a href="empdata/updateposition">
+                <i class="site-menu-icon icon fas fa-people-arrows" aria-hidden="true"></i>
+                <span class="site-menu-title">ข้อมูล ตำแหน่ง</span>
+              </a>
+            </li>
+            <li class="site-menu-item">
+              <a href="empdata/updateoganize">
+                <i class="site-menu-icon icon fas fa-people-arrows" aria-hidden="true"></i>
+                <span class="site-menu-title">ข้อมูล oganize</span>
+              </a>
+            </li>
+            <li class="site-menu-item">
+              <a href="empdata/updatepertype">
+                <i class="site-menu-icon icon fas fa-people-arrows" aria-hidden="true"></i>
+                <span class="site-menu-title">ข้อมูล pertype</span>
               </a>
             </li>
 
@@ -27,21 +57,21 @@
             <li class="site-menu-category">ตั้งค่าข้อมูล</li>
 
             <li class="site-menu-item">
-              <a href="<?php echo Yii::$app->urlManager->createUrl('empdata/user_list'); ?>">
+              <a href="empdata/user_list">
                 <i class="site-menu-icon fas fa-user-cog" aria-hidden="true"></i>
                 <span class="site-menu-title">สิทธิ์ผู้ใช้งาน</span>
               </a>
             </li>
 
             <li class="site-menu-item">
-              <a href="<?php echo Yii::$app->urlManager->createUrl('empdata/user_register'); ?>">
+              <a href="empdata/user_register">
                 <i class="site-menu-icon fas fa-user-plus" aria-hidden="true"></i>
                 <span class="site-menu-title">เพิ่มผู้ใช้งาน</span>
               </a>
             </li>
 
             <li class="site-menu-item">
-              <a href="<?php echo Yii::$app->urlManager->createUrl('admin/datamanagement'); ?>">
+              <a href="admin/datamanagement">
                 <i class="site-menu-icon fas fa-database" aria-hidden="true"></i>
                 <span class="site-menu-title">ดูฐานข้อมูลระบบ</span>
               </a>
@@ -56,8 +86,6 @@
   </div>
 
 <?php } else {?>
-  
-  
   <div class="site-menubar site-menubar-light">
     <div class="site-menubar-body">
       <div>
@@ -65,29 +93,24 @@
           <ul class="site-menu" data-plugin="menu">
             <li class="site-menu-category"></li>
             <li class="site-menu-item">
-              <a href="<?php echo Yii::$app->urlManager->createUrl('dashboard'); ?>">
+              <a href="dashboard">
                 <i class="site-menu-icon fas fa-home" aria-hidden="true"></i>
                 <span class="site-menu-title">หน้าแรก</span>
               </a>
             </li>
 
-            
+
             <li class="site-menu-category">จัดการข้อมูล</li>
 
 
             <li class="site-menu-item">
-              <a href="<?php echo Yii::$app->urlManager->createUrl('empdata/syndata'); ?>">
+              <a href="empdata/syndata">
                 <i class="site-menu-icon icon fas fa-people-arrows" aria-hidden="true"></i>
                 <span class="site-menu-title">ข้อมูลเจ้าหน้าที่</span>
               </a>
             </li>
 
-
-            
-
-            
-
-            
+ 
 
            
 
@@ -98,6 +121,7 @@
     </div>
 
   </div>
+
   <?php } ?>
 
 <script type="text/javascript">

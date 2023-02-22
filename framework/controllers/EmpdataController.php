@@ -26,16 +26,99 @@ class EmpdataController extends Controller
         }
     }
 
+     // updateposition
+     public function actionUpdatepertype()
+     {
+ 
+         // arr('dddad');
+         $datas['columns'] = [
+             [
+                 'name' => 'PERTYPE_CODE',
+                 'label' => 'รหัส',
+                 'className' => "text-center",
+                 'orderable' => false
+             ],
+             [
+                 'name' => 'PERTYPE',
+                 'label' => 'ประเภท',
+                 'className' => "text-center",
+                 'orderable' => false
+             ],
+ 
+         ];
+ 
+         $LogEvents = LogEvent::find(['log_page' => 'updatepertype'])->orderBy(['log_id' => SORT_DESC])->limit(1)->all();
+ 
+         $datas['last_user'] = NULL;
+         foreach ($LogEvents as $ka => $LogEvent) {
+             if ($LogEvent['log_user'] == yii::$app->user->getId()) {
+ 
+                 $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">' . $LogEvent->log_date . '</b> โดย <b style="color: #a53f6f;">คุณ</b> </div>';
+             } else {
+ 
+                 $res = MasUser::findOne($LogEvent->log_user);
+ 
+                 if ($res) {
+                     $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">' . $LogEvent->log_date . '</b> โดยคุณ  <b style="color: #a53f6f;">' . $res['displayname'] . '</b> </div>';
+                 }
+             }
+         }
+ 
+         $datas['datatableUrl'] = 'api/pertype';
+         $datas['apiUrl'] = 'cronemp/pertype';
+         $datas['title'] = 'อัพเดตข้อมูล oganize';
+ 
+         return $this->render('view', $datas);
+     }
+
+    // updateposition
+    public function actionUpdateoganize()
+    {
+
+        // arr('dddad');
+        $datas['columns'] = [
+            [
+                'name' => 'ORGANIZE_TH',
+                'label' => 'ชื่อองค์กร',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+
+        ];
+
+        $LogEvents = LogEvent::find(['log_page' => 'updateoganize'])->orderBy(['log_id' => SORT_DESC])->limit(1)->all();
+
+        $datas['last_user'] = NULL;
+        foreach ($LogEvents as $ka => $LogEvent) {
+            if ($LogEvent['log_user'] == yii::$app->user->getId()) {
+
+                $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">' . $LogEvent->log_date . '</b> โดย <b style="color: #a53f6f;">คุณ</b> </div>';
+            } else {
+
+                $res = MasUser::findOne($LogEvent->log_user);
+
+                if ($res) {
+                    $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">' . $LogEvent->log_date . '</b> โดยคุณ  <b style="color: #a53f6f;">' . $res['displayname'] . '</b> </div>';
+                }
+            }
+        }
+
+        $datas['datatableUrl'] = 'api/oganize';
+        $datas['apiUrl'] = 'cronemp/oganize';
+        $datas['title'] = 'อัพเดตข้อมูล oganize';
+
+        return $this->render('view', $datas);
+    }
+
+
     // http://samservice/empdata/gogo
     public function actionGogo()
     {
-
 
         $user_id = 1;
         if (Yii::$app->user->getId()) {
             $user_id = Yii::$app->user->getId();
         }
-
 
         // PerPersonal1::getlevelApi($user_id);
         // PerPersonal1::getPertypeApi($user_id);
@@ -47,7 +130,204 @@ class EmpdataController extends Controller
     }
 
 
- 
+    // updateposition
+    public function actionUpdateposition()
+    {
+
+        // arr('dddad');
+        $datas['columns'] = [
+            [
+                'name' => 'POS_NO',
+                'label' => 'POS_NO',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+
+        ];
+
+        $LogEvents = LogEvent::find(['log_page' => 'updateposition'])->orderBy(['log_id' => SORT_DESC])->limit(1)->all();
+
+        $datas['last_user'] = NULL;
+        foreach ($LogEvents as $ka => $LogEvent) {
+            if ($LogEvent['log_user'] == yii::$app->user->getId()) {
+
+                $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">' . $LogEvent->log_date . '</b> โดย <b style="color: #a53f6f;">คุณ</b> </div>';
+            } else {
+
+                $res = MasUser::findOne($LogEvent->log_user);
+
+                if ($res) {
+                    $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">' . $LogEvent->log_date . '</b> โดยคุณ  <b style="color: #a53f6f;">' . $res['displayname'] . '</b> </div>';
+                }
+            }
+        }
+
+        $datas['datatableUrl'] = 'api/position';
+        $datas['apiUrl'] = 'cronemp/position';
+        $datas['title'] = 'อัพเดตข้อมูลระดับชั้น';
+
+        return $this->render('view', $datas);
+    }
+
+
+    public function actionUpdateline()
+    {
+        $datas['columns'] = [
+           
+            [
+                'name' => 'LINENAME_TH',
+                'label' => 'LINENAME_TH',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+        ];
+
+        $LogEvents = LogEvent::find(['log_page' => 'updateline'])->orderBy(['log_id' => SORT_DESC])->limit(1)->all();
+
+        $datas['last_user'] = NULL;
+        foreach ($LogEvents as $ka => $LogEvent) {
+            if ($LogEvent['log_user'] == yii::$app->user->getId()) {
+
+                $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">' . $LogEvent->log_date . '</b> โดย <b style="color: #a53f6f;">คุณ</b> </div>';
+            } else {
+
+                $res = MasUser::findOne($LogEvent->log_user);
+
+                if ($res) {
+                    $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">' . $LogEvent->log_date . '</b> โดยคุณ  <b style="color: #a53f6f;">' . $res['displayname'] . '</b> </div>';
+                }
+            }
+        }
+
+        $datas['datatableUrl'] = 'api/line';
+        $datas['apiUrl'] = 'cronemp/line';
+        $datas['title'] = 'อัพเดตข้อมูลระดับชั้น';
+
+        return $this->render('view', $datas);
+    }
+
+
+    public function actionUpdatelevel()
+    {
+        $datas['columns'] = [
+            
+            [
+                'name' => 'LEVELNAME_TH',
+                'label' => 'ระดับ',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+
+        ];
+
+        $LogEvents = LogEvent::find(['log_page' => 'updatelevel'])->orderBy(['log_id' => SORT_DESC])->limit(1)->all();
+
+        $datas['last_user'] = NULL;
+        foreach ($LogEvents as $ka => $LogEvent) {
+            if ($LogEvent['log_user'] == yii::$app->user->getId()) {
+
+                $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">' . $LogEvent->log_date . '</b> โดย <b style="color: #a53f6f;">คุณ</b> </div>';
+            } else {
+
+                $res = MasUser::findOne($LogEvent->log_user);
+
+                if ($res) {
+                    $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">' . $LogEvent->log_date . '</b> โดยคุณ  <b style="color: #a53f6f;">' . $res['displayname'] . '</b> </div>';
+                }
+            }
+        }
+
+        $datas['datatableUrl'] = 'api/level';
+
+
+        $datas['apiUrl'] = 'cronemp/level';
+        $datas['title'] = 'อัพเดตข้อมูลระดับชั้น';
+
+
+
+        return $this->render('view', $datas);
+    }
+
+
+    public function actionSyndata()
+    {
+        $datas['columns'] = [
+            [
+                'name' => 'PER_CARDNO',
+                'label' => 'เลขบัตร',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'POS_ID',
+                'label' => 'เลขที่ตำแหน่ง',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'FULL_NAME_THAI',
+                'label' => 'ชื่อ นามสกุล',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'LEVEL_NO',
+                'label' => 'ระดับผู้ดำรงตำแหน่ง',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'ORGANIZE_TH',
+                'label' => 'สังกัดตามกฏหมาย',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'ORGANIZE_TH_ASS',
+                'label' => 'สังกัดตามมอบหมายงาน',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'OT_NAME',
+                'label' => 'ประเภทบุคลากร',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'PER_STATUS_NAME',
+                'label' => 'สถานะ',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+        ];
+
+        $LogEvents = LogEvent::find(['log_page' => 'syndata'])->orderBy(['log_id' => SORT_DESC])->limit(1)->all();
+
+        $datas['last_user'] = NULL;
+        foreach ($LogEvents as $ka => $LogEvent) {
+            if ($LogEvent['log_user'] == yii::$app->user->getId()) {
+
+                $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">' . $LogEvent->log_date . '</b> โดย <b style="color: #a53f6f;">คุณ</b> </div>';
+            } else {
+
+                $res = MasUser::findOne($LogEvent->log_user);
+
+                if ($res) {
+                    $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">' . $LogEvent->log_date . '</b> โดยคุณ  <b style="color: #a53f6f;">' . $res['displayname'] . '</b> </div>';
+                }
+            }
+        }
+
+        $datas['datatableUrl'] = 'api';
+        $datas['apiUrl'] = 'cronemp/perpersonal';
+        $datas['title'] = 'อัพเดตข้อมูลเจ้าหน้าที่';
+
+
+
+        return $this->render('view_per_personal', $datas);
+    }
+
 
     public function actionTest1()
     {
@@ -330,16 +610,16 @@ class EmpdataController extends Controller
         arr($js);
     }
 
-    
 
 
-   
+
+
 
     // http://samservice/empdata/tb_line
-  
+
 
     // http://samservice/empdata/tb_level
-   
+
 
 
     public function actionTest()
@@ -356,78 +636,7 @@ class EmpdataController extends Controller
     }
 
 
-    public function actionSyndata()
-    {
-        $datas['columns'] = [
-            [
-                'name' => 'PER_CARDNO',
-                'label' => 'เลขบัตร',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'POS_ID',
-                'label' => 'เลขที่ตำแหน่ง',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'FULL_NAME_THAI',
-                'label' => 'ชื่อ นามสกุล',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'LEVEL_NO',
-                'label' => 'ระดับผู้ดำรงตำแหน่ง',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'ORGANIZE_TH',
-                'label' => 'สังกัดตามกฏหมาย',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'ORGANIZE_TH_ASS',
-                'label' => 'สังกัดตามมอบหมายงาน',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'OT_NAME',
-                'label' => 'ประเภทบุคลากร',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'PER_STATUS_NAME',
-                'label' => 'สถานะ',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-        ];
 
-        $LogEvents = LogEvent::find(['log_page' => 'syndata'])->orderBy(['log_id' => SORT_DESC])->limit(1)->all();
-
-        $datas['last_user'] = NULL;
-        foreach ($LogEvents as $ka => $LogEvent) {
-            if ($LogEvent['log_user'] == yii::$app->user->getId()) {
-
-                $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">' . $LogEvent->log_date . '</b> โดย <b style="color: #a53f6f;">คุณ</b> </div>';
-            } else {
-
-                $res = MasUser::findOne($LogEvent->log_user);
-
-                if ($res) {
-                    $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">' . $LogEvent->log_date . '</b> โดยคุณ  <b style="color: #a53f6f;">' . $res['displayname'] . '</b> </div>';
-                }
-            }
-        }
-
-        return $this->render('view', $datas);
-    }
 
     // http://samservice/empdata/user_register
     public function actionUser_register($id = NULL)

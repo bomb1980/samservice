@@ -21,6 +21,484 @@ class ApiController extends Controller
         }
     }
 
+    
+
+    public function actionPertype()
+    {
+
+        $req = Yii::$app->request->get();
+
+        $seltype = isset($req['seltype']) ? $req['seltype'] : 1;
+        $start = isset($req['start']) ? $req['start'] : 0;
+        $length = isset($req['length']) ? $req['length'] : 10;
+
+        if ($seltype == 1) {
+
+            $con = Yii::$app->dbdpis;
+        } else {
+
+            $con = Yii::$app->dbdpisemp;
+        }
+
+        $sql = "
+            SELECT
+                count( * ) as t
+            FROM per_off_type_news        
+            [WHERE] 
+        ";
+
+        $replace = [];
+        $bindValue = [];
+        if (isset($req['per_cardno'])) {
+             
+            // $replace['WHERE'][] = "per_cardno LIKE :per_cardno";
+
+            // $bindValue['per_cardno'] = '%' . str_replace( ' ', '%', $req['per_cardno'] )  . '%';
+
+        }
+
+        $cmd = genCond_($sql, $replace, $con, $bindValue);
+
+        $totalRecords = 0;
+        foreach ($cmd->queryAll() as $kt => $vt) {
+
+            $totalRecords = $vt['T'];
+        }
+
+        $sql = "
+            SELECT
+                p.*
+            FROM per_off_type_news p
+           
+            [WHERE]
+            [ORDER]
+            OFFSET " . $start . " ROWS FETCH NEXT :length ROWS ONLY
+        ";
+
+        $bindValue['length'] = $length;
+
+        $orders = [];
+        if( isset( $req['columns'] ) ) {
+
+            foreach( $req['columns']  as $kc => $vc ) {
+    
+                if( $kc == $req['order'][0]['column'] ) {
+    
+                    $orders[] = $vc['data'] ." ". $req['order'][0]['dir'];
+                }
+            }
+        }
+
+        $replace['ORDER'] = NULL;
+        if( !empty( $orders ) ) {
+
+            $replace['ORDER'] = "ORDER BY " . implode( ' , ', $orders );
+        }
+        
+        $cmd = genCond_( $sql, $replace, $con, $bindValue );
+
+
+        // arr( $cmd->sql );
+        
+        $keep = [];
+        foreach( $cmd->queryAll() as $kd => $vd ) {
+
+            $keep[] = $vd;
+        }
+
+        echo json_encode(
+            [
+                "iTotalRecords" => $totalRecords,
+                "iTotalDisplayRecords" => $totalRecords,
+                "aaData" =>  $keep,
+            ]
+        );
+
+        exit;
+    }
+    public function actionOganize()
+    {
+
+        $req = Yii::$app->request->get();
+
+        $seltype = isset($req['seltype']) ? $req['seltype'] : 1;
+        $start = isset($req['start']) ? $req['start'] : 0;
+        $length = isset($req['length']) ? $req['length'] : 10;
+
+        if ($seltype == 1) {
+
+            $con = Yii::$app->dbdpis;
+        } else {
+
+            $con = Yii::$app->dbdpisemp;
+        }
+
+        $sql = "
+            SELECT
+                count( * ) as t
+            FROM per_org_ass_news        
+            [WHERE] 
+        ";
+
+        $replace = [];
+        $bindValue = [];
+        if (isset($req['per_cardno'])) {
+             
+            // $replace['WHERE'][] = "per_cardno LIKE :per_cardno";
+
+            // $bindValue['per_cardno'] = '%' . str_replace( ' ', '%', $req['per_cardno'] )  . '%';
+
+        }
+
+        $cmd = genCond_($sql, $replace, $con, $bindValue);
+
+        $totalRecords = 0;
+        foreach ($cmd->queryAll() as $kt => $vt) {
+
+            $totalRecords = $vt['T'];
+        }
+
+        $sql = "
+            SELECT
+                p.*
+            FROM per_org_ass_news p
+           
+            [WHERE]
+            [ORDER]
+            OFFSET " . $start . " ROWS FETCH NEXT :length ROWS ONLY
+        ";
+
+        $bindValue['length'] = $length;
+
+        $orders = [];
+        if( isset( $req['columns'] ) ) {
+
+            foreach( $req['columns']  as $kc => $vc ) {
+    
+                if( $kc == $req['order'][0]['column'] ) {
+    
+                    $orders[] = $vc['data'] ." ". $req['order'][0]['dir'];
+                }
+            }
+        }
+
+        $replace['ORDER'] = NULL;
+        if( !empty( $orders ) ) {
+
+            $replace['ORDER'] = "ORDER BY " . implode( ' , ', $orders );
+        }
+        
+        $cmd = genCond_( $sql, $replace, $con, $bindValue );
+
+
+        // arr( $cmd->sql );
+        
+        $keep = [];
+        foreach( $cmd->queryAll() as $kd => $vd ) {
+
+            $keep[] = $vd;
+        }
+
+        echo json_encode(
+            [
+                "iTotalRecords" => $totalRecords,
+                "iTotalDisplayRecords" => $totalRecords,
+                "aaData" =>  $keep,
+            ]
+        );
+
+        exit;
+    }
+
+
+
+    public function actionPosition()
+    {
+
+        $req = Yii::$app->request->get();
+
+        $seltype = isset($req['seltype']) ? $req['seltype'] : 1;
+        $start = isset($req['start']) ? $req['start'] : 0;
+        $length = isset($req['length']) ? $req['length'] : 10;
+
+        if ($seltype == 1) {
+
+            $con = Yii::$app->dbdpis;
+        } else {
+
+            $con = Yii::$app->dbdpisemp;
+        }
+
+        $sql = "
+            SELECT
+                count( * ) as t
+            FROM per_position_news        
+            [WHERE] 
+        ";
+
+        $replace = [];
+        $bindValue = [];
+        if (isset($req['per_cardno'])) {
+             
+            // $replace['WHERE'][] = "per_cardno LIKE :per_cardno";
+
+            // $bindValue['per_cardno'] = '%' . str_replace( ' ', '%', $req['per_cardno'] )  . '%';
+
+        }
+
+        $cmd = genCond_($sql, $replace, $con, $bindValue);
+
+        $totalRecords = 0;
+        foreach ($cmd->queryAll() as $kt => $vt) {
+
+            $totalRecords = $vt['T'];
+        }
+
+        $sql = "
+            SELECT
+                p.*
+            FROM per_position_news p
+           
+            [WHERE]
+            [ORDER]
+            OFFSET " . $start . " ROWS FETCH NEXT :length ROWS ONLY
+        ";
+
+        $bindValue['length'] = $length;
+
+        $orders = [];
+        if( isset( $req['columns'] ) ) {
+
+            foreach( $req['columns']  as $kc => $vc ) {
+    
+                if( $kc == $req['order'][0]['column'] ) {
+    
+                    $orders[] = $vc['data'] ." ". $req['order'][0]['dir'];
+                }
+            }
+        }
+
+        $replace['ORDER'] = NULL;
+        if( !empty( $orders ) ) {
+
+            $replace['ORDER'] = "ORDER BY " . implode( ' , ', $orders );
+        }
+        
+        $cmd = genCond_( $sql, $replace, $con, $bindValue );
+
+
+        // arr( $cmd->sql );
+        
+        $keep = [];
+        foreach( $cmd->queryAll() as $kd => $vd ) {
+
+            $keep[] = $vd;
+        }
+
+        echo json_encode(
+            [
+                "iTotalRecords" => $totalRecords,
+                "iTotalDisplayRecords" => $totalRecords,
+                "aaData" =>  $keep,
+            ]
+        );
+
+        exit;
+    }
+
+
+    public function actionLine()
+    {
+
+        $req = Yii::$app->request->get();
+
+        $seltype = isset($req['seltype']) ? $req['seltype'] : 1;
+        $start = isset($req['start']) ? $req['start'] : 0;
+        $length = isset($req['length']) ? $req['length'] : 10;
+
+        if ($seltype == 1) {
+
+            $con = Yii::$app->dbdpis;
+        } else {
+
+            $con = Yii::$app->dbdpisemp;
+        }
+
+        $sql = "
+            SELECT
+                count( * ) as t
+            FROM per_line_news        
+            [WHERE] 
+        ";
+
+        $replace = [];
+        $bindValue = [];
+        if (isset($req['per_cardno'])) {
+             
+            // $replace['WHERE'][] = "per_cardno LIKE :per_cardno";
+
+            // $bindValue['per_cardno'] = '%' . str_replace( ' ', '%', $req['per_cardno'] )  . '%';
+
+        }
+
+        $cmd = genCond_($sql, $replace, $con, $bindValue);
+
+        $totalRecords = 0;
+        foreach ($cmd->queryAll() as $kt => $vt) {
+
+            $totalRecords = $vt['T'];
+        }
+
+        $sql = "
+            SELECT
+                p.*
+            FROM per_line_news p
+           
+            [WHERE]
+            [ORDER]
+            OFFSET " . $start . " ROWS FETCH NEXT :length ROWS ONLY
+        ";
+
+        $bindValue['length'] = $length;
+
+        $orders = [];
+        if( isset( $req['columns'] ) ) {
+
+            foreach( $req['columns']  as $kc => $vc ) {
+    
+                if( $kc == $req['order'][0]['column'] ) {
+    
+                    $orders[] = $vc['data'] ." ". $req['order'][0]['dir'];
+                }
+            }
+        }
+
+        $replace['ORDER'] = NULL;
+        if( !empty( $orders ) ) {
+
+            $replace['ORDER'] = "ORDER BY " . implode( ' , ', $orders );
+        }
+        
+        $cmd = genCond_( $sql, $replace, $con, $bindValue );
+
+
+        // arr( $cmd->sql );
+        
+        $keep = [];
+        foreach( $cmd->queryAll() as $kd => $vd ) {
+
+            $keep[] = $vd;
+        }
+
+        echo json_encode(
+            [
+                "iTotalRecords" => $totalRecords,
+                "iTotalDisplayRecords" => $totalRecords,
+                "aaData" =>  $keep,
+            ]
+        );
+
+        exit;
+    }
+
+
+
+    public function actionLevel()
+    {
+
+        $req = Yii::$app->request->get();
+
+        $seltype = isset($req['seltype']) ? $req['seltype'] : 1;
+        $start = isset($req['start']) ? $req['start'] : 0;
+        $length = isset($req['length']) ? $req['length'] : 10;
+
+        if ($seltype == 1) {
+
+            $con = Yii::$app->dbdpis;
+        } else {
+
+            $con = Yii::$app->dbdpisemp;
+        }
+
+        $sql = "
+            SELECT
+                count( * ) as t
+            FROM per_level_news        
+            [WHERE] 
+        ";
+
+        $replace = [];
+        $bindValue = [];
+        if (isset($req['per_cardno'])) {
+             
+            // $replace['WHERE'][] = "per_cardno LIKE :per_cardno";
+
+            // $bindValue['per_cardno'] = '%' . str_replace( ' ', '%', $req['per_cardno'] )  . '%';
+
+        }
+
+        $cmd = genCond_($sql, $replace, $con, $bindValue);
+
+        $totalRecords = 0;
+        foreach ($cmd->queryAll() as $kt => $vt) {
+
+            $totalRecords = $vt['T'];
+        }
+
+        $sql = "
+            SELECT
+                p.*
+            FROM per_level_news p
+           
+            [WHERE]
+            [ORDER]
+            OFFSET " . $start . " ROWS FETCH NEXT :length ROWS ONLY
+        ";
+
+        $bindValue['length'] = $length;
+
+        $orders = [];
+        if( isset( $req['columns'] ) ) {
+
+            foreach( $req['columns']  as $kc => $vc ) {
+    
+                if( $kc == $req['order'][0]['column'] ) {
+    
+                    $orders[] = $vc['data'] ." ". $req['order'][0]['dir'];
+                }
+            }
+        }
+
+        $replace['ORDER'] = NULL;
+        if( !empty( $orders ) ) {
+
+            $replace['ORDER'] = "ORDER BY " . implode( ' , ', $orders );
+        }
+        
+        $cmd = genCond_( $sql, $replace, $con, $bindValue );
+
+
+        // arr( $cmd->sql );
+        
+        $keep = [];
+        foreach( $cmd->queryAll() as $kd => $vd ) {
+
+            $keep[] = $vd;
+        }
+
+        echo json_encode(
+            [
+                "iTotalRecords" => $totalRecords,
+                "iTotalDisplayRecords" => $totalRecords,
+                "aaData" =>  $keep,
+            ]
+        );
+
+        exit;
+    }
+
+ 
+
     public function actionIndex()
     {
 
@@ -141,136 +619,7 @@ class ApiController extends Controller
         exit;
     }
 
-
-    public function actionIndex____()
-    {
-
-        $req = Yii::$app->request->get();
-
-        $seltype = isset($req['seltype']) ? $req['seltype'] : 1;
-        $start = isset($req['start']) ? $req['start'] : 0;
-        $length = isset($req['length']) ? $req['length'] : 10;
-
-        if ($seltype == 1) {
-
-            $con = Yii::$app->dbdpis;
-        } else {
-
-            $con = Yii::$app->dbdpisemp;
-        }
-
-        $sql = "
-            SELECT
-                count( * ) as t
-            FROM per_personal
-            [WHERE] 
-        ";
-
-        $replace = [];
-        $bindValue = [];
-        if (isset($req['per_cardno'])) {
-            if( 0 ) {
-
-                $replace['WHERE'][] = "per_cardno LIKE '%".  $req['per_cardno'] ."%'";
-    
-                // $bindValue['per_cardno'] = '%' . $req['per_cardno'] . '%';
-            }
-            else {
-
-                $replace['WHERE'][] = "per_cardno LIKE :per_cardno";
-    
-                $bindValue['per_cardno'] = '%' . str_replace( ' ', '%', $req['per_cardno'] )  . '%';
-            }
-
-        }
-
-        $cmd = genCond_($sql, $replace, $con, $bindValue);
-
-        $totalRecords = 0;
-        foreach ($cmd->queryAll() as $kt => $vt) {
-
-            $totalRecords = $vt['T'];
-        }
-
-        $sql = "
-            SELECT
-                NVL( p.update_date , '-') as update_date_,
-                CONCAT( p.per_name, CONCAT(' ', p.per_surname) ) as full_name_thai,
-                CONCAT( p.per_eng_name, CONCAT(' ', p.per_eng_surname) ) as full_name_en,
-                p.per_cardno,
-                p.per_status,
-                p.per_startdate,
-                p.per_occupydate,
-                p.pos_id,
-                p.per_id,
-                t.ot_name,
-                CASE
-                    WHEN p.per_status = -1 THEN 'ยังไม่มี per_id'
-                    WHEN p.per_status = 0 THEN 'รอบรรจุ'
-                    WHEN p.per_status = 1 THEN 'ปกติ'
-                    WHEN p.per_status = 2 THEN 'พ้นจากราชการแล้ว'
-                    WHEN p.per_status = 3 THEN 'รอคำสั่งบรรจุ/รอเลขที่ตำแหน่ง'
-                    ELSE 'ไม่มาปฏิบัติงาน'
-                END as per_status_name,
-                p.dpis6_data,
-                p.level_no,
-                lv.level_name,
-                a.org_name as organize_th_ass,
-                ap.org_name as organize_th
-            FROM per_personal p 
-            LEFT JOIN per_position pos ON p.pos_id = pos.pos_id
-            LEFT JOIN per_org_ass ap ON pos.org_id = ap.org_id
-            LEFT JOIN per_org_ass a ON p.org_id = a.org_id
-            LEFT JOIN per_level lv ON p.level_no = lv.level_no
-            LEFT JOIN per_off_type t ON p.ot_code = t.ot_code
-            [WHERE]
-            [ORDER]
-            OFFSET " . $start . " ROWS FETCH NEXT :length ROWS ONLY
-        ";
-
-        $bindValue['length'] = $length;
-        $orders = [];
-        if( isset( $req['columns'] ) ) {
-
-            foreach( $req['columns']  as $kc => $vc ) {
-    
-                if( $kc == $req['order'][0]['column'] ) {
-    
-                    $orders[] = $vc['data'] ." ". $req['order'][0]['dir'];
-                }
-    
-            }
-        }
-
-        $replace['ORDER'] = NULL;
-        if( !empty( $orders ) ) {
-
-            $replace['ORDER'] = "ORDER BY " . implode( ' , ', $orders );
-        }
-        
-        $cmd = genCond_( $sql, $replace, $con, $bindValue );
-
-
-        // arr( $cmd->sql );
-        
-        $keep = [];
-        foreach( $cmd->queryAll() as $kd => $vd ) {
-
-            $json_decode = json_decode( $vd['DPIS6_DATA'] );
-
-            $keep[] = $vd;
-        }
-
-        echo json_encode(
-            [
-                "iTotalRecords" => $totalRecords,
-                "iTotalDisplayRecords" => $totalRecords,
-                "aaData" =>  $keep,
-            ]
-        );
-
-        exit;
-    }
+ 
 
 
 

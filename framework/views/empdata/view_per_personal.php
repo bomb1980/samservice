@@ -82,7 +82,7 @@
 			<div class="row mt-15">
 				<div class="col-md-6">
 					<div class="row ">
-						<label class="col-md-4 col-form-label control-label">รหัส</label>
+						<label class="col-md-4 col-form-label control-label">รหัสบัตรประชาชน</label>
 						<div class="col-md-8">
 							<input type="text" class="form-control" id="per_cardno" name="per_cardno">
 						</div>
