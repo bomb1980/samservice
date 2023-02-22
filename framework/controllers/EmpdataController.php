@@ -78,6 +78,12 @@ class EmpdataController extends Controller
         // arr('dddad');
         $datas['columns'] = [
             [
+                'name' => 'ORGANIZE_CODE',
+                'label' => 'รหัส',
+                'className' => "text-center",
+                'orderable' => false
+            ],
+            [
                 'name' => 'ORGANIZE_TH',
                 'label' => 'ชื่อองค์กร',
                 'className' => "text-center",
