@@ -233,7 +233,7 @@
 				url: 'js/datatable-thai.json',
 			},
 			scrollX: true,
-			order: [[0, 'desc']],
+			order: [[0, 'asc']],
 			ordering: true,
 			serverSide: true,
 			processing: true,
