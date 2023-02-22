@@ -24,20 +24,11 @@ class CommonFnc
 		return $headers;
 	}
 
-	public  static function getEncrypter($string = NULL, $type = 'encrtyp')
+	public  static function getEncrypter($string = NULL, $type = 'encrtyp', $ciphering = 'AES-256-CBC', $encryption_iv = '1234567891011121', $encryption_key = 'GeeksforGeeks' )
 	{
-		// $ciphering = "AES-128-CTR";
-		$ciphering = "AES-256-CBC";
-
 		$options = 0;
 
-		$encryption_iv = '1234567891011121';
-
-		$encryption_key = "GeeksforGeeks";
-
-
 		if ($type != 'encrtyp') {
-
 
 			return openssl_decrypt(
 				$string,
@@ -47,8 +38,6 @@ class CommonFnc
 				$encryption_iv
 			);
 		}
-
-		// echo base64_encode($string);
 
 		return openssl_encrypt(
 			$string,
