@@ -54,7 +54,7 @@ h6 {
 
 .site-menu-title {
 	font-family: Prompt-Regular !important;
-	font-size: 16px !important;
+	font-size: 11px !important;
 	color: #535a60 !important;
 	/*white-space:normal; */
 }
@@ -98,8 +98,7 @@ h6 {
 	border-color: #CCC;
 	box-shadow: none;
 	transition: box-shadow .25s linear, border .25s linear, color .25s linear, background-color .25s linear;
-	-webkit-appearance: none;
-	-moz-appearance: none;
+	 
 }
 
 
