@@ -6,18 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 class CreatePerLevelNewsTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
+
     public function up()
     {
-
-
         Schema::create('per_level_news', function (Blueprint $table) {
             $table->integer('level_id')->autoIncrement();
-
             $table->string('level_code')->nullable();
             $table->string('level_abbr')->nullable();
             $table->string('levelname_th')->nullable();

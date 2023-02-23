@@ -17,10 +17,11 @@ class PerPersonal1 extends \yii\db\ActiveRecord
     public static function getlevelApi($user_id = 1)
     {
 
-        // echo 'dasdss';exit;
-
         $con = Yii::$app->dbdpis;
         $con2 = Yii::$app->dbdpisemp;
+
+		$con3 = Yii::$app->db;
+
 
         ini_set('memory_limit', '2048M');
         //ini_set('max_execution_time', 0);
@@ -29,7 +30,6 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
         $url_gettoken = $params['apiUrl'] . '/oapi/login'; //prd domain
 
-        // $url_gettoken = 'https://172.16.12.248/oapi/login'; //prd ip
         $curl = curl_init();
         curl_setopt_array($curl, array(
             CURLOPT_URL => $url_gettoken,
@@ -62,8 +62,6 @@ class PerPersonal1 extends \yii\db\ActiveRecord
         curl_close($curl);
         $result = json_decode($response, true);
 
-
-        // arr( $result );
         $accessToken = '';
         $encrypt_key = '';
 
@@ -84,9 +82,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
             );
             return $arrsms;
         }
-        // $url = "https://dpis6uat.sso.go.th/oapi/open_api_users/callapi";
-
-        // $url_gettoken = $params['apiUrl'] . '/oapi/login'; //prd domain
+      
         $url = "". $params['apiUrl'] ."/oapi/open_api_users/callapi";
         $header = array(
             'Content-Type: application/x-www-form-urlencoded',
@@ -114,34 +110,15 @@ class PerPersonal1 extends \yii\db\ActiveRecord
             $data = $data_result["data"];
             $decrypt_data = self::ssl_decrypt_api($data, $encrypt_key);
 
-
             $js = json_decode($decrypt_data);
-
-
-            // arr( $js );
 
             if (count($js) == 0) {
 
-                // echo $p;
 
                 break;
             }
 
             foreach ($js as $ka => $va) {
-
-
-                // foreach ($va as $kc => $vc) {
-
-                //     echo $kc . ',<br>';
-                //     // echo $kc . ',';
-                // }
-
-
-                // exit;
-
-                // arr( $va );
-
-
 
                 $SqlOrgs[] = "
                     SELECT 
@@ -175,9 +152,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
                 if (count($SqlOrgs) > 100) {
 
-                    //   level_abbr] => 1,  levelname_en] => , positiontype_id] => 0,  flag_executive] => 0, region_calc_flag] => N, pos_value] => 0.00, sortorder] => 14, flag] => 1, creator] => -1, createdate] => 2020-03-02 15:46:09, create_org] => 0, updateuser] => 310210128083701, updatedate] => 2022-04-21 00:00:01, update_org] => 100000, recode_id] => 1, is_sync] => 0, sync_datetime] => 2022-12-20 15:50:29, sync_status_code] => , is_delete] => 0, org_owner] => 0, org_visible] => 1
-
-                    // TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' )
+                 
                     $sql = "
                         MERGE INTO per_level_news d
                         USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.level_id = s.level_id )
@@ -223,24 +198,30 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                             $cmd = $con2->createCommand($sql);
                         }
 
-                        // $cmd->bindValue(":user_id", $user_id);
-
                         $cmd->execute();
                     }
+
+
+                    $sql = "
+                        REPLACE INTO per_level_news 
+                        SELECT * FROM ( " . implode(' UNION ', $SqlOrgs) . " )  as new_tb                        
+                        
+                    ";
+
+                    $cmd = $con3->createCommand($sql);
+
+                    $cmd->execute();
 
                     $SqlOrgs = [];
 
 
-                    // exit;
                 }
             }
         }
 
         if (count($SqlOrgs) > 0) {
 
-            //   level_abbr] => 1,  levelname_en] => , positiontype_id] => 0,  flag_executive] => 0, region_calc_flag] => N, pos_value] => 0.00, sortorder] => 14, flag] => 1, creator] => -1, createdate] => 2020-03-02 15:46:09, create_org] => 0, updateuser] => 310210128083701, updatedate] => 2022-04-21 00:00:01, update_org] => 100000, recode_id] => 1, is_sync] => 0, sync_datetime] => 2022-12-20 15:50:29, sync_status_code] => , is_delete] => 0, org_owner] => 0, org_visible] => 1
-
-            // TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' )
+                 
             $sql = "
                 MERGE INTO per_level_news d
                 USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.level_id = s.level_id )
@@ -286,15 +267,23 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                     $cmd = $con2->createCommand($sql);
                 }
 
-                // $cmd->bindValue(":user_id", $user_id);
-
                 $cmd->execute();
             }
+
+
+            $sql = "
+                REPLACE INTO per_level_news 
+                SELECT * FROM ( " . implode(' UNION ', $SqlOrgs) . " )  as new_tb                        
+                
+            ";
+
+            $cmd = $con3->createCommand($sql);
+
+            $cmd->execute();
 
             $SqlOrgs = [];
 
 
-            // exit;
         }
 
 
@@ -358,8 +347,6 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
         // arr( $result );
         $accessToken = '';
-
-
         $encrypt_key = '';
 
         if (json_last_error() === JSON_ERROR_NONE) {
@@ -446,6 +433,8 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
                     $mymess[$setType] = 'มีข้อมูล <b>พนักงาน</b> ถูกดึงมาจำนวน <b>' . ++$totals[$setType] . '</b>เรคคอร์ด';
                 }
+
+
 
                 $SqlUnion[$setType][] = "
                     SELECT 
@@ -810,6 +799,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
  
          $con = Yii::$app->dbdpis;
          $con2 = Yii::$app->dbdpisemp;
+         $con3 = Yii::$app->db;
          ini_set('memory_limit', '2048M');
          //ini_set('max_execution_time', 0);
          set_time_limit(0);
@@ -912,18 +902,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
  
              foreach ($js as $ka => $va) {
  
-                 //  foreach( $va as $kc => $vc ){
- 
-                 //     echo $kc . ',<br>';
-                 //     // echo $kc . ',';
-                 // }
- 
- 
-                 // exit;
- 
-                 // arr( $va );
- 
- 
+            
                  $SqlOrgs[] = "
                      SELECT 
                          '" . $va->pertype_id . "' as pertype_id,
@@ -950,8 +929,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                      FROM dual
                  ";
  
-                 //  [pertype_pid] => 0 [pertype_code] => 10000 [pertype_abbr] => ขรก. [pertype] => ข้าราชการ [sortorder] => 1 [flag] => 1 [creator] => -1 [createdate] => 2020-02-03 16:07:55 [create_org] => 0 [updateuser] => -1 [updatedate] => 2020-02-03 16:07:55 [recode_id] => 1 [is_delete] => 0 [require_cmd] => 0 [is_sync] => 0 [sync_datetime] => 2022-12-20 15:53:21 [sync_status_code] =>  [update_org] => 0 [org_owner] => 0 [org_visible] => 0
- 
+        
                  if (count($SqlOrgs) > 100) {
  
                      $sql = "
@@ -1001,6 +979,20 @@ class PerPersonal1 extends \yii\db\ActiveRecord
  
                          $cmd->execute();
                      }
+
+
+                     
+                    $sql = "
+                    REPLACE INTO per_off_type_news (pertype_id, pertype_pid, pertype_code, pertype_abbr, pertype, sortorder, flag, creator, createdate, create_org, updateuser, updatedate, recode_id, is_delete, require_cmd, is_sync, sync_datetime, sync_status_code, update_org, org_owner, org_visible) 
+                        
+                    SELECT pertype_id, pertype_pid, pertype_code, pertype_abbr, pertype, sortorder, flag, creator, createdate, create_org, updateuser, updatedate, recode_id, is_delete, require_cmd, is_sync, sync_datetime, sync_status_code, update_org, org_owner, org_visible FROM ( " . implode(' UNION ', $SqlOrgs) . " )  as new_tb                        
+                        
+                    ";
+
+                    $cmd = $con3->createCommand($sql);
+
+                    $cmd->execute();
+
  
                      $SqlOrgs = [];
  
@@ -1009,62 +1001,78 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                  }
              }
          }
- 
+
+
          if (count($SqlOrgs) > 0) {
  
-             $sql = "
-                 MERGE INTO per_off_type_news d
-                 USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.pertype_id = s.pertype_id )
-                 WHEN NOT MATCHED THEN
-                 INSERT ( pertype_id,pertype_pid,pertype_code,pertype_abbr,pertype,sortorder,flag,creator,createdate,create_org,updateuser,updatedate,recode_id,is_delete,require_cmd,is_sync,sync_datetime,sync_status_code,update_org,org_owner,org_visible ) 
-                 VALUES
-                 ( s.pertype_id, s.pertype_pid, s.pertype_code, s.pertype_abbr, s.pertype, s.sortorder, s.flag, s.creator, s.createdate, s.create_org, s.updateuser, s.updatedate, s.recode_id, s.is_delete, s.require_cmd, s.is_sync, s.sync_datetime, s.sync_status_code, s.update_org, s.org_owner, s.org_visible )               
-                 WHEN MATCHED THEN
-                 UPDATE
-                 SET
-                     pertype_pid = s.pertype_pid,
-                     pertype_code = s.pertype_code,
-                     pertype_abbr = s.pertype_abbr,
-                     pertype = s.pertype,
-                     sortorder = s.sortorder,
-                     flag = s.flag,
-                     creator = s.creator,
-                     createdate = s.createdate,
-                     create_org = s.create_org,
-                     updateuser = s.updateuser,
-                     updatedate = s.updatedate,
-                     recode_id = s.recode_id,
-                     is_delete = s.is_delete,
-                     require_cmd = s.require_cmd,
-                     is_sync = s.is_sync,
-                     sync_datetime = s.sync_datetime,
-                     sync_status_code = s.sync_status_code,
-                     update_org = s.update_org,
-                     org_owner = s.org_owner,
-                     org_visible = s.org_visible
-                     
-             ";
+            $sql = "
+                MERGE INTO per_off_type_news d
+                USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.pertype_id = s.pertype_id )
+                WHEN NOT MATCHED THEN
+                INSERT ( pertype_id,pertype_pid,pertype_code,pertype_abbr,pertype,sortorder,flag,creator,createdate,create_org,updateuser,updatedate,recode_id,is_delete,require_cmd,is_sync,sync_datetime,sync_status_code,update_org,org_owner,org_visible ) 
+                VALUES
+                ( s.pertype_id, s.pertype_pid, s.pertype_code, s.pertype_abbr, s.pertype, s.sortorder, s.flag, s.creator, s.createdate, s.create_org, s.updateuser, s.updatedate, s.recode_id, s.is_delete, s.require_cmd, s.is_sync, s.sync_datetime, s.sync_status_code, s.update_org, s.org_owner, s.org_visible )               
+                WHEN MATCHED THEN
+                UPDATE
+                SET
+                    pertype_pid = s.pertype_pid,
+                    pertype_code = s.pertype_code,
+                    pertype_abbr = s.pertype_abbr,
+                    pertype = s.pertype,
+                    sortorder = s.sortorder,
+                    flag = s.flag,
+                    creator = s.creator,
+                    createdate = s.createdate,
+                    create_org = s.create_org,
+                    updateuser = s.updateuser,
+                    updatedate = s.updatedate,
+                    recode_id = s.recode_id,
+                    is_delete = s.is_delete,
+                    require_cmd = s.require_cmd,
+                    is_sync = s.is_sync,
+                    sync_datetime = s.sync_datetime,
+                    sync_status_code = s.sync_status_code,
+                    update_org = s.update_org,
+                    org_owner = s.org_owner,
+                    org_visible = s.org_visible
+                    
+            ";
+
+            foreach ($params['dbInserts'] as $kg => $vg) {
+
+                if ($vg == 1) {
+
+                    $cmd = $con->createCommand($sql);
+                } else {
+
+                    $cmd = $con2->createCommand($sql);
+                }
+
+                // $cmd->bindValue(":user_id", $user_id);
+
+                $cmd->execute();
+            }
+
+
+            
+           $sql = "
+           REPLACE INTO per_off_type_news (pertype_id, pertype_pid, pertype_code, pertype_abbr, pertype, sortorder, flag, creator, createdate, create_org, updateuser, updatedate, recode_id, is_delete, require_cmd, is_sync, sync_datetime, sync_status_code, update_org, org_owner, org_visible) 
+               
+           SELECT pertype_id, pertype_pid, pertype_code, pertype_abbr, pertype, sortorder, flag, creator, createdate, create_org, updateuser, updatedate, recode_id, is_delete, require_cmd, is_sync, sync_datetime, sync_status_code, update_org, org_owner, org_visible FROM ( " . implode(' UNION ', $SqlOrgs) . " )  as new_tb                        
+               
+           ";
+
+           $cmd = $con3->createCommand($sql);
+
+           $cmd->execute();
+
+
+            $SqlOrgs = [];
+
+
+            // exit;
+        }
  
-             foreach ($params['dbInserts'] as $kg => $vg) {
- 
-                 if ($vg == 1) {
- 
-                     $cmd = $con->createCommand($sql);
-                 } else {
- 
-                     $cmd = $con2->createCommand($sql);
-                 }
- 
-                 // $cmd->bindValue(":user_id", $user_id);
- 
-                 $cmd->execute();
-             }
- 
-             $SqlOrgs = [];
- 
- 
-             // exit;
-         }
 
 
          $log_page = basename(Yii::$app->request->referrer); 
@@ -1087,6 +1095,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
         // $user_id = Yii::$app->user->getId();
         $con = Yii::$app->dbdpis;
         $con2 = Yii::$app->dbdpisemp;
+        $con3 = Yii::$app->db;
         ini_set('memory_limit', '2048M');
         //ini_set('max_execution_time', 0);
         set_time_limit(0);
@@ -1185,107 +1194,31 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
             foreach ($js as $ka => $va) {
 
-                // foreach( $va as $kc => $vc ){
-
-                //     echo $kc . ', ';
-                // }
-
-
-                // exit;
-
                 if ($va->department_id != 1640000) {
                     continue;
                 }
 
+                $s = [];
+                foreach ($va as $ks => $vs) {
 
-                // if ($va->orgclass_id == 1) {
+                    if( empty( trim($vs) ) ) {
 
-                //     $ot_code = '01';
-                // } else {
-                //     $ot_code = '03';
-                // }
+                        $s[] = "NULL as " . strtolower($ks) . "";
+                    }
+                    else {
 
+                        $s[] = "'" . trim($vs) . "' as " . strtolower($ks) . "";
+                    }
+                }
 
                 $SqlOrgs[] = "
                     SELECT 
-                        '" . $va->organize_id . "' as organize_id, 
-                        '" . $va->org_status . "' as org_status, 
-                        '" . $va->organize_pid . "' as organize_pid, 
-                        '" . $va->organize_code . "' as organize_code, 
-                        '" . $va->org_date . "' as org_date, 
-                        '" . $va->org_start_date . "' as org_start_date, 
-                        '" . $va->org_end_date . "' as org_end_date, 
-                        '" . $va->organize_th . "' as organize_th, 
-                        '" . $va->organize_en . "' as organize_en, 
-                        '" . $va->organize_abbrth . "' as organize_abbrth, 
-                        '" . $va->organize_abbren . "' as organize_abbren, 
-                        '" . $va->organize_add1 . "' as organize_add1, 
-                        '" . $va->organize_add2 . "' as organize_add2, 
-                        '" . $va->organize_add3 . "' as organize_add3, 
-                        '" . $va->country_id . "' as country_id, 
-                        '" . $va->province_id . "' as province_id, 
-                        '" . $va->amphur_id . "' as amphur_id, 
-                        '" . $va->tambon_id . "' as tambon_id, 
-                        '" . $va->postcode . "' as postcode, 
-                        '" . $va->risk_zone . "' as risk_zone, 
-                        '" . $va->orglevel_id . "' as orglevel_id, 
-                        '" . $va->orgstat_id . "' as orgstat_id, 
-                        '" . $va->orgclass_id . "' as orgclass_id, 
-                        '" . $va->orgtype_id . "' as orgtype_id, 
-                        '" . $va->organize_job . "' as organize_job, 
-                        '" . $va->org_owner_id . "' as org_owner_id, 
-                        '" . $va->org_mode . "' as org_mode, 
-                        '" . $va->org_website . "' as org_website, 
-                        '" . $va->org_gps . "' as org_gps, 
-                        '" . $va->latitude . "' as latitude, 
-                        '" . $va->longitude . "' as longitude, 
-                        '" . $va->org_dopa_code . "' as org_dopa_code, 
-                        '" . $va->ministrygroup_id . "' as ministrygroup_id, 
-                        '" . $va->sector_id . "' as sector_id, 
-                        '" . $va->org_id_ass . "' as org_id_ass, 
-                        '" . $va->org_chart_level . "' as org_chart_level, 
-                        '" . $va->command_no . "' as command_no, 
-                        '" . $va->command_date . "' as command_date, 
-                        '" . $va->canceldate . "' as canceldate, 
-                        '" . $va->telephone . "' as telephone, 
-                        '" . $va->fax . "' as fax, 
-                        '" . $va->email . "' as email, 
-                        '" . $va->remark . "' as remark, 
-                        '" . $va->sortorder . "' as sortorder, 
-                        '" . $va->parent_flag . "' as parent_flag, 
-                        '" . $va->creator . "' as creator, 
-                        '" . $va->createdate . "' as createdate, 
-                        '" . $va->create_org . "' as create_org, 
-                        '" . $va->updateuser . "' as updateuser, 
-                        '" . $va->updatedate . "' as updatedate, 
-                        '" . $va->update_org . "' as update_org, 
-                        '" . $va->is_sync . "' as is_sync, 
-                        '" . $va->sync_datetime . "' as sync_datetime, 
-                        '" . $va->sync_status_code . "' as sync_status_code, 
-                        '" . $va->org_path . "' as org_path, 
-                        '" . $va->org_seq_no . "' as org_seq_no, 
-                        '" . $va->ministry_id . "' as ministry_id, 
-                        '" . $va->ministry . "' as ministry, 
-                        '" . $va->department_id . "' as department_id, 
-                        '" . $va->department . "' as department, 
-                        '" . $va->division_id . "' as division_id, 
-                        '" . $va->division . "' as division, 
-                        '" . $va->subdiv1 . "' as subdiv1, 
-                        '" . $va->subdiv2 . "' as subdiv2, 
-                        '" . $va->subdiv3 . "' as subdiv3, 
-                        '" . $va->subdiv4 . "' as subdiv4, 
-                        '" . $va->subdiv5 . "' as subdiv5, 
-                        '" . $va->subdiv6 . "' as subdiv6, 
-                        '" . $va->d5_org_id . "' as d5_org_id, 
-                        '" . $va->org_model_id . "' as org_model_id, 
-                        '" . $va->org_model_dlt_id . "' as org_model_dlt_id, 
-                        '" . $va->leader_pos_id . "' as leader_pos_id, 
-                        '" . $va->org_path_name . "' as org_path_name
-                    FROM dual
-                ";
+                        " . implode(',', $s) . "
 
+                        FROM dual
+                ";
+            
                 if (count($SqlOrgs) > 100) {
-                    // TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' )
                     $sql = "
                         MERGE INTO per_org_ass_news d
                         USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.organize_id = s.organize_id )
@@ -1379,17 +1312,27 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                             $cmd = $con2->createCommand($sql);
                         }
 
-                        // $cmd->bindValue(":user_id", $user_id);
 
                         $cmd->execute();
                     }
 
+                    $sql = "
+                    REPLACE INTO per_org_ass_news (organize_id, org_date, org_start_date, org_end_date, organize_th, organize_en, organize_abbrth, organize_abbren, risk_zone, org_website, org_gps, latitude, longitude, org_dopa_code, ministrygroup_id, sector_id, org_id_ass, org_chart_level, command_no, command_date, canceldate, telephone, fax, email, remark, sortorder, createdate, create_org, updateuser, updatedate, update_org, is_sync, sync_datetime, sync_status_code, org_path, org_seq_no, ministry_id, ministry, department_id, department, division_id, division, subdiv1, subdiv2, subdiv3, subdiv4, subdiv5, subdiv6, d5_org_id, org_model_id, org_model_dlt_id, leader_pos_id, org_path_name, org_status, organize_pid, organize_code, country_id, province_id, amphur_id, tambon_id, postcode, organize_add1, organize_add2, organize_add3, orglevel_id, orgstat_id, orgclass_id, orgtype_id, organize_job, org_owner_id, org_mode, parent_flag, creator) 
+                        
+                    SELECT organize_id, org_date, org_start_date, org_end_date, organize_th, organize_en, organize_abbrth, organize_abbren, risk_zone, org_website, org_gps, latitude, longitude, org_dopa_code, ministrygroup_id, sector_id, org_id_ass, org_chart_level, command_no, command_date, canceldate, telephone, fax, email, remark, sortorder, createdate, create_org, updateuser, updatedate, update_org, is_sync, sync_datetime, sync_status_code, org_path, org_seq_no, ministry_id, ministry, department_id, department, division_id, division, subdiv1, subdiv2, subdiv3, subdiv4, subdiv5, subdiv6, d5_org_id, org_model_id, org_model_dlt_id, leader_pos_id, org_path_name, org_status, organize_pid, organize_code, country_id, province_id, amphur_id, tambon_id, postcode, organize_add1, organize_add2, organize_add3, orglevel_id, orgstat_id, orgclass_id, orgtype_id, organize_job, org_owner_id, org_mode, parent_flag, creator FROM ( " . implode(' UNION ', $SqlOrgs) . " )  as new_tb                        
+                        
+                    ";
+
+                    $cmd = $con3->createCommand($sql);
+
+                    $cmd->execute();
+
                     $SqlOrgs = [];
 
-                    // exit;
                 }
             }
         }
+
 
         if (count($SqlOrgs) > 0) {
             // TO_CHAR( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SS' )
@@ -1486,16 +1429,22 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                     $cmd = $con2->createCommand($sql);
                 }
 
-                // $cmd->bindValue(":user_id", $user_id);
-
                 $cmd->execute();
             }
 
+            $sql = "
+                REPLACE INTO per_org_ass_news (organize_id, org_date, org_start_date, org_end_date, organize_th, organize_en, organize_abbrth, organize_abbren, risk_zone, org_website, org_gps, latitude, longitude, org_dopa_code, ministrygroup_id, sector_id, org_id_ass, org_chart_level, command_no, command_date, canceldate, telephone, fax, email, remark, sortorder, createdate, create_org, updateuser, updatedate, update_org, is_sync, sync_datetime, sync_status_code, org_path, org_seq_no, ministry_id, ministry, department_id, department, division_id, division, subdiv1, subdiv2, subdiv3, subdiv4, subdiv5, subdiv6, d5_org_id, org_model_id, org_model_dlt_id, leader_pos_id, org_path_name, org_status, organize_pid, organize_code, country_id, province_id, amphur_id, tambon_id, postcode, organize_add1, organize_add2, organize_add3, orglevel_id, orgstat_id, orgclass_id, orgtype_id, organize_job, org_owner_id, org_mode, parent_flag, creator) 
+                SELECT organize_id, org_date, org_start_date, org_end_date, organize_th, organize_en, organize_abbrth, organize_abbren, risk_zone, org_website, org_gps, latitude, longitude, org_dopa_code, ministrygroup_id, sector_id, org_id_ass, org_chart_level, command_no, command_date, canceldate, telephone, fax, email, remark, sortorder, createdate, create_org, updateuser, updatedate, update_org, is_sync, sync_datetime, sync_status_code, org_path, org_seq_no, ministry_id, ministry, department_id, department, division_id, division, subdiv1, subdiv2, subdiv3, subdiv4, subdiv5, subdiv6, d5_org_id, org_model_id, org_model_dlt_id, leader_pos_id, org_path_name, org_status, organize_pid, organize_code, country_id, province_id, amphur_id, tambon_id, postcode, organize_add1, organize_add2, organize_add3, orglevel_id, orgstat_id, orgclass_id, orgtype_id, organize_job, org_owner_id, org_mode, parent_flag, creator FROM ( " . implode(' UNION ', $SqlOrgs) . " )  as new_tb                        
+                
+            ";
+
+            $cmd = $con3->createCommand($sql);
+
+            $cmd->execute();
+
             $SqlOrgs = [];
 
-            // exit;
         }
-
 
         $log_page = basename(Yii::$app->request->referrer); 
         $log_description = 'อัพเดตข้อมูลoganize';
@@ -1503,12 +1452,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
         $return['msg'] = 'ปรับปรุงข้อมูลเสร็จสิ้น';
 
         $return['status'] = 'success';
-
-
         return json_encode($return );
-
-
- 
     }
 
     // http://samservice/empdata/pos_position
@@ -1945,6 +1889,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
         $con = Yii::$app->dbdpis;
         $con2 = Yii::$app->dbdpisemp;
+        $con3 = Yii::$app->db;
 
         // arr('adsfds');
 
@@ -2136,6 +2081,17 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
                         $cmd->execute();
                     }
+
+
+                    $sql = "
+                        REPLACE INTO per_line_news 
+                        SELECT * FROM ( " . implode(' UNION ', $SqlOrgs) . " )  as new_tb                        
+                        
+                    ";
+
+                    $cmd = $con3->createCommand($sql);
+
+                    $cmd->execute();
 
                     $SqlOrgs = [];
 

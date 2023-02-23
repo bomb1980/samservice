@@ -61,29 +61,16 @@ class CronempController extends Controller
 					$s = [];
 					foreach ($vd as $ks => $vs) {
 
-						if( true ) {
-							if( empty( trim($vs) ) ) {
-	
-								$s[] = "NULL as " . strtolower($ks) . "";
-							}
-							else {
-	
-								$s[] = "'" . trim($vs) . "' as " . strtolower($ks) . "";
-							}
+						
+						if( empty( trim($vs) ) ) {
 
+							$s[] = "NULL as " . strtolower($ks) . "";
 						}
 						else {
 
-							if( in_array( strtolower($ks), ['approve_per_id', 'organize_id_ass', 'per_cardno', 'per_renew', 'per_taxno', 'blood_id', 'replace_per_id', 'province_id'] ) && empty( trim($vs) ) ) {
-	
-								$s[] = "0 as " . strtolower($ks) . "";
-							}
-							else {
-	
-								$s[] = "'" . trim($vs) . "' as " . strtolower($ks) . "";
-							}
+							$s[] = "'" . trim($vs) . "' as " . strtolower($ks) . "";
 						}
-
+						 
 
 					}
 
