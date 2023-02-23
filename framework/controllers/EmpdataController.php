@@ -66,7 +66,7 @@ class EmpdataController extends Controller
  
          $datas['datatableUrl'] = 'api/pertype';
          $datas['apiUrl'] = 'cronemp/pertype';
-         $datas['title'] = 'อัพเดตข้อมูล oganize';
+         $datas['title'] = 'ประเภทบุคลากร (tb_pertype)';
  
          return $this->render('view', $datas);
      }
@@ -111,7 +111,7 @@ class EmpdataController extends Controller
 
         $datas['datatableUrl'] = 'api/oganize';
         $datas['apiUrl'] = 'cronemp/oganize';
-        $datas['title'] = 'อัพเดตข้อมูล oganize';
+        $datas['title'] = 'โครงสร้างส่วนราชการ (organize)';
 
         return $this->render('view', $datas);
     }
@@ -170,7 +170,7 @@ class EmpdataController extends Controller
 
         $datas['datatableUrl'] = 'api/position';
         $datas['apiUrl'] = 'cronemp/position';
-        $datas['title'] = 'อัพเดตข้อมูลตำแหน่ง';
+        $datas['title'] = 'ตำแหน่ง (pos_position)';
 
         return $this->render('view', $datas);
     }
@@ -213,7 +213,7 @@ class EmpdataController extends Controller
 
         $datas['datatableUrl'] = 'api/line';
         $datas['apiUrl'] = 'cronemp/line';
-        $datas['title'] = 'อัพเดตข้อมูล LINE';
+        $datas['title'] = 'ตำแหน่งในสายงาน (tb_line)';
 
         return $this->render('view', $datas);
     }
@@ -259,7 +259,7 @@ class EmpdataController extends Controller
 
 
         $datas['apiUrl'] = 'cronemp/level';
-        $datas['title'] = 'อัพเดตข้อมูลระดับชั้น';
+        $datas['title'] = 'ระดับตำแหน่ง (tb_level)';
 
 
 
@@ -339,7 +339,7 @@ class EmpdataController extends Controller
 
         $datas['datatableUrl'] = 'api';
         $datas['apiUrl'] = 'cronemp/perpersonal';
-        $datas['title'] = 'อัพเดตข้อมูลเจ้าหน้าที่';
+        $datas['title'] = 'ข้อมูลบุคลากร (per_personal)';
 
 
 

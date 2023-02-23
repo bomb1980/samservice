@@ -15,43 +15,48 @@
 
             <li class="site-menu-category">จัดการข้อมูล</li>
 
-
             <li class="site-menu-item">
               <a href="empdata/syndata">
                 <i class="site-menu-icon icon fas fa-people-arrows" aria-hidden="true"></i>
-                <span class="site-menu-title">ข้อมูลเจ้าหน้าที่</span>
-              </a>
-            </li>
-            <li class="site-menu-item">
-              <a href="empdata/updatelevel">
-                <i class="site-menu-icon icon fas fa-people-arrows" aria-hidden="true"></i>
-                <span class="site-menu-title">ข้อมูลระดับชั้น</span>
+                <span class="site-menu-title">ข้อมูลบุคลากร (per_personal)</span>
               </a>
             </li>
             <li class="site-menu-item">
               <a href="empdata/updateline">
                 <i class="site-menu-icon icon fas fa-people-arrows" aria-hidden="true"></i>
-                <span class="site-menu-title">ข้อมูล LINE</span>
+                <span class="site-menu-title">ตำแหน่งในสายงาน (tb_line)</span>
               </a>
             </li>
             <li class="site-menu-item">
-              <a href="empdata/updateposition">
+              <a href="empdata/updatelevel">
                 <i class="site-menu-icon icon fas fa-people-arrows" aria-hidden="true"></i>
-                <span class="site-menu-title">ข้อมูล ตำแหน่ง</span>
+                <span class="site-menu-title">ระดับตำแหน่ง (tb_level)</span>
               </a>
             </li>
             <li class="site-menu-item">
               <a href="empdata/updateoganize">
                 <i class="site-menu-icon icon fas fa-people-arrows" aria-hidden="true"></i>
-                <span class="site-menu-title">ข้อมูล oganize</span>
+                <span class="site-menu-title">โครงสร้างส่วนราชการ (organize)</span>
               </a>
             </li>
+
             <li class="site-menu-item">
               <a href="empdata/updatepertype">
                 <i class="site-menu-icon icon fas fa-people-arrows" aria-hidden="true"></i>
-                <span class="site-menu-title">ข้อมูล pertype</span>
+                <span class="site-menu-title">ประเภทบุคลากร (tb_pertype)</span>
               </a>
             </li>
+
+
+
+            <li class="site-menu-item">
+              <a href="empdata/updateposition">
+                <i class="site-menu-icon icon fas fa-people-arrows" aria-hidden="true"></i>
+                <span class="site-menu-title">ตำแหน่ง (pos_position)</span>
+              </a>
+            </li>
+
+
 
 
             <li class="site-menu-category">ตั้งค่าข้อมูล</li>
@@ -85,7 +90,7 @@
 
   </div>
 
-<?php } else {?>
+<?php } else { ?>
   <div class="site-menubar site-menubar-light">
     <div class="site-menubar-body">
       <div>
@@ -110,9 +115,9 @@
               </a>
             </li>
 
- 
 
-           
+
+
 
           </ul>
 
@@ -122,7 +127,7 @@
 
   </div>
 
-  <?php } ?>
+<?php } ?>
 
 <script type="text/javascript">
   jQuery(document).ready(function($) {
