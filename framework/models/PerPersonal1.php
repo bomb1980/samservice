@@ -84,8 +84,10 @@ class PerPersonal1 extends \yii\db\ActiveRecord
             );
             return $arrsms;
         }
-        $url = "https://dpis6uat.sso.go.th/oapi/open_api_users/callapi";
-        $url = "https://sso.dpis.go.th/oapi/open_api_users/callapi";
+        // $url = "https://dpis6uat.sso.go.th/oapi/open_api_users/callapi";
+
+        // $url_gettoken = $params['apiUrl'] . '/oapi/login'; //prd domain
+        $url = "". $params['apiUrl'] ."/oapi/open_api_users/callapi";
         $header = array(
             'Content-Type: application/x-www-form-urlencoded',
             'Authorization: ' . $accessToken
@@ -2007,7 +2009,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
             );
             return $arrsms;
         }
-        $url = "https://dpis6uat.sso.go.th/oapi/open_api_users/callapi";
+        // $url = "https://dpis6uat.sso.go.th/oapi/open_api_users/callapi";
         $url = "" . $params['apiUrl'] . "/oapi/open_api_users/callapi";
         $header = array(
             'Content-Type: application/x-www-form-urlencoded',
