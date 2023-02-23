@@ -61,7 +61,30 @@ class CronempController extends Controller
 					$s = [];
 					foreach ($vd as $ks => $vs) {
 
-						$s[] = "'" . trim($vs) . "' as " . strtolower($ks) . "";
+						if( true ) {
+							if( empty( trim($vs) ) ) {
+	
+								$s[] = "NULL as " . strtolower($ks) . "";
+							}
+							else {
+	
+								$s[] = "'" . trim($vs) . "' as " . strtolower($ks) . "";
+							}
+
+						}
+						else {
+
+							if( in_array( strtolower($ks), ['approve_per_id', 'organize_id_ass', 'per_cardno', 'per_renew', 'per_taxno', 'blood_id', 'replace_per_id', 'province_id'] ) && empty( trim($vs) ) ) {
+	
+								$s[] = "0 as " . strtolower($ks) . "";
+							}
+							else {
+	
+								$s[] = "'" . trim($vs) . "' as " . strtolower($ks) . "";
+							}
+						}
+
+
 					}
 
 					$sqlUnion[] = "
@@ -72,19 +95,13 @@ class CronempController extends Controller
 					if (count($sqlUnion) > 200) {
 
 						$sql = "
-							REPLACE INTO per_personal_news ( per_id, per_status, organize_id_ass, per_cardno, pos_id, per_name, per_surname, per_level_id, pertype_id, per_pos_desc, per_pos_doctype, per_pos_orgmgt, per_pos_org, org_owner, d5_per_id, pos_no, per_offno, per_renew, per_taxno, per_start_org, per_startdate, per_occupydate, per_effectivedate, per_gender, blood_id, scar, birth_place, is_ordain, ordain_date, ordain_detail, is_disability, is_soldier_service, per_saldate, probation_startdate, probation_enddate, probation_passdate, per_posdate, approve_per_id, replace_per_id, per_mobile, per_email, per_license_no, per_id_ref, per_nickname, per_pos_docdate, per_pos_remark, per_book_no, per_job, per_ot_flag, per_type_2535, prename_id, prename_th, prename_en, per_eng_name, per_eng_surname, department_id, province_id, movement_id, pay_no, per_orgmgt, posstatus_id, per_salary, hip_flag ) 
+							REPLACE INTO per_personal_news ( per_id, per_status, organize_id_ass, per_cardno, pos_id, per_name, per_surname, per_level_id, pertype_id, per_pos_desc, per_pos_doctype, per_pos_orgmgt, per_pos_org, org_owner, d5_per_id, pos_no, per_offno, per_renew, per_taxno, per_start_org, per_startdate, per_occupydate, per_effectivedate, per_gender, blood_id, scar, birth_place, is_ordain, ordain_date, ordain_detail, is_disability, is_soldier_service, per_saldate, probation_startdate, probation_enddate, probation_passdate, per_posdate, approve_per_id, replace_per_id, per_mobile, per_email, per_license_no, per_id_ref, per_nickname, per_pos_docdate, per_pos_remark, per_book_no, per_job, per_ot_flag, per_type_2535, prename_id, prename_th, prename_en, per_eng_name, per_eng_surname, department_id, province_id, movement_id, pay_no, per_orgmgt, posstatus_id, per_salary, hip_flag, is_sync, sync_datetime, sync_status_code, per_set_ass, organize_id_work, organize_id_kpi, organize_id_salary, create_date, creator, department_id_ass, create_org, update_date, update_user, update_name, allow_sync, edit_req_no, update_org, birth_date, creator_name, audit_name, is_delete, per_level_date, per_line_date ) 
 							SELECT
-							per_id, per_status, organize_id_ass, per_cardno, pos_id, per_name, per_surname, per_level_id, pertype_id, per_pos_desc, per_pos_doctype, per_pos_orgmgt, per_pos_org, org_owner, d5_per_id, pos_no, per_offno, per_renew, per_taxno, per_start_org, per_startdate, per_occupydate, per_effectivedate, per_gender, blood_id, scar, birth_place, is_ordain, ordain_date, ordain_detail, is_disability, is_soldier_service, per_saldate, probation_startdate, probation_enddate, probation_passdate, per_posdate, approve_per_id, replace_per_id, per_mobile, per_email, per_license_no, per_id_ref, per_nickname, per_pos_docdate, per_pos_remark, per_book_no, per_job, per_ot_flag, per_type_2535, prename_id, prename_th, prename_en, per_eng_name, per_eng_surname, department_id, province_id, movement_id, pay_no, per_orgmgt, posstatus_id, per_salary, hip_flag
+							per_id, per_status, organize_id_ass, per_cardno, pos_id, per_name, per_surname, per_level_id, pertype_id, per_pos_desc, per_pos_doctype, per_pos_orgmgt, per_pos_org, org_owner, d5_per_id, pos_no, per_offno, per_renew, per_taxno, per_start_org, per_startdate, per_occupydate, per_effectivedate, per_gender, blood_id, scar, birth_place, is_ordain, ordain_date, ordain_detail, is_disability, is_soldier_service, per_saldate, probation_startdate, probation_enddate, probation_passdate, per_posdate, approve_per_id, replace_per_id, per_mobile, per_email, per_license_no, per_id_ref, per_nickname, per_pos_docdate, per_pos_remark, per_book_no, per_job, per_ot_flag, per_type_2535, prename_id, prename_th, prename_en, per_eng_name, per_eng_surname, department_id, province_id, movement_id, pay_no, per_orgmgt, posstatus_id, per_salary, hip_flag, is_sync, sync_datetime, sync_status_code, per_set_ass, organize_id_work, organize_id_kpi, organize_id_salary, create_date, creator, department_id_ass, create_org, update_date, update_user, update_name, allow_sync, edit_req_no, update_org, birth_date, creator_name, audit_name, is_delete, per_level_date, per_line_date
 							FROM (
 							" . implode(' UNION ', $sqlUnion) . "
 							) as s;
-							REPLACE INTO per_personal_news2 ( per_id, is_sync, sync_datetime, sync_status_code, per_set_ass, organize_id_work, organize_id_kpi, organize_id_salary, create_date, creator, department_id_ass, create_org, update_date, update_user, update_name, allow_sync, edit_req_no, update_org, birth_date, creator_name, audit_name, is_delete, per_level_date, per_line_date ) 
-							SELECT
-							per_id, is_sync, sync_datetime, sync_status_code, per_set_ass, organize_id_work, organize_id_kpi, organize_id_salary, create_date, creator, department_id_ass, create_org, update_date, update_user, update_name, allow_sync, edit_req_no, update_org, birth_date, creator_name, audit_name, is_delete, per_level_date, per_line_date
-							FROM (
-							" . implode(' UNION ', $sqlUnion) . "
-					
-							) as s;
+							
 						";
 
 						$con3->createCommand($sql)->execute();
