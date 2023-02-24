@@ -494,6 +494,22 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
                         $implodeUnion = implode(' UNION ', $vs);
 
+                        $file_name = 'save_file/per_personal/' . date( 'Y-m-d') . '/'. ++$file_number .'.txt';
+
+                        if( file_exists( $file_name ) ) {
+
+                            if( file_get_contents( $file_name ) == $implodeUnion ) {
+
+                                $implodeUnion = NULL;
+
+                                $SqlUnion[$ks] = [];
+
+                                continue;
+                            }
+                        }
+                       
+                        self::saveFile( $file_name, $implodeUnion );
+
                         $sql = "
                             MERGE INTO per_personal_news d
                             USING ( 
@@ -593,17 +609,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                                 per_line_date = s.per_line_date   
                         ";
 
-                        $file_name = 'save_file/per_personal/' . date( 'Y-m-d') . '/'. ++$file_number .'.txt';
-
-                        if( file_exists( $file_name ) ) {
-
-                            if( file_get_contents( $file_name ) == $implodeUnion ) {
-
-                                continue;
-                            }
-                        }
                        
-                        self::saveFile( $file_name, $implodeUnion );
 
                         if( in_array( $ks, $params['dbInserts'])) {
 
@@ -644,6 +650,22 @@ class PerPersonal1 extends \yii\db\ActiveRecord
             if (count($vs) > 0) {
 
                 $implodeUnion = implode(' UNION ', $vs);
+
+                $file_name = 'save_file/per_personal/' . date( 'Y-m-d') . '/'. ++$file_number .'.txt';
+
+                if( file_exists( $file_name ) ) {
+
+                    if( file_get_contents( $file_name ) == $implodeUnion ) {
+
+                        $implodeUnion = NULL;
+
+                        $SqlUnion[$ks] = [];
+
+                        continue;
+                    }
+                }
+               
+                self::saveFile( $file_name, $implodeUnion );
 
                 $sql = "
                     MERGE INTO per_personal_news d
@@ -744,17 +766,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                         per_line_date = s.per_line_date   
                 ";
 
-                $file_name = 'save_file/per_personal/' . date( 'Y-m-d') . '/'. ++$file_number .'.txt';
-
-                if( file_exists( $file_name ) ) {
-
-                    if( file_get_contents( $file_name ) == $implodeUnion ) {
-
-                        continue;
-                    }
-                }
                
-                self::saveFile( $file_name, $implodeUnion );
 
                 if( in_array( $ks, $params['dbInserts'])) {
 
@@ -786,6 +798,9 @@ class PerPersonal1 extends \yii\db\ActiveRecord
               
             }
         }
+
+
+         
 
         $return['msg'] = 'ไม่มีการปรับปรุงข้อมูลใดๆ';
 
