@@ -331,45 +331,47 @@ class EmpdataController extends Controller
 
     public function actionSyndata()
     {
+
+       
         $datas['columns'] = [
             [
-                'name' => 'per_cardno',
+                'name' => 'personal_id',
                 'label' => 'เลขบัตร',
                 'classname' => "text-center",
                 'orderable' => false
             ],
             [
-                'name' => 'pos_id',
+                'name' => 'position',
                 'label' => 'เลขที่ตำแหน่ง',
                 'classname' => "text-center",
                 'orderable' => false
             ],
             [
-                'name' => 'full_name_thai',
+                'name' => 'full_name',
                 'label' => 'ชื่อ นามสกุล',
                 'classname' => "text-center",
                 'orderable' => false
             ],
             [
-                'name' => 'level_no',
+                'name' => 'level_name',
                 'label' => 'ระดับผู้ดำรงตำแหน่ง',
                 'classname' => "text-center",
                 'orderable' => false
             ],
             [
-                'name' => 'organize_th',
+                'name' => 'org_name',
                 'label' => 'สังกัดตามกฏหมาย',
                 'classname' => "text-center",
                 'orderable' => false
             ],
             [
-                'name' => 'organize_th_ass',
+                'name' => 'org_ass_name',
                 'label' => 'สังกัดตามมอบหมายงาน',
                 'classname' => "text-center",
                 'orderable' => false
             ],
             [
-                'name' => 'ot_name',
+                'name' => 'off_type',
                 'label' => 'ประเภทบุคลากร',
                 'classname' => "text-center",
                 'orderable' => false

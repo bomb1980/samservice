@@ -60,13 +60,13 @@
             
             
             
-            <li class="site-menu-category">ดึงข้อมูลมาลง SQL</li>
+            <!-- <li class="site-menu-category">ดึงข้อมูลมาลง SQL</li>
             <li class="site-menu-item">
               <a href="empdata/personalotosql">
                 <i class="site-menu-icon icon fas fa-people-arrows" aria-hidden="true"></i>
                 <span class="site-menu-title">ข้อมูลบุคลากร</span>
               </a>
-            </li>
+            </li> -->
 
 
             <li class="site-menu-category">ตั้งค่าข้อมูล</li>

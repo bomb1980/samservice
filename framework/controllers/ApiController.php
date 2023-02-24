@@ -518,39 +518,99 @@ class ApiController extends Controller
         
         $con = Yii::$app->db;
         $sql = "
-            SELECT
-                count( * ) as t
-            FROM per_personal
-            [WHERE] 
+        SELECT
+            COUNT( * ) as tt
+        FROM per_personal_news p
+        INNER JOIN per_off_type_news t ON p.pertype_id = t.pertype_id
+        LEFT JOIN per_position_news po ON p.pos_id = po.pos_id
+        LEFT JOIN per_org_ass_news o ON po.organize_id = o.organize_id
+        LEFT JOIN per_line_news l ON po.line_id = l.line_id
+        LEFT JOIN per_level_news lev ON p.per_level_id = lev.level_id
+        [WHERE]
+   
         ";
 
         $replace = [];
         $bindValue = [];
         if (isset($req['per_cardno'])) {
              
-            // $replace['WHERE'][] = "per_cardno LIKE :per_cardno";
+            // arr('dsafds');
+            $replace['WHERE'][] = "p.per_cardno LIKE :per_cardno";
 
-            // $bindValue['per_cardno'] = '%' . str_replace( ' ', '%', $req['per_cardno'] )  . '%';
+            $bindValue['per_cardno'] = '%' . str_replace( ' ', '%', $req['per_cardno'] )  . '%';
 
         }
 
         $cmd = genCond_($sql, $replace, $con, $bindValue);
 
+        // arr( $cmd->sql );
+
+
         $totalRecords = 0;
         foreach ($cmd->queryAll() as $kt => $vt) {
 
-            $totalRecords = $vt['t'];
+            $totalRecords = $vt['tt'];
         }
 
+        // $sql = "
+        //     SELECT
+        //         p.per_cardno,
+        //         p.pos_id,
+        //         CONCAT( p.per_name, CONCAT(' ', p.per_surname ) ) as full_name_thai,
+        //         l.level_code as level_no,
+        //         orga.organize_th as organize_th_ass,
+        //         orga2.organize_th as organize_th,
+        //         t.pertype as ot_name,
+        //         CASE
+        //             WHEN p.per_status = -1 THEN 'ยังไม่มี per_id'
+        //             WHEN p.per_status = 0 THEN 'รอบรรจุ'
+        //             WHEN p.per_status = 1 THEN 'ปกติ'
+        //             WHEN p.per_status = 2 THEN 'พ้นจากราชการแล้ว'
+        //             WHEN p.per_status = 3 THEN 'รอคำสั่งบรรจุ/รอเลขที่ตำแหน่ง'
+        //             ELSE 'ไม่มาปฏิบัติงาน'
+        //         END as per_status_name
+        //     FROM per_personal_news p
+        //     LEFT JOIN per_off_type_news t ON p.pertype_id = t.pertype_id
+        //     LEFT JOIN per_position_news po ON p.pos_id = po.pos_id
+        //     LEFT JOIN per_org_ass_news orga2 ON p.organize_id_ass = orga2.organize_id
+        //     LEFT JOIN per_org_ass_news orga ON po.organize_id = orga.organize_id
+        //     LEFT JOIN per_level_news l ON p.per_level_id = l.level_id
+        //     [WHERE]
+        //     [ORDER]
+        //     LIMIT " . $start . ", ". $length ."
+        // ";
+
+        // [personal_id] => 3100601829038
+        // [thai_title] => นางสาว
+        // [thai_firstname] => ภรัณยา
+        // [eng_title] => Miss
+        // [eng_firstname] => PARUNYA
+        // [eng_lastname] => THANOMKAEO
+        // [start_date] => 2001-10-29
+        // [birth_date] => 1972-10-17
+        // [status] => 1
+        // [thai_lastname] => ถนอมแก้ว
+        // [per_status_name] => ปกติ
+        // [branch_name] => กองบริหารทรัพยากรบุคคล
+        // [off_type] => ข้าราชการพลเรือนสามัญ
+        // [org_name] => กองบริหารทรัพยากรบุคคล
+        // [org_ass_name] => กองบริหารทรัพยากรบุคคล
+        // [position] => นิติกร
+        // [level_name] => ระดับชำนาญการ
         $sql = "
+        
             SELECT
-                p.per_cardno,
-                p.pos_id,
-                CONCAT( p.per_name, CONCAT(' ', p.per_surname ) ) as full_name_thai,
-                l.level_code as level_no,
-                orga.organize_th as organize_th_ass,
-                orga2.organize_th as organize_th,
-                t.pertype as ot_name,
+                p.per_cardno as personal_id,
+                p.prename_th as thai_title,
+                p.per_name as thai_firstname ,
+                p.per_surname as thai_lastname,
+                CONCAT( p.per_name, ' ', p.per_surname ) as full_name,
+                p.prename_en as eng_title,
+                p.per_eng_name as eng_firstname ,
+                p.per_eng_surname as eng_lastname,
+                p.per_startdate as start_date,
+                p.birth_date as birth_date,
+                p.per_status as status,
                 CASE
                     WHEN p.per_status = -1 THEN 'ยังไม่มี per_id'
                     WHEN p.per_status = 0 THEN 'รอบรรจุ'
@@ -558,13 +618,19 @@ class ApiController extends Controller
                     WHEN p.per_status = 2 THEN 'พ้นจากราชการแล้ว'
                     WHEN p.per_status = 3 THEN 'รอคำสั่งบรรจุ/รอเลขที่ตำแหน่ง'
                     ELSE 'ไม่มาปฏิบัติงาน'
-                END as per_status_name
+                END as per_status_name,
+                o.division as branch_name,
+                t.pertype as off_type,
+                o.division as org_name,
+                ( select division from per_org_ass_news where organize_id = p.organize_id_ass) as org_ass_name,
+                l.linename_th as position,
+                lev.levelname_th as level_name
             FROM per_personal_news p
-            LEFT JOIN per_off_type_news t ON p.pertype_id = t.pertype_id
+            INNER JOIN per_off_type_news t ON p.pertype_id = t.pertype_id
             LEFT JOIN per_position_news po ON p.pos_id = po.pos_id
-            LEFT JOIN per_org_ass_news orga2 ON p.organize_id_ass = orga2.organize_id
-            LEFT JOIN per_org_ass_news orga ON po.organize_id = orga.organize_id
-            LEFT JOIN per_level_news l ON p.per_level_id = l.level_id
+            LEFT JOIN per_org_ass_news o ON po.organize_id = o.organize_id
+            LEFT JOIN per_line_news l ON po.line_id = l.line_id
+            LEFT JOIN per_level_news lev ON p.per_level_id = lev.level_id
             [WHERE]
             [ORDER]
             LIMIT " . $start . ", ". $length ."
@@ -614,9 +680,6 @@ class ApiController extends Controller
 
         exit;
     }
-
- 
-
 
 
     public function actionGetuser()
