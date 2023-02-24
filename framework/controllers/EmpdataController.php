@@ -328,11 +328,9 @@ class EmpdataController extends Controller
         return $this->render('view', $datas);
     }
 
-
     public function actionSyndata()
     {
 
-       
         $datas['columns'] = [
             [
                 'name' => 'personal_id',
@@ -405,11 +403,8 @@ class EmpdataController extends Controller
         $datas['apiUrl'] = 'cronemp/perpersonal';
         $datas['title'] = 'ข้อมูลบุคลากร (per_personal)';
 
-
-
         return $this->render('view_per_personal', $datas);
     }
-
 
     public function actionTest1()
     {

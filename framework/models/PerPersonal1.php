@@ -297,6 +297,37 @@ class PerPersonal1 extends \yii\db\ActiveRecord
         return json_encode($return );
     }
 
+
+
+    public static function saveFile($path = NULL, $content = NULL )
+    {
+         // $path = 'save_file/per_personal/' . date( 'Y-m-d') . '/1.txt';
+
+        $ex = explode( '/', $path );
+
+        $dirs = [];
+
+        foreach( $ex as $ke => $ve ) {
+
+            $dirs[] = $ve;
+
+            if( ($ke + 1) == count( $ex ) ) {
+
+                file_put_contents(  implode('/', $dirs ) , $content);
+
+            }
+            else {
+
+                if( !is_dir(implode('/', $dirs )) ) {
+
+                    mkdir( implode('/', $dirs ) );
+                }
+            }
+
+        }
+
+    }
+
     public static function getFromApi($user_id = 1)
     {
         global $params;
@@ -379,6 +410,9 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
 
         $totals = [];
+
+
+        $file_number = 0;
         for ($i = 1; $i <= 100; $i++) {
 
             $param = array(
@@ -450,23 +484,25 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
                 $SqlUnion[$setType][] = "
                     SELECT 
-                        " . implode(',', $s) . "
-
+                        " . implode(', ', $s) . "
                     FROM dual
                 ";
 
                 foreach ($SqlUnion as $ks => $vs) {
 
                     if (count($vs) > 300) {
+
+                        $implodeUnion = implode(' UNION ', $vs);
+
                         $sql = "
                             MERGE INTO per_personal_news d
                             USING ( 
-                                " . implode(' UNION ', $vs) . "
+                                " . $implodeUnion . "
                             ) s ON ( d.per_id = s.per_id )
                             WHEN NOT MATCHED THEN
-                            INSERT  ( org_owner,per_cardno, per_id,per_name,per_surname,d5_per_id,pos_id,pos_no,per_status,per_offno,per_renew,per_taxno,per_start_org,per_startdate,per_occupydate,per_effectivedate,per_gender,blood_id,scar,birth_place,is_ordain,ordain_date,ordain_detail,is_disability,is_soldier_service,per_saldate,probation_startdate,probation_enddate,probation_passdate,per_posdate,approve_per_id,replace_per_id,per_mobile,per_email,per_license_no,per_id_ref,per_nickname,per_pos_org,per_pos_orgmgt,per_pos_docdate,per_pos_doctype,per_pos_remark,per_book_no,per_pos_desc,per_job,per_ot_flag,per_type_2535,prename_id,prename_th,prename_en,per_eng_name,per_eng_surname,pertype_id,department_id,province_id,movement_id,pay_no,per_orgmgt,per_level_id,posstatus_id,per_salary,hip_flag,is_sync,sync_datetime,sync_status_code,per_set_ass,organize_id_ass,organize_id_work,organize_id_kpi,organize_id_salary,department_id_ass,create_date,creator,create_org,update_date,update_user,update_name,allow_sync,edit_req_no,update_org,birth_date,creator_name,audit_name,is_delete,per_level_date,per_line_date ) 
+                            INSERT ( org_owner,per_cardno, per_id,per_name,per_surname,d5_per_id,pos_id,pos_no,per_status,per_offno,per_renew,per_taxno,per_start_org,per_startdate,per_occupydate,per_effectivedate,per_gender,blood_id,scar,birth_place,is_ordain,ordain_date,ordain_detail,is_disability,is_soldier_service,per_saldate,probation_startdate,probation_enddate,probation_passdate,per_posdate,approve_per_id,replace_per_id,per_mobile,per_email,per_license_no,per_id_ref,per_nickname,per_pos_org,per_pos_orgmgt,per_pos_docdate,per_pos_doctype,per_pos_remark,per_book_no,per_pos_desc,per_job,per_ot_flag,per_type_2535,prename_id,prename_th,prename_en,per_eng_name,per_eng_surname,pertype_id,department_id,province_id,movement_id,pay_no,per_orgmgt,per_level_id,posstatus_id,per_salary,hip_flag,is_sync,sync_datetime,sync_status_code,per_set_ass,organize_id_ass,organize_id_work,organize_id_kpi,organize_id_salary,department_id_ass,create_date,creator,create_org,update_date,update_user,update_name,allow_sync,edit_req_no,update_org,birth_date,creator_name,audit_name,is_delete,per_level_date,per_line_date ) 
                             values 
-                            (  org_owner, s.per_cardno, s.per_id, s.per_name, s.per_surname, s.d5_per_id, s.pos_id, s.pos_no, s.per_status, s.per_offno, s.per_renew, s.per_taxno, s.per_start_org, s.per_startdate, s.per_occupydate, s.per_effectivedate, s.per_gender, s.blood_id, s.scar, s.birth_place, s.is_ordain, s.ordain_date, s.ordain_detail, s.is_disability, s.is_soldier_service, s.per_saldate, s.probation_startdate, s.probation_enddate, s.probation_passdate, s.per_posdate, s.approve_per_id, s.replace_per_id, s.per_mobile, s.per_email, s.per_license_no, s.per_id_ref, s.per_nickname, s.per_pos_org, s.per_pos_orgmgt, s.per_pos_docdate, s.per_pos_doctype, s.per_pos_remark, s.per_book_no, s.per_pos_desc, s.per_job, s.per_ot_flag, s.per_type_2535, s.prename_id, s.prename_th, s.prename_en, s.per_eng_name, s.per_eng_surname, s.pertype_id, s.department_id, s.province_id, s.movement_id, s.pay_no, s.per_orgmgt, s.per_level_id, s.posstatus_id, s.per_salary, s.hip_flag, s.is_sync, s.sync_datetime, s.sync_status_code, s.per_set_ass, s.organize_id_ass, s.organize_id_work, s.organize_id_kpi, s.organize_id_salary, s.department_id_ass, s.create_date, s.creator, s.create_org, s.update_date, s.update_user, s.update_name, s.allow_sync, s.edit_req_no, s.update_org, s.birth_date, s.creator_name, s.audit_name, s.is_delete, s.per_level_date, s.per_line_date )
+                            ( org_owner, s.per_cardno, s.per_id, s.per_name, s.per_surname, s.d5_per_id, s.pos_id, s.pos_no, s.per_status, s.per_offno, s.per_renew, s.per_taxno, s.per_start_org, s.per_startdate, s.per_occupydate, s.per_effectivedate, s.per_gender, s.blood_id, s.scar, s.birth_place, s.is_ordain, s.ordain_date, s.ordain_detail, s.is_disability, s.is_soldier_service, s.per_saldate, s.probation_startdate, s.probation_enddate, s.probation_passdate, s.per_posdate, s.approve_per_id, s.replace_per_id, s.per_mobile, s.per_email, s.per_license_no, s.per_id_ref, s.per_nickname, s.per_pos_org, s.per_pos_orgmgt, s.per_pos_docdate, s.per_pos_doctype, s.per_pos_remark, s.per_book_no, s.per_pos_desc, s.per_job, s.per_ot_flag, s.per_type_2535, s.prename_id, s.prename_th, s.prename_en, s.per_eng_name, s.per_eng_surname, s.pertype_id, s.department_id, s.province_id, s.movement_id, s.pay_no, s.per_orgmgt, s.per_level_id, s.posstatus_id, s.per_salary, s.hip_flag, s.is_sync, s.sync_datetime, s.sync_status_code, s.per_set_ass, s.organize_id_ass, s.organize_id_work, s.organize_id_kpi, s.organize_id_salary, s.department_id_ass, s.create_date, s.creator, s.create_org, s.update_date, s.update_user, s.update_name, s.allow_sync, s.edit_req_no, s.update_org, s.birth_date, s.creator_name, s.audit_name, s.is_delete, s.per_level_date, s.per_line_date )
                             WHEN MATCHED THEN
                             UPDATE
                             SET     
@@ -557,6 +593,18 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                                 per_line_date = s.per_line_date   
                         ";
 
+                        $file_name = 'save_file/per_personal/' . date( 'Y-m-d') . '/'. ++$file_number .'.txt';
+
+                        if( file_exists( $file_name ) ) {
+
+                            if( file_get_contents( $file_name ) == $implodeUnion ) {
+
+                                continue;
+                            }
+                        }
+                       
+                        self::saveFile( $file_name, $implodeUnion );
+
                         if( in_array( $ks, $params['dbInserts'])) {
 
                             if ($ks == 1) {
@@ -572,13 +620,16 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
                         $sql = "
                             REPLACE INTO per_personal_news (org_owner,per_cardno, per_id,per_name,per_surname,d5_per_id,pos_id,pos_no,per_status,per_offno,per_renew,per_taxno,per_start_org,per_startdate,per_occupydate,per_effectivedate,per_gender,blood_id,scar,birth_place,is_ordain,ordain_date,ordain_detail,is_disability,is_soldier_service,per_saldate,probation_startdate,probation_enddate,probation_passdate,per_posdate,approve_per_id,replace_per_id,per_mobile,per_email,per_license_no,per_id_ref,per_nickname,per_pos_org,per_pos_orgmgt,per_pos_docdate,per_pos_doctype,per_pos_remark,per_book_no,per_pos_desc,per_job,per_ot_flag,per_type_2535,prename_id,prename_th,prename_en,per_eng_name,per_eng_surname,pertype_id,department_id,province_id,movement_id,pay_no,per_orgmgt,per_level_id,posstatus_id,per_salary,hip_flag,is_sync,sync_datetime,sync_status_code,per_set_ass,organize_id_ass,organize_id_work,organize_id_kpi,organize_id_salary,department_id_ass,create_date,creator,create_org,update_date,update_user,update_name,allow_sync,edit_req_no,update_org,birth_date,creator_name,audit_name,is_delete,per_level_date,per_line_date)  
-                            SELECT org_owner,per_cardno, per_id,per_name,per_surname,d5_per_id,pos_id,pos_no,per_status,per_offno,per_renew,per_taxno,per_start_org,per_startdate,per_occupydate,per_effectivedate,per_gender,blood_id,scar,birth_place,is_ordain,ordain_date,ordain_detail,is_disability,is_soldier_service,per_saldate,probation_startdate,probation_enddate,probation_passdate,per_posdate,approve_per_id,replace_per_id,per_mobile,per_email,per_license_no,per_id_ref,per_nickname,per_pos_org,per_pos_orgmgt,per_pos_docdate,per_pos_doctype,per_pos_remark,per_book_no,per_pos_desc,per_job,per_ot_flag,per_type_2535,prename_id,prename_th,prename_en,per_eng_name,per_eng_surname,pertype_id,department_id,province_id,movement_id,pay_no,per_orgmgt,per_level_id,posstatus_id,per_salary,hip_flag,is_sync,sync_datetime,sync_status_code,per_set_ass,organize_id_ass,organize_id_work,organize_id_kpi,organize_id_salary,department_id_ass,create_date,creator,create_org,update_date,update_user,update_name,allow_sync,edit_req_no,update_org,birth_date,creator_name,audit_name,is_delete,per_level_date,per_line_date FROM ( " . implode(' UNION ', $vs) . " )  as new_tb                        
-                            
+                            SELECT org_owner,per_cardno, per_id,per_name,per_surname,d5_per_id,pos_id,pos_no,per_status,per_offno,per_renew,per_taxno,per_start_org,per_startdate,per_occupydate,per_effectivedate,per_gender,blood_id,scar,birth_place,is_ordain,ordain_date,ordain_detail,is_disability,is_soldier_service,per_saldate,probation_startdate,probation_enddate,probation_passdate,per_posdate,approve_per_id,replace_per_id,per_mobile,per_email,per_license_no,per_id_ref,per_nickname,per_pos_org,per_pos_orgmgt,per_pos_docdate,per_pos_doctype,per_pos_remark,per_book_no,per_pos_desc,per_job,per_ot_flag,per_type_2535,prename_id,prename_th,prename_en,per_eng_name,per_eng_surname,pertype_id,department_id,province_id,movement_id,pay_no,per_orgmgt,per_level_id,posstatus_id,per_salary,hip_flag,is_sync,sync_datetime,sync_status_code,per_set_ass,organize_id_ass,organize_id_work,organize_id_kpi,organize_id_salary,department_id_ass,create_date,creator,create_org,update_date,update_user,update_name,allow_sync,edit_req_no,update_org,birth_date,creator_name,audit_name,is_delete,per_level_date,per_line_date FROM ( " . $implodeUnion . " )  as new_tb  
                         ";
 
                         $cmd = $con3->createCommand($sql);
 
                         $cmd->execute();
+
+                        $implodeUnion = NULL;
+
+                        $sql = NULL;
 
                         $SqlUnion[$ks] = [];
                       
@@ -588,8 +639,153 @@ class PerPersonal1 extends \yii\db\ActiveRecord
         }
 
 
+        foreach ($SqlUnion as $ks => $vs) {
 
-        // arr('adddfddda');
+            if (count($vs) > 0) {
+
+                $implodeUnion = implode(' UNION ', $vs);
+
+                $sql = "
+                    MERGE INTO per_personal_news d
+                    USING ( 
+                        " . $implodeUnion . "
+                    ) s ON ( d.per_id = s.per_id )
+                    WHEN NOT MATCHED THEN
+                    INSERT ( org_owner,per_cardno, per_id,per_name,per_surname,d5_per_id,pos_id,pos_no,per_status,per_offno,per_renew,per_taxno,per_start_org,per_startdate,per_occupydate,per_effectivedate,per_gender,blood_id,scar,birth_place,is_ordain,ordain_date,ordain_detail,is_disability,is_soldier_service,per_saldate,probation_startdate,probation_enddate,probation_passdate,per_posdate,approve_per_id,replace_per_id,per_mobile,per_email,per_license_no,per_id_ref,per_nickname,per_pos_org,per_pos_orgmgt,per_pos_docdate,per_pos_doctype,per_pos_remark,per_book_no,per_pos_desc,per_job,per_ot_flag,per_type_2535,prename_id,prename_th,prename_en,per_eng_name,per_eng_surname,pertype_id,department_id,province_id,movement_id,pay_no,per_orgmgt,per_level_id,posstatus_id,per_salary,hip_flag,is_sync,sync_datetime,sync_status_code,per_set_ass,organize_id_ass,organize_id_work,organize_id_kpi,organize_id_salary,department_id_ass,create_date,creator,create_org,update_date,update_user,update_name,allow_sync,edit_req_no,update_org,birth_date,creator_name,audit_name,is_delete,per_level_date,per_line_date ) 
+                    values 
+                    ( org_owner, s.per_cardno, s.per_id, s.per_name, s.per_surname, s.d5_per_id, s.pos_id, s.pos_no, s.per_status, s.per_offno, s.per_renew, s.per_taxno, s.per_start_org, s.per_startdate, s.per_occupydate, s.per_effectivedate, s.per_gender, s.blood_id, s.scar, s.birth_place, s.is_ordain, s.ordain_date, s.ordain_detail, s.is_disability, s.is_soldier_service, s.per_saldate, s.probation_startdate, s.probation_enddate, s.probation_passdate, s.per_posdate, s.approve_per_id, s.replace_per_id, s.per_mobile, s.per_email, s.per_license_no, s.per_id_ref, s.per_nickname, s.per_pos_org, s.per_pos_orgmgt, s.per_pos_docdate, s.per_pos_doctype, s.per_pos_remark, s.per_book_no, s.per_pos_desc, s.per_job, s.per_ot_flag, s.per_type_2535, s.prename_id, s.prename_th, s.prename_en, s.per_eng_name, s.per_eng_surname, s.pertype_id, s.department_id, s.province_id, s.movement_id, s.pay_no, s.per_orgmgt, s.per_level_id, s.posstatus_id, s.per_salary, s.hip_flag, s.is_sync, s.sync_datetime, s.sync_status_code, s.per_set_ass, s.organize_id_ass, s.organize_id_work, s.organize_id_kpi, s.organize_id_salary, s.department_id_ass, s.create_date, s.creator, s.create_org, s.update_date, s.update_user, s.update_name, s.allow_sync, s.edit_req_no, s.update_org, s.birth_date, s.creator_name, s.audit_name, s.is_delete, s.per_level_date, s.per_line_date )
+                    WHEN MATCHED THEN
+                    UPDATE
+                    SET     
+                        org_owner = s.org_owner,
+                        per_cardno = s.per_cardno,
+                        per_name = s.per_name,
+                        per_surname = s.per_surname,
+                        d5_per_id = s.d5_per_id,
+                        pos_id = s.pos_id,
+                        pos_no = s.pos_no,
+                        per_status = s.per_status,
+                        per_offno = s.per_offno,
+                        per_renew = s.per_renew,
+                        per_taxno = s.per_taxno,
+                        per_start_org = s.per_start_org,
+                        per_startdate = s.per_startdate,
+                        per_occupydate = s.per_occupydate,
+                        per_effectivedate = s.per_effectivedate,
+                        per_gender = s.per_gender,
+                        blood_id = s.blood_id,
+                        scar = s.scar,
+                        birth_place = s.birth_place,
+                        is_ordain = s.is_ordain,
+                        ordain_date = s.ordain_date,
+                        ordain_detail = s.ordain_detail,
+                        is_disability = s.is_disability,
+                        is_soldier_service = s.is_soldier_service,
+                        per_saldate = s.per_saldate,
+                        probation_startdate = s.probation_startdate,
+                        probation_enddate = s.probation_enddate,
+                        probation_passdate = s.probation_passdate,
+                        per_posdate = s.per_posdate,
+                        approve_per_id = s.approve_per_id,
+                        replace_per_id = s.replace_per_id,
+                        per_mobile = s.per_mobile,
+                        per_email = s.per_email,
+                        per_license_no = s.per_license_no,
+                        per_id_ref = s.per_id_ref,
+                        per_nickname = s.per_nickname,
+                        per_pos_org = s.per_pos_org,
+                        per_pos_orgmgt = s.per_pos_orgmgt,
+                        per_pos_docdate = s.per_pos_docdate,
+                        per_pos_doctype = s.per_pos_doctype,
+                        per_pos_remark = s.per_pos_remark,
+                        per_book_no = s.per_book_no,
+                        per_pos_desc = s.per_pos_desc,
+                        per_job = s.per_job,
+                        per_ot_flag = s.per_ot_flag,
+                        per_type_2535 = s.per_type_2535,
+                        prename_id = s.prename_id,
+                        prename_th = s.prename_th,
+                        prename_en = s.prename_en,
+                        per_eng_name = s.per_eng_name,
+                        per_eng_surname = s.per_eng_surname,
+                        pertype_id = s.pertype_id,
+                        department_id = s.department_id,
+                        province_id = s.province_id,
+                        movement_id = s.movement_id,
+                        pay_no = s.pay_no,
+                        per_orgmgt = s.per_orgmgt,
+                        per_level_id = s.per_level_id,
+                        posstatus_id = s.posstatus_id,
+                        per_salary = s.per_salary,
+                        hip_flag = s.hip_flag,
+                        is_sync = s.is_sync,
+                        sync_datetime = s.sync_datetime,
+                        sync_status_code = s.sync_status_code,
+                        per_set_ass = s.per_set_ass,
+                        organize_id_ass = s.organize_id_ass,
+                        organize_id_work = s.organize_id_work,
+                        organize_id_kpi = s.organize_id_kpi,
+                        organize_id_salary = s.organize_id_salary,
+                        department_id_ass = s.department_id_ass,
+                        create_date = s.create_date,
+                        creator = s.creator,
+                        create_org = s.create_org,
+                        update_date = s.update_date,
+                        update_user = s.update_user,
+                        update_name = s.update_name,
+                        allow_sync = s.allow_sync,
+                        edit_req_no = s.edit_req_no,
+                        update_org = s.update_org,
+                        birth_date = s.birth_date,
+                        creator_name = s.creator_name,
+                        audit_name = s.audit_name,
+                        is_delete = s.is_delete,
+                        per_level_date = s.per_level_date,
+                        per_line_date = s.per_line_date   
+                ";
+
+                $file_name = 'save_file/per_personal/' . date( 'Y-m-d') . '/'. ++$file_number .'.txt';
+
+                if( file_exists( $file_name ) ) {
+
+                    if( file_get_contents( $file_name ) == $implodeUnion ) {
+
+                        continue;
+                    }
+                }
+               
+                self::saveFile( $file_name, $implodeUnion );
+
+                if( in_array( $ks, $params['dbInserts'])) {
+
+                    if ($ks == 1) {
+
+                        $cmd = $con->createCommand($sql);
+                    }
+                    else {
+                        $cmd = $con2->createCommand($sql); 
+                    }
+                    
+                    $cmd->execute();
+                }
+
+                $sql = "
+                    REPLACE INTO per_personal_news (org_owner,per_cardno, per_id,per_name,per_surname,d5_per_id,pos_id,pos_no,per_status,per_offno,per_renew,per_taxno,per_start_org,per_startdate,per_occupydate,per_effectivedate,per_gender,blood_id,scar,birth_place,is_ordain,ordain_date,ordain_detail,is_disability,is_soldier_service,per_saldate,probation_startdate,probation_enddate,probation_passdate,per_posdate,approve_per_id,replace_per_id,per_mobile,per_email,per_license_no,per_id_ref,per_nickname,per_pos_org,per_pos_orgmgt,per_pos_docdate,per_pos_doctype,per_pos_remark,per_book_no,per_pos_desc,per_job,per_ot_flag,per_type_2535,prename_id,prename_th,prename_en,per_eng_name,per_eng_surname,pertype_id,department_id,province_id,movement_id,pay_no,per_orgmgt,per_level_id,posstatus_id,per_salary,hip_flag,is_sync,sync_datetime,sync_status_code,per_set_ass,organize_id_ass,organize_id_work,organize_id_kpi,organize_id_salary,department_id_ass,create_date,creator,create_org,update_date,update_user,update_name,allow_sync,edit_req_no,update_org,birth_date,creator_name,audit_name,is_delete,per_level_date,per_line_date)  
+                    SELECT org_owner,per_cardno, per_id,per_name,per_surname,d5_per_id,pos_id,pos_no,per_status,per_offno,per_renew,per_taxno,per_start_org,per_startdate,per_occupydate,per_effectivedate,per_gender,blood_id,scar,birth_place,is_ordain,ordain_date,ordain_detail,is_disability,is_soldier_service,per_saldate,probation_startdate,probation_enddate,probation_passdate,per_posdate,approve_per_id,replace_per_id,per_mobile,per_email,per_license_no,per_id_ref,per_nickname,per_pos_org,per_pos_orgmgt,per_pos_docdate,per_pos_doctype,per_pos_remark,per_book_no,per_pos_desc,per_job,per_ot_flag,per_type_2535,prename_id,prename_th,prename_en,per_eng_name,per_eng_surname,pertype_id,department_id,province_id,movement_id,pay_no,per_orgmgt,per_level_id,posstatus_id,per_salary,hip_flag,is_sync,sync_datetime,sync_status_code,per_set_ass,organize_id_ass,organize_id_work,organize_id_kpi,organize_id_salary,department_id_ass,create_date,creator,create_org,update_date,update_user,update_name,allow_sync,edit_req_no,update_org,birth_date,creator_name,audit_name,is_delete,per_level_date,per_line_date FROM ( " . $implodeUnion . " )  as new_tb  
+                ";
+
+                $cmd = $con3->createCommand($sql);
+
+                $cmd->execute();
+
+                $implodeUnion = NULL;
+
+                $sql = NULL;
+
+                $SqlUnion[$ks] = [];
+              
+            }
+        }
 
         $return['msg'] = 'ไม่มีการปรับปรุงข้อมูลใดๆ';
 
@@ -608,6 +804,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
         // $createby = Yii::$app->user->getId();
         
         \app\models\CommonAction::AddEventLog($user_id, "Update", $log_page, $log_description);
+
         return json_encode($return);
     }
 
