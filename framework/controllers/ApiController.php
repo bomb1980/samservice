@@ -518,16 +518,16 @@ class ApiController extends Controller
         
         $con = Yii::$app->db;
         $sql = "
-        SELECT
-            COUNT( * ) as tt
-        FROM per_personal_news p
-        INNER JOIN per_off_type_news t ON p.pertype_id = t.pertype_id
-        LEFT JOIN per_position_news po ON p.pos_id = po.pos_id
-        LEFT JOIN per_org_ass_news o ON po.organize_id = o.organize_id
-        LEFT JOIN per_line_news l ON po.line_id = l.line_id
-        LEFT JOIN per_level_news lev ON p.per_level_id = lev.level_id
-        [WHERE]
-   
+            SELECT
+                COUNT( * ) as tt
+            FROM per_personal_news p
+            INNER JOIN per_off_type_news t ON p.pertype_id = t.pertype_id
+            LEFT JOIN per_position_news po ON p.pos_id = po.pos_id
+            LEFT JOIN per_org_ass_news o ON po.organize_id = o.organize_id
+            LEFT JOIN per_line_news l ON po.line_id = l.line_id
+            LEFT JOIN per_level_news lev ON p.per_level_id = lev.level_id
+            [WHERE]
+    
         ";
 
         $replace = [];
@@ -646,7 +646,7 @@ class ApiController extends Controller
     
                 if( $kc == $req['order'][0]['column'] ) {
     
-                    // $orders[] = $vc['data'] ." ". $req['order'][0]['dir'];
+                    $orders[] = $vc['data'] ." ". $req['order'][0]['dir'];
                 }
             }
         }
