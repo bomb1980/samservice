@@ -508,14 +508,15 @@ class ApiController extends Controller
         $start = isset($req['start']) ? $req['start'] : 0;
         $length = isset($req['length']) ? $req['length'] : 10;
 
-        if ($seltype == 1) {
+        // if ($seltype == 1) {
 
-            $con = Yii::$app->dbdpis;
-        } else {
+        //     $con = Yii::$app->dbdpis;
+        // } else {
 
-            $con = Yii::$app->dbdpisemp;
-        }
-
+        //     $con = Yii::$app->dbdpisemp;
+        // }
+        
+        $con = Yii::$app->db;
         $sql = "
             SELECT
                 count( * ) as t
@@ -526,18 +527,10 @@ class ApiController extends Controller
         $replace = [];
         $bindValue = [];
         if (isset($req['per_cardno'])) {
-            if( 0 ) {
+             
+            // $replace['WHERE'][] = "per_cardno LIKE :per_cardno";
 
-                $replace['WHERE'][] = "per_cardno LIKE '%".  $req['per_cardno'] ."%'";
-    
-                // $bindValue['per_cardno'] = '%' . $req['per_cardno'] . '%';
-            }
-            else {
-
-                $replace['WHERE'][] = "per_cardno LIKE :per_cardno";
-    
-                $bindValue['per_cardno'] = '%' . str_replace( ' ', '%', $req['per_cardno'] )  . '%';
-            }
+            // $bindValue['per_cardno'] = '%' . str_replace( ' ', '%', $req['per_cardno'] )  . '%';
 
         }
 
@@ -546,7 +539,7 @@ class ApiController extends Controller
         $totalRecords = 0;
         foreach ($cmd->queryAll() as $kt => $vt) {
 
-            $totalRecords = $vt['T'];
+            $totalRecords = $vt['t'];
         }
 
         $sql = "
@@ -574,10 +567,11 @@ class ApiController extends Controller
             LEFT JOIN per_level_news l ON p.per_level_id = l.level_id
             [WHERE]
             [ORDER]
-            OFFSET " . $start . " ROWS FETCH NEXT :length ROWS ONLY
+            LIMIT " . $start . ", ". $length ."
         ";
-
-        $bindValue['length'] = $length;
+            
+            // OFFSET " . $start . " ROWS FETCH NEXT :length ROWS ONLY
+        // $bindValue['length'] = $length;
 
         $orders = [];
         if( isset( $req['columns'] ) ) {
@@ -586,7 +580,7 @@ class ApiController extends Controller
     
                 if( $kc == $req['order'][0]['column'] ) {
     
-                    $orders[] = $vc['data'] ." ". $req['order'][0]['dir'];
+                    // $orders[] = $vc['data'] ." ". $req['order'][0]['dir'];
                 }
             }
         }
@@ -604,6 +598,8 @@ class ApiController extends Controller
         
         $keep = [];
         foreach( $cmd->queryAll() as $kd => $vd ) {
+
+            // arr($vd);
 
             $keep[] = $vd;
         }

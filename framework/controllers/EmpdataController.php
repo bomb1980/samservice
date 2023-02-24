@@ -333,51 +333,51 @@ class EmpdataController extends Controller
     {
         $datas['columns'] = [
             [
-                'name' => 'PER_CARDNO',
+                'name' => 'per_cardno',
                 'label' => 'เลขบัตร',
-                'className' => "text-center",
+                'classname' => "text-center",
                 'orderable' => false
             ],
             [
-                'name' => 'POS_ID',
+                'name' => 'pos_id',
                 'label' => 'เลขที่ตำแหน่ง',
-                'className' => "text-center",
+                'classname' => "text-center",
                 'orderable' => false
             ],
             [
-                'name' => 'FULL_NAME_THAI',
+                'name' => 'full_name_thai',
                 'label' => 'ชื่อ นามสกุล',
-                'className' => "text-center",
+                'classname' => "text-center",
                 'orderable' => false
             ],
             [
-                'name' => 'LEVEL_NO',
+                'name' => 'level_no',
                 'label' => 'ระดับผู้ดำรงตำแหน่ง',
-                'className' => "text-center",
+                'classname' => "text-center",
                 'orderable' => false
             ],
             [
-                'name' => 'ORGANIZE_TH',
+                'name' => 'organize_th',
                 'label' => 'สังกัดตามกฏหมาย',
-                'className' => "text-center",
+                'classname' => "text-center",
                 'orderable' => false
             ],
             [
-                'name' => 'ORGANIZE_TH_ASS',
+                'name' => 'organize_th_ass',
                 'label' => 'สังกัดตามมอบหมายงาน',
-                'className' => "text-center",
+                'classname' => "text-center",
                 'orderable' => false
             ],
             [
-                'name' => 'OT_NAME',
+                'name' => 'ot_name',
                 'label' => 'ประเภทบุคลากร',
-                'className' => "text-center",
+                'classname' => "text-center",
                 'orderable' => false
             ],
             [
-                'name' => 'PER_STATUS_NAME',
+                'name' => 'per_status_name',
                 'label' => 'สถานะ',
-                'className' => "text-center",
+                'classname' => "text-center",
                 'orderable' => false
             ],
         ];

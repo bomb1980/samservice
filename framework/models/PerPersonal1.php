@@ -308,6 +308,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
         $con = Yii::$app->dbdpis;
 
         $con2 = Yii::$app->dbdpisemp;
+        $con3 = Yii::$app->db;
 
 
         $url_gettoken = $params['apiUrl'] . '/oapi/login'; //prd domain
@@ -426,104 +427,31 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
                 if($setType == 1 ) {
 
-
                     $mymess[$setType] = 'มีข้อมูล <b>ข้าราชการ</b> ถูกดึงมาจำนวน <b>' . ++$totals[$setType] . '</b>เรคคอร์ด';
+
                 }
                 else {
 
                     $mymess[$setType] = 'มีข้อมูล <b>พนักงาน</b> ถูกดึงมาจำนวน <b>' . ++$totals[$setType] . '</b>เรคคอร์ด';
                 }
 
+                $s = [];
+                foreach ($va as $ks => $vs) {
 
+                    if( empty( trim($vs) ) ) {
+
+                        $s[] = "NULL as " . strtolower($ks) . "";
+                    }
+                    else {
+
+                        $s[] = "'" . trim($vs) . "' as " . strtolower($ks) . "";
+                    }
+                }
 
                 $SqlUnion[$setType][] = "
                     SELECT 
-                        '". trim($va->org_owner) ."' as org_owner,
-                        '". trim($va->per_cardno) ."' as per_cardno,
-                        '". trim($va->per_id) ."' as per_id,
-                        '". trim($va->per_name) ."' as per_name,
-                        '". trim($va->per_surname) ."' as per_surname,
-                        '". trim($va->d5_per_id) ."' as d5_per_id,
-                        '". trim($va->pos_id) ."' as pos_id,
-                        '". trim($va->pos_no) ."' as pos_no,
-                        '". trim($va->per_status) ."' as per_status,
-                        '". trim($va->per_offno) ."' as per_offno,
-                        '". trim($va->per_renew) ."' as per_renew,
-                        '". trim($va->per_taxno) ."' as per_taxno,
-                        '". trim($va->per_start_org) ."' as per_start_org,
-                        '". trim($va->per_startdate) ."' as per_startdate,
-                        '". trim($va->per_occupydate) ."' as per_occupydate,
-                        '". trim($va->per_effectivedate) ."' as per_effectivedate,
-                        '". trim($va->per_gender) ."' as per_gender,
-                        '". trim($va->blood_id) ."' as blood_id,
-                        '". trim($va->scar) ."' as scar,
-                        '". trim($va->birth_place) ."' as birth_place,
-                        '". trim($va->is_ordain) ."' as is_ordain,
-                        '". trim($va->ordain_date) ."' as ordain_date,
-                        '". trim($va->ordain_detail) ."' as ordain_detail,
-                        '". trim($va->is_disability) ."' as is_disability,
-                        '". trim($va->is_soldier_service) ."' as is_soldier_service,
-                        '". trim($va->per_saldate) ."' as per_saldate,
-                        '". trim($va->probation_startdate) ."' as probation_startdate,
-                        '". trim($va->probation_enddate) ."' as probation_enddate,
-                        '". trim($va->probation_passdate) ."' as probation_passdate,
-                        '". trim($va->per_posdate) ."' as per_posdate,
-                        '". trim($va->approve_per_id) ."' as approve_per_id,
-                        '". trim($va->replace_per_id) ."' as replace_per_id,
-                        '". trim($va->per_mobile) ."' as per_mobile,
-                        '". trim($va->per_email) ."' as per_email,
-                        '". trim($va->per_license_no) ."' as per_license_no,
-                        '". trim($va->per_id_ref) ."' as per_id_ref,
-                        '". trim($va->per_nickname) ."' as per_nickname,
-                        '". trim($va->per_pos_org) ."' as per_pos_org,
-                        '". trim($va->per_pos_orgmgt) ."' as per_pos_orgmgt,
-                        '". trim($va->per_pos_docdate) ."' as per_pos_docdate,
-                        '". trim($va->per_pos_doctype) ."' as per_pos_doctype,
-                        '". trim($va->per_pos_remark) ."' as per_pos_remark,
-                        '". trim($va->per_book_no) ."' as per_book_no,
-                        '". trim($va->per_pos_desc) ."' as per_pos_desc,
-                        '". trim($va->per_job) ."' as per_job,
-                        '". trim($va->per_ot_flag) ."' as per_ot_flag,
-                        '". trim($va->per_type_2535) ."' as per_type_2535,
-                        '". trim($va->prename_id) ."' as prename_id,
-                        '". trim($va->prename_th) ."' as prename_th,
-                        '". trim($va->prename_en) ."' as prename_en,
-                        '". trim($va->per_eng_name) ."' as per_eng_name,
-                        '". trim($va->per_eng_surname) ."' as per_eng_surname,
-                        '". trim($va->pertype_id) ."' as pertype_id,
-                        '". trim($va->department_id) ."' as department_id,
-                        '". trim($va->province_id) ."' as province_id,
-                        '". trim($va->movement_id) ."' as movement_id,
-                        '". trim($va->pay_no) ."' as pay_no,
-                        '". trim($va->per_orgmgt) ."' as per_orgmgt,
-                        '". trim($va->per_level_id) ."' as per_level_id,
-                        '". trim($va->posstatus_id) ."' as posstatus_id,
-                        '". trim($va->per_salary) ."' as per_salary,
-                        '". trim($va->hip_flag) ."' as hip_flag,
-                        '". trim($va->is_sync) ."' as is_sync,
-                        '". trim($va->sync_datetime) ."' as sync_datetime,
-                        '". trim($va->sync_status_code) ."' as sync_status_code,
-                        '". trim($va->per_set_ass) ."' as per_set_ass,
-                        '". trim($va->organize_id_ass) ."' as organize_id_ass,
-                        '". trim($va->organize_id_work) ."' as organize_id_work,
-                        '". trim($va->organize_id_kpi) ."' as organize_id_kpi,
-                        '". trim($va->organize_id_salary) ."' as organize_id_salary,
-                        '". trim($va->department_id_ass) ."' as department_id_ass,
-                        '". trim($va->create_date) ."' as create_date,
-                        '". trim($va->creator) ."' as creator,
-                        '". trim($va->create_org) ."' as create_org,
-                        '". trim($va->update_date) ."' as update_date,
-                        '". trim($va->update_user) ."' as update_user,
-                        '". trim($va->update_name) ."' as update_name,
-                        '". trim($va->allow_sync) ."' as allow_sync,
-                        '". trim($va->edit_req_no) ."' as edit_req_no,
-                        '". trim($va->update_org) ."' as update_org,
-                        '". trim($va->birth_date) ."' as birth_date,
-                        '". trim($va->creator_name) ."' as creator_name,
-                        '". trim($va->audit_name) ."' as audit_name,
-                        '". trim($va->is_delete) ."' as is_delete,
-                        '". trim($va->per_level_date) ."' as per_level_date,
-                        '". trim($va->per_line_date) ."' as per_line_date
+                        " . implode(',', $s) . "
+
                     FROM dual
                 ";
 
@@ -642,6 +570,16 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                             $cmd->execute();
                         }
 
+                        $sql = "
+                            REPLACE INTO per_personal_news (org_owner,per_cardno, per_id,per_name,per_surname,d5_per_id,pos_id,pos_no,per_status,per_offno,per_renew,per_taxno,per_start_org,per_startdate,per_occupydate,per_effectivedate,per_gender,blood_id,scar,birth_place,is_ordain,ordain_date,ordain_detail,is_disability,is_soldier_service,per_saldate,probation_startdate,probation_enddate,probation_passdate,per_posdate,approve_per_id,replace_per_id,per_mobile,per_email,per_license_no,per_id_ref,per_nickname,per_pos_org,per_pos_orgmgt,per_pos_docdate,per_pos_doctype,per_pos_remark,per_book_no,per_pos_desc,per_job,per_ot_flag,per_type_2535,prename_id,prename_th,prename_en,per_eng_name,per_eng_surname,pertype_id,department_id,province_id,movement_id,pay_no,per_orgmgt,per_level_id,posstatus_id,per_salary,hip_flag,is_sync,sync_datetime,sync_status_code,per_set_ass,organize_id_ass,organize_id_work,organize_id_kpi,organize_id_salary,department_id_ass,create_date,creator,create_org,update_date,update_user,update_name,allow_sync,edit_req_no,update_org,birth_date,creator_name,audit_name,is_delete,per_level_date,per_line_date)  
+                            SELECT org_owner,per_cardno, per_id,per_name,per_surname,d5_per_id,pos_id,pos_no,per_status,per_offno,per_renew,per_taxno,per_start_org,per_startdate,per_occupydate,per_effectivedate,per_gender,blood_id,scar,birth_place,is_ordain,ordain_date,ordain_detail,is_disability,is_soldier_service,per_saldate,probation_startdate,probation_enddate,probation_passdate,per_posdate,approve_per_id,replace_per_id,per_mobile,per_email,per_license_no,per_id_ref,per_nickname,per_pos_org,per_pos_orgmgt,per_pos_docdate,per_pos_doctype,per_pos_remark,per_book_no,per_pos_desc,per_job,per_ot_flag,per_type_2535,prename_id,prename_th,prename_en,per_eng_name,per_eng_surname,pertype_id,department_id,province_id,movement_id,pay_no,per_orgmgt,per_level_id,posstatus_id,per_salary,hip_flag,is_sync,sync_datetime,sync_status_code,per_set_ass,organize_id_ass,organize_id_work,organize_id_kpi,organize_id_salary,department_id_ass,create_date,creator,create_org,update_date,update_user,update_name,allow_sync,edit_req_no,update_org,birth_date,creator_name,audit_name,is_delete,per_level_date,per_line_date FROM ( " . implode(' UNION ', $vs) . " )  as new_tb                        
+                            
+                        ";
+
+                        $cmd = $con3->createCommand($sql);
+
+                        $cmd->execute();
+
                         $SqlUnion[$ks] = [];
                       
                     }
@@ -649,124 +587,6 @@ class PerPersonal1 extends \yii\db\ActiveRecord
             }
         }
 
-        foreach ($SqlUnion as $ks => $vs) {
-
-            if (count($vs) > 0) {
-                $sql = "
-                    MERGE INTO per_personal_news d
-                    USING ( 
-                        " . implode(' UNION ', $vs) . "
-                    ) s ON ( d.per_id = s.per_id )
-                    WHEN NOT MATCHED THEN
-                    INSERT  (  org_owner,per_cardno, per_id,per_name,per_surname,d5_per_id,pos_id,pos_no,per_status,per_offno,per_renew,per_taxno,per_start_org,per_startdate,per_occupydate,per_effectivedate,per_gender,blood_id,scar,birth_place,is_ordain,ordain_date,ordain_detail,is_disability,is_soldier_service,per_saldate,probation_startdate,probation_enddate,probation_passdate,per_posdate,approve_per_id,replace_per_id,per_mobile,per_email,per_license_no,per_id_ref,per_nickname,per_pos_org,per_pos_orgmgt,per_pos_docdate,per_pos_doctype,per_pos_remark,per_book_no,per_pos_desc,per_job,per_ot_flag,per_type_2535,prename_id,prename_th,prename_en,per_eng_name,per_eng_surname,pertype_id,department_id,province_id,movement_id,pay_no,per_orgmgt,per_level_id,posstatus_id,per_salary,hip_flag,is_sync,sync_datetime,sync_status_code,per_set_ass,organize_id_ass,organize_id_work,organize_id_kpi,organize_id_salary,department_id_ass,create_date,creator,create_org,update_date,update_user,update_name,allow_sync,edit_req_no,update_org,birth_date,creator_name,audit_name,is_delete,per_level_date,per_line_date ) 
-                    values 
-                    (  org_owner, s.per_cardno, s.per_id, s.per_name, s.per_surname, s.d5_per_id, s.pos_id, s.pos_no, s.per_status, s.per_offno, s.per_renew, s.per_taxno, s.per_start_org, s.per_startdate, s.per_occupydate, s.per_effectivedate, s.per_gender, s.blood_id, s.scar, s.birth_place, s.is_ordain, s.ordain_date, s.ordain_detail, s.is_disability, s.is_soldier_service, s.per_saldate, s.probation_startdate, s.probation_enddate, s.probation_passdate, s.per_posdate, s.approve_per_id, s.replace_per_id, s.per_mobile, s.per_email, s.per_license_no, s.per_id_ref, s.per_nickname, s.per_pos_org, s.per_pos_orgmgt, s.per_pos_docdate, s.per_pos_doctype, s.per_pos_remark, s.per_book_no, s.per_pos_desc, s.per_job, s.per_ot_flag, s.per_type_2535, s.prename_id, s.prename_th, s.prename_en, s.per_eng_name, s.per_eng_surname, s.pertype_id, s.department_id, s.province_id, s.movement_id, s.pay_no, s.per_orgmgt, s.per_level_id, s.posstatus_id, s.per_salary, s.hip_flag, s.is_sync, s.sync_datetime, s.sync_status_code, s.per_set_ass, s.organize_id_ass, s.organize_id_work, s.organize_id_kpi, s.organize_id_salary, s.department_id_ass, s.create_date, s.creator, s.create_org, s.update_date, s.update_user, s.update_name, s.allow_sync, s.edit_req_no, s.update_org, s.birth_date, s.creator_name, s.audit_name, s.is_delete, s.per_level_date, s.per_line_date )
-                    WHEN MATCHED THEN
-                    UPDATE
-                    SET     
-                    org_owner = s.org_owner,
-                    per_cardno = s.per_cardno,
-                    per_name = s.per_name,
-                    per_surname = s.per_surname,
-                    d5_per_id = s.d5_per_id,
-                    pos_id = s.pos_id,
-                    pos_no = s.pos_no,
-                    per_status = s.per_status,
-                    per_offno = s.per_offno,
-                    per_renew = s.per_renew,
-                    per_taxno = s.per_taxno,
-                    per_start_org = s.per_start_org,
-                    per_startdate = s.per_startdate,
-                    per_occupydate = s.per_occupydate,
-                    per_effectivedate = s.per_effectivedate,
-                    per_gender = s.per_gender,
-                    blood_id = s.blood_id,
-                    scar = s.scar,
-                    birth_place = s.birth_place,
-                    is_ordain = s.is_ordain,
-                    ordain_date = s.ordain_date,
-                    ordain_detail = s.ordain_detail,
-                    is_disability = s.is_disability,
-                    is_soldier_service = s.is_soldier_service,
-                    per_saldate = s.per_saldate,
-                    probation_startdate = s.probation_startdate,
-                    probation_enddate = s.probation_enddate,
-                    probation_passdate = s.probation_passdate,
-                    per_posdate = s.per_posdate,
-                    approve_per_id = s.approve_per_id,
-                    replace_per_id = s.replace_per_id,
-                    per_mobile = s.per_mobile,
-                    per_email = s.per_email,
-                    per_license_no = s.per_license_no,
-                    per_id_ref = s.per_id_ref,
-                    per_nickname = s.per_nickname,
-                    per_pos_org = s.per_pos_org,
-                    per_pos_orgmgt = s.per_pos_orgmgt,
-                    per_pos_docdate = s.per_pos_docdate,
-                    per_pos_doctype = s.per_pos_doctype,
-                    per_pos_remark = s.per_pos_remark,
-                    per_book_no = s.per_book_no,
-                    per_pos_desc = s.per_pos_desc,
-                    per_job = s.per_job,
-                    per_ot_flag = s.per_ot_flag,
-                    per_type_2535 = s.per_type_2535,
-                    prename_id = s.prename_id,
-                    prename_th = s.prename_th,
-                    prename_en = s.prename_en,
-                    per_eng_name = s.per_eng_name,
-                    per_eng_surname = s.per_eng_surname,
-                    pertype_id = s.pertype_id,
-                    department_id = s.department_id,
-                    province_id = s.province_id,
-                    movement_id = s.movement_id,
-                    pay_no = s.pay_no,
-                    per_orgmgt = s.per_orgmgt,
-                    per_level_id = s.per_level_id,
-                    posstatus_id = s.posstatus_id,
-                    per_salary = s.per_salary,
-                    hip_flag = s.hip_flag,
-                    is_sync = s.is_sync,
-                    sync_datetime = s.sync_datetime,
-                    sync_status_code = s.sync_status_code,
-                    per_set_ass = s.per_set_ass,
-                    organize_id_ass = s.organize_id_ass,
-                    organize_id_work = s.organize_id_work,
-                    organize_id_kpi = s.organize_id_kpi,
-                    organize_id_salary = s.organize_id_salary,
-                    department_id_ass = s.department_id_ass,
-                    create_date = s.create_date,
-                    creator = s.creator,
-                    create_org = s.create_org,
-                    update_date = s.update_date,
-                    update_user = s.update_user,
-                    update_name = s.update_name,
-                    allow_sync = s.allow_sync,
-                    edit_req_no = s.edit_req_no,
-                    update_org = s.update_org,
-                    birth_date = s.birth_date,
-                    creator_name = s.creator_name,
-                    audit_name = s.audit_name,
-                    is_delete = s.is_delete,
-                    per_level_date = s.per_level_date,
-                    per_line_date = s.per_line_date       
-                ";
-
-                if( in_array( $ks, $params['dbInserts'])) {
-                    if ($ks == 1) {
-
-                        $cmd = $con->createCommand($sql);
-                    }
-                    else {
-                        $cmd = $con2->createCommand($sql); 
-                    }
-                    
-                    $cmd->execute();
-                }
-
-                $SqlUnion[$ks] = [];
-              
-            }
-        }
 
 
         // arr('adddfddda');
@@ -1461,6 +1281,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
         $con = Yii::$app->dbdpis;
         $con2 = Yii::$app->dbdpisemp;
+        $con3 = Yii::$app->db;
 
         ini_set('memory_limit', '2048M');
         //ini_set('max_execution_time', 0);
@@ -1564,85 +1385,22 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
             foreach ($js as $ka => $va) {
 
+                $s = [];
+                foreach ($va as $ks => $vs) {
+
+                    if( empty( trim($vs) ) ) {
+
+                        $s[] = "NULL as " . strtolower($ks) . "";
+                    }
+                    else {
+
+                        $s[] = "'" . trim($vs) . "' as " . strtolower($ks) . "";
+                    }
+                }
 
                 $SqlOrgs[] = "
                     SELECT 
-                   '" . $va->pos_id . "' as pos_id,
-                   '" . $va->dcid . "' as dcid,
-                   '" . $va->pertype_id . "' as pertype_id,
-                   '" . $va->organize_id . "' as organize_id,
-                   '" . $va->pos_no . "' as pos_no,
-                   '" . $va->pos_no_name . "' as pos_no_name,
-                   '" . $va->pos_salary . "' as pos_salary,
-                   '" . $va->pos_mgtsalary . "' as pos_mgtsalary,
-                   '" . $va->min_salary . "' as min_salary,
-                   '" . $va->max_salary . "' as max_salary,
-                   '" . $va->group_salary . "' as group_salary,
-                   '" . $va->pos_condition . "' as pos_condition,
-                   '" . $va->pos_doc_no . "' as pos_doc_no,
-                   '" . $va->pos_remark . "' as pos_remark,
-                   '" . $va->pos_date . "' as pos_date,
-                   '" . $va->approve_name . "' as approve_name,
-                   '" . $va->approve_docno . "' as approve_docno,
-                   '" . $va->approve_date . "' as approve_date,
-                   '" . $va->pos_get_date . "' as pos_get_date,
-                   '" . $va->pos_change_date . "' as pos_change_date,
-                   '" . $va->pos_vacant_date . "' as pos_vacant_date,
-                   '" . $va->pos_status . "' as pos_status,
-                   '" . $va->pos_seq_no . "' as pos_seq_no,
-                   '" . $va->pay_no . "' as pay_no,
-                   '" . $va->pos_orgmgt . "' as pos_orgmgt,
-                   '" . $va->line_id . "' as line_id,
-                   '" . $va->mposition_id . "' as mposition_id,
-                   '" . $va->colevel_id . "' as colevel_id,
-                   '" . $va->level_id . "' as level_id,
-                   '" . $va->level_id_min . "' as level_id_min,
-                   '" . $va->level_id_max . "' as level_id_max,
-                   '" . $va->flag_level . "' as flag_level,
-                   '" . $va->condition_id . "' as condition_id,
-                   '" . $va->frametype_id . "' as frametype_id,
-                   '" . $va->skill_id . "' as skill_id,
-                   '" . $va->positionstat_id . "' as positionstat_id,
-                   '" . $va->audit_flag . "' as audit_flag,
-                   '" . $va->ppt_code . "' as ppt_code,
-                   '" . $va->pos_retire . "' as pos_retire,
-                   '" . $va->pos_retire_remark . "' as pos_retire_remark,
-                   '" . $va->reserve_flag . "' as reserve_flag,
-                   '" . $va->posreserve_id . "' as posreserve_id,
-                   '" . $va->pos_reserve_desc . "' as pos_reserve_desc,
-                   '" . $va->pos_reserve_docno . "' as pos_reserve_docno,
-                   '" . $va->pos_reserve_date . "' as pos_reserve_date,
-                   '" . $va->pos_south . "' as pos_south,
-                   '" . $va->pos_spec . "' as pos_spec,
-                   '" . $va->pos_job_description . "' as pos_job_description,
-                   '" . $va->d5_pg_code . "' as d5_pg_code,
-                   '" . $va->allow_decor . "' as allow_decor,
-                   '" . $va->practicetype_id . "' as practicetype_id,
-                   '" . $va->self_ratio . "' as self_ratio,
-                   '" . $va->chief_ratio . "' as chief_ratio,
-                   '" . $va->friend_ratio . "' as friend_ratio,
-                   '" . $va->sub_ratio . "' as sub_ratio,
-                   '" . $va->update_user . "' as update_user,
-                   '" . $va->update_date . "' as update_date,
-                   '" . $va->is_sync . "' as is_sync,
-                   '" . $va->sync_datetime . "' as sync_datetime,
-                   '" . $va->sync_status_code . "' as sync_status_code,
-                   '" . $va->recruit_plan . "' as recruit_plan,
-                   '" . $va->creator . "' as creator,
-                   '" . $va->create_date . "' as create_date,
-                   '" . $va->exper_skill . "' as exper_skill,
-                   '" . $va->work_location_id . "' as work_location_id,
-                   '" . $va->governor_flag . "' as governor_flag,
-                   '" . $va->province_id . "' as province_id,
-                   '" . $va->d5_pos_id . "' as d5_pos_id,
-                   '" . $va->org_owner . "' as org_owner,
-                   '" . $va->audit_by . "' as audit_by,
-                   '" . $va->audit_date . "' as audit_date,
-                   '" . $va->create_org . "' as create_org,
-                   '" . $va->update_org . "' as update_org,
-                   '" . $va->pos_value . "' as pos_value,
-                   '" . $va->update_name . "' as update_name,
-                   '" . $va->creator_name . "' as creator_name
+                        " . implode(',', $s) . "
                     FROM dual
                 ";
 
@@ -1731,8 +1489,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                             update_org = s.update_org,
                             pos_value = s.pos_value,
                             update_name = s.update_name,
-                            creator_name = s.creator_name
-                             
+                            creator_name = s.creator_name   
                     ";
 
                     foreach ($params['dbInserts'] as $kg => $vg) {
@@ -1744,17 +1501,32 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                             $cmd = $con2->createCommand($sql);
                         }
 
-                        // $cmd->bindValue(":user_id", $user_id);
 
                         $cmd->execute();
                     }
 
+
+                    $sql = "
+                    REPLACE INTO per_position_news (pos_id, dcid, pertype_id, organize_id, pos_no, pos_no_name, pos_salary, pos_mgtsalary, min_salary, max_salary, group_salary, pos_condition, pos_doc_no, pos_remark, pos_date, approve_name, approve_docno, approve_date, pos_get_date, pos_change_date, pos_vacant_date, pos_status, pos_seq_no, pay_no, pos_orgmgt, line_id, mposition_id, colevel_id, level_id, level_id_min, level_id_max, flag_level, condition_id, frametype_id, skill_id, positionstat_id, audit_flag, ppt_code, pos_retire, pos_retire_remark, reserve_flag, posreserve_id, pos_reserve_desc, pos_reserve_docno, pos_reserve_date, pos_south, pos_spec, pos_job_description, d5_pg_code, allow_decor, practicetype_id, self_ratio, chief_ratio, friend_ratio, sub_ratio, update_user, update_date, is_sync, sync_datetime, sync_status_code, recruit_plan, creator, create_date, exper_skill, work_location_id, governor_flag, province_id, d5_pos_id, org_owner, audit_by, audit_date, create_org, update_org, pos_value, update_name, creator_name) 
+                        
+                    SELECT pos_id, dcid, pertype_id, organize_id, pos_no, pos_no_name, pos_salary, pos_mgtsalary, min_salary, max_salary, group_salary, pos_condition, pos_doc_no, pos_remark, pos_date, approve_name, approve_docno, approve_date, pos_get_date, pos_change_date, pos_vacant_date, pos_status, pos_seq_no, pay_no, pos_orgmgt, line_id, mposition_id, colevel_id, level_id, level_id_min, level_id_max, flag_level, condition_id, frametype_id, skill_id, positionstat_id, audit_flag, ppt_code, pos_retire, pos_retire_remark, reserve_flag, posreserve_id, pos_reserve_desc, pos_reserve_docno, pos_reserve_date, pos_south, pos_spec, pos_job_description, d5_pg_code, allow_decor, practicetype_id, self_ratio, chief_ratio, friend_ratio, sub_ratio, update_user, update_date, is_sync, sync_datetime, sync_status_code, recruit_plan, creator, create_date, exper_skill, work_location_id, governor_flag, province_id, d5_pos_id, org_owner, audit_by, audit_date, create_org, update_org, pos_value, update_name, creator_name FROM ( " . implode(' UNION ', $SqlOrgs) . " )  as new_tb                        
+                        
+                    ";
+
+                    $cmd = $con3->createCommand($sql);
+
+                    $cmd->execute();
+
+
+
                     $SqlOrgs = [];
 
-                    // exit;
                 }
             }
         }
+
+
+     
 
 
         if (count($SqlOrgs) > 0) {
@@ -1842,8 +1614,7 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                     update_org = s.update_org,
                     pos_value = s.pos_value,
                     update_name = s.update_name,
-                    creator_name = s.creator_name
-                     
+                    creator_name = s.creator_name   
             ";
 
             foreach ($params['dbInserts'] as $kg => $vg) {
@@ -1855,17 +1626,27 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                     $cmd = $con2->createCommand($sql);
                 }
 
-                // $cmd->bindValue(":user_id", $user_id);
 
                 $cmd->execute();
             }
 
+
+            $sql = "
+            REPLACE INTO per_position_news (pos_id, dcid, pertype_id, organize_id, pos_no, pos_no_name, pos_salary, pos_mgtsalary, min_salary, max_salary, group_salary, pos_condition, pos_doc_no, pos_remark, pos_date, approve_name, approve_docno, approve_date, pos_get_date, pos_change_date, pos_vacant_date, pos_status, pos_seq_no, pay_no, pos_orgmgt, line_id, mposition_id, colevel_id, level_id, level_id_min, level_id_max, flag_level, condition_id, frametype_id, skill_id, positionstat_id, audit_flag, ppt_code, pos_retire, pos_retire_remark, reserve_flag, posreserve_id, pos_reserve_desc, pos_reserve_docno, pos_reserve_date, pos_south, pos_spec, pos_job_description, d5_pg_code, allow_decor, practicetype_id, self_ratio, chief_ratio, friend_ratio, sub_ratio, update_user, update_date, is_sync, sync_datetime, sync_status_code, recruit_plan, creator, create_date, exper_skill, work_location_id, governor_flag, province_id, d5_pos_id, org_owner, audit_by, audit_date, create_org, update_org, pos_value, update_name, creator_name) 
+                
+            SELECT pos_id, dcid, pertype_id, organize_id, pos_no, pos_no_name, pos_salary, pos_mgtsalary, min_salary, max_salary, group_salary, pos_condition, pos_doc_no, pos_remark, pos_date, approve_name, approve_docno, approve_date, pos_get_date, pos_change_date, pos_vacant_date, pos_status, pos_seq_no, pay_no, pos_orgmgt, line_id, mposition_id, colevel_id, level_id, level_id_min, level_id_max, flag_level, condition_id, frametype_id, skill_id, positionstat_id, audit_flag, ppt_code, pos_retire, pos_retire_remark, reserve_flag, posreserve_id, pos_reserve_desc, pos_reserve_docno, pos_reserve_date, pos_south, pos_spec, pos_job_description, d5_pg_code, allow_decor, practicetype_id, self_ratio, chief_ratio, friend_ratio, sub_ratio, update_user, update_date, is_sync, sync_datetime, sync_status_code, recruit_plan, creator, create_date, exper_skill, work_location_id, governor_flag, province_id, d5_pos_id, org_owner, audit_by, audit_date, create_org, update_org, pos_value, update_name, creator_name FROM ( " . implode(' UNION ', $SqlOrgs) . " )  as new_tb                        
+                
+            ";
+
+            $cmd = $con3->createCommand($sql);
+
+            $cmd->execute();
+
+
+
             $SqlOrgs = [];
 
-            // exit;
         }
-
-
         
 
         $log_page = basename(Yii::$app->request->referrer); 
