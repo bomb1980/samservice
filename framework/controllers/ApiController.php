@@ -21,6 +21,92 @@ class ApiController extends Controller
         }
     }
 
+    public function actionFiles()
+    {
+
+        $req = Yii::$app->request->get();
+
+        $seltype = isset($req['seltype']) ? $req['seltype'] : 1;
+        $start = isset($req['start']) ? $req['start'] : 0;
+        $length = isset($req['length']) ? $req['length'] : 10;
+
+       
+        $con = Yii::$app->db;
+
+        $sql = "
+            SELECT
+                count( * ) as t
+            FROM tb_save_files        
+            [WHERE] 
+        ";
+
+        $replace = [];
+        $bindValue = [];
+       
+
+        $cmd = genCond_($sql, $replace, $con, $bindValue);
+
+        $totalRecords = 0;
+        foreach ($cmd->queryAll() as $kt => $vt) {
+
+
+            $totalRecords = $vt['t'];
+        }
+
+        $sql = "
+            SELECT
+                p.*,
+                CONCAT( '<a target=\"blank_\" href=\"empdata/loadfile/', p.id,'\">ดาวน์โหลด</a>') as download_link
+            FROM tb_save_files p
+           
+            [WHERE]
+            [ORDER]
+            
+        ";
+
+        // $bindValue['length'] = $length;
+
+        $orders = [];
+        if( isset( $req['columns'] ) ) {
+
+            foreach( $req['columns']  as $kc => $vc ) {
+    
+                if( $kc == $req['order'][0]['column'] ) {
+    
+                    $orders[] = $vc['data'] ." ". $req['order'][0]['dir'];
+                }
+            }
+        }
+
+        $replace['ORDER'] = NULL;
+        if( !empty( $orders ) ) {
+
+            $replace['ORDER'] = "ORDER BY " . implode( ' , ', $orders );
+        }
+        
+        $cmd = genCond_( $sql, $replace, $con, $bindValue );
+
+
+        // arr( $cmd->sql );
+        
+        $keep = [];
+        foreach( $cmd->queryAll() as $kd => $vd ) {
+
+            $keep[] = $vd;
+        }
+
+        echo json_encode(
+            [
+                "iTotalRecords" => $totalRecords,
+                "iTotalDisplayRecords" => $totalRecords,
+                "aaData" =>  $keep,
+            ]
+        );
+
+        exit;
+    }
+
+
     
 
     public function actionPertype()

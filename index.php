@@ -11,15 +11,14 @@ function arr( $arr = [], $exit = true ) {
 
             exit;
       }
-
 } 
 
 //
 //
-function genCond_($sql, $replace = [], $con, $bindValue = [] )
+function genCond_( $sql, $replace = [], $con, $bindValue = [] )
 {
 
-	$defConditions = array('WHERE', 'HAVING', 'AND');
+	$defConditions = array('WHERE', 'HAVING');
 
 	$keep = array();
 	foreach ($defConditions as $kr => $vr) {
@@ -43,22 +42,15 @@ function genCond_($sql, $replace = [], $con, $bindValue = [] )
 
 	$sql = str_replace(array_keys($keep), $keep, $sql);
 
-	
       $cmd = $con->createCommand($sql);
 
       foreach( $bindValue as $kb => $vb ) {
-
-          $cmd->bindValue( $kb, $vb);
+		
+		$cmd->bindValue( $kb, $vb );
       }
 
-
-
-
       return $cmd;
-
-
 }
-
 
 require __DIR__ . '/framework/vendor/autoload.php';
 require __DIR__ . '/framework/vendor/yiisoft/yii2/Yii.php';

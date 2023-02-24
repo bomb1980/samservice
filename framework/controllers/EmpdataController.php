@@ -11,7 +11,7 @@ use app\components\UserController;
 use app\models\LogEvent;
 use app\models\MasSsobranch;
 use app\models\MasUser;
-use app\models\PerPersonal1;
+use app\models\TbSaveFiles;
 use yii\helpers\Url;
 
 class EmpdataController extends Controller
@@ -26,61 +26,165 @@ class EmpdataController extends Controller
         }
     }
 
+    
 
-    public function actionPersonalotosql()
+    // http://samservice/empdata/user_register
+    public function actionUser_register($id = NULL)
     {
+
+        // arr(Yii::$app->user->identity->role_id);
+
+        $res = MasUser::findOne($id);
+
+        //form action
+        if (Yii::$app->request->isPost) {
+
+
+            $keep_errors = [];
+
+
+            $r = Yii::$app->request->post();
+
+            if (!$res) {
+
+                $res = new MasUser();
+
+                $res->load(\Yii::$app->request->post());
+
+
+                if (empty($r['password'])) {
+
+                    $keep_errors['password'] = 'please input user password';
+                }
+            }
+
+            // arr( $r );
+
+            $res->uid = $r['uid'];
+
+
+            if (!empty($r['password'])) {
+
+                if ($r['password'] != $r['passwordcheck']) {
+
+                    $keep_errors['passwordcheck'] = 'confirm password not match';
+                }
+
+                $res->password = Yii::$app->getSecurity()->generatePasswordHash($r['password']);
+            }
+            // ssobranch_code
+
+            $res->displayname = $r['displayname'];
+            $res->ssobranch_code = $r['ssobranch_code'];
+            $res->status = 1;
+            $res->role_id = $r['role_id'];
+            $res->create_by = json_encode(Yii::$app->user->getId());
+
+            if (!$res->validate()) {
+
+                foreach ($res->errors as $ke => $ve) {
+                    $keep_errors[$ke] = $ve;
+                }
+            }
+
+            if (!empty($keep_errors)) {
+
+                Yii::$app->session->setFlash('warning', json_encode($keep_errors));
+                $log_page = Yii::$app->request->referrer;
+
+                return Yii::$app->getResponse()->redirect($log_page);
+            }
+
+            $res->save();
+
+            $log_page = Url::to(['empdata/user_register', 'id' => $res->id]);
+
+            return Yii::$app->getResponse()->redirect($log_page);
+        }
+
+        //view
+        $datas['form']['id'] = NULL;
+        $datas['form']['uid'] = NULL;
+        $datas['form']['displayname'] = NULL;
+        $datas['form']['ssobranch_code'] = NULL;
+        $datas['button_text'] = 'เพิ่มผู้ใช้งาน';
+
+
+        $datas['check1'] = 'checked';
+        $datas['check2'] = NULL;
+        if ($res) {
+
+            $datas['form'] = $res;
+            $datas['button_text'] = 'แก้ไขผู้ใช้งาน';
+
+            if ($res->role_id != 1) {
+
+                $datas['check1'] = NULL;
+                $datas['check2'] = 'checked';
+            }
+        }
+
+        $datas['MasSsobranch'] = MasSsobranch::find()->all();
+
+        return $this->render('view_user_new', $datas);
+    }
+
+
+    // http://samservice/empdata/loadfile
+    public function actionLoadfile( $id = NULL )
+    {
+
+        $LogEvents = TbSaveFiles::findOne($id);
+    
+        if( $LogEvents ) {
+
+            $ex = explode( '/', $LogEvents->path );
+
+            unset( $ex[0]) ;
+
+            $txt = [];
+            for( $i = 1; $i <= 90; ++$i ) {
+    
+                $file_name = $LogEvents->path .'/'. $i .'.txt';
+    
+                if( file_exists( $file_name )) {
+    
+                    $txt[] = file_get_contents($file_name);
+                }
+                else {
+
+                    break;
+                }
+    
+            }
+    
+            header('Content-Description: File Transfer');
+            header('Content-Type: text/html; charset=UTF-8');
+            header('Content-disposition: attachment; filename='. implode('_', $ex ).'.txt');
+    
+            arr( implode( ' UNION ', $txt ));
+
+            exit;
+        }
+    
         $datas['columns'] = [
             [
-                'name' => 'PER_CARDNO',
-                'label' => 'เลขบัตร',
+                'name' => 'created_at',
+                'label' => 'สร้างเมื่อ',
                 'className' => "text-center",
                 'orderable' => false
             ],
             [
-                'name' => 'POS_ID',
-                'label' => 'เลขที่ตำแหน่ง',
+                'name' => 'download_link',
+                'label' => 'ดาวน์โหลด',
                 'className' => "text-center",
                 'orderable' => false
             ],
-            [
-                'name' => 'FULL_NAME_THAI',
-                'label' => 'ชื่อ นามสกุล',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'LEVEL_NO',
-                'label' => 'ระดับผู้ดำรงตำแหน่ง',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'ORGANIZE_TH',
-                'label' => 'สังกัดตามกฏหมาย',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'ORGANIZE_TH_ASS',
-                'label' => 'สังกัดตามมอบหมายงาน',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'OT_NAME',
-                'label' => 'ประเภทบุคลากร',
-                'className' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'PER_STATUS_NAME',
-                'label' => 'สถานะ',
-                'className' => "text-center",
-                'orderable' => false
-            ],
+         
+
         ];
 
-        $LogEvents = LogEvent::find(['log_page' => 'syndata'])->orderBy(['log_id' => SORT_DESC])->limit(1)->all();
+        $LogEvents = LogEvent::find(['log_page' => 'updatepertype'])->orderBy(['log_id' => SORT_DESC])->limit(1)->all();
 
         $datas['last_user'] = NULL;
         foreach ($LogEvents as $ka => $LogEvent) {
@@ -97,16 +201,16 @@ class EmpdataController extends Controller
             }
         }
 
-        $datas['datatableUrl'] = 'api';
-        $datas['apiUrl'] = 'cronemp/personaltosql';
-        $datas['title'] = 'ดึงข้อมูลบุคลากรมา sql';
+        $datas['datatableUrl'] = 'api/files';
+        $datas['apiUrl'] = 'cronemp/pertype';
+        $datas['title'] = 'ดาวน์โหลดไฟล์';
+
+        return $this->render('view_download', $datas);
+    
 
 
 
-        return $this->render('view_per_personal', $datas);
     }
-
-   
 
     // updateposition
     public function actionUpdatepertype()
@@ -713,108 +817,6 @@ class EmpdataController extends Controller
     }
 
 
-
-
-    // http://samservice/empdata/user_register
-    public function actionUser_register($id = NULL)
-    {
-
-        // arr(Yii::$app->user->identity->role_id);
-
-        $res = MasUser::findOne($id);
-
-        //form action
-        if (Yii::$app->request->isPost) {
-
-
-            $keep_errors = [];
-
-
-            $r = Yii::$app->request->post();
-
-            if (!$res) {
-
-                $res = new MasUser();
-
-                $res->load(\Yii::$app->request->post());
-
-
-                if (empty($r['password'])) {
-
-                    $keep_errors['password'] = 'please input user password';
-                }
-            }
-
-            // arr( $r );
-
-            $res->uid = $r['uid'];
-
-
-            if (!empty($r['password'])) {
-
-                if ($r['password'] != $r['passwordcheck']) {
-
-                    $keep_errors['passwordcheck'] = 'confirm password not match';
-                }
-
-                $res->password = Yii::$app->getSecurity()->generatePasswordHash($r['password']);
-            }
-            // ssobranch_code
-
-            $res->displayname = $r['displayname'];
-            $res->ssobranch_code = $r['ssobranch_code'];
-            $res->status = 1;
-            $res->role_id = $r['role_id'];
-            $res->create_by = json_encode(Yii::$app->user->getId());
-
-            if (!$res->validate()) {
-
-                foreach ($res->errors as $ke => $ve) {
-                    $keep_errors[$ke] = $ve;
-                }
-            }
-
-            if (!empty($keep_errors)) {
-
-                Yii::$app->session->setFlash('warning', json_encode($keep_errors));
-                $log_page = Yii::$app->request->referrer;
-
-                return Yii::$app->getResponse()->redirect($log_page);
-            }
-
-            $res->save();
-
-            $log_page = Url::to(['empdata/user_register', 'id' => $res->id]);
-
-            return Yii::$app->getResponse()->redirect($log_page);
-        }
-
-        //view
-        $datas['form']['id'] = NULL;
-        $datas['form']['uid'] = NULL;
-        $datas['form']['displayname'] = NULL;
-        $datas['form']['ssobranch_code'] = NULL;
-        $datas['button_text'] = 'เพิ่มผู้ใช้งาน';
-
-
-        $datas['check1'] = 'checked';
-        $datas['check2'] = NULL;
-        if ($res) {
-
-            $datas['form'] = $res;
-            $datas['button_text'] = 'แก้ไขผู้ใช้งาน';
-
-            if ($res->role_id != 1) {
-
-                $datas['check1'] = NULL;
-                $datas['check2'] = 'checked';
-            }
-        }
-
-        $datas['MasSsobranch'] = MasSsobranch::find()->all();
-
-        return $this->render('view_user_new', $datas);
-    }
 
 
 

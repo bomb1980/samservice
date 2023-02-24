@@ -13,321 +13,6 @@ use Yii;
 class PerPersonal1 extends \yii\db\ActiveRecord
 {
 
-    
-    public static function getlevelApi($user_id = 1)
-    {
-
-        $con = Yii::$app->dbdpis;
-        $con2 = Yii::$app->dbdpisemp;
-
-		$con3 = Yii::$app->db;
-
-
-        ini_set('memory_limit', '2048M');
-        //ini_set('max_execution_time', 0);
-        set_time_limit(0);
-        global $params;
-
-        $url_gettoken = $params['apiUrl'] . '/oapi/login'; //prd domain
-
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => $url_gettoken,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_SSL_VERIFYHOST => 0,
-            CURLOPT_SSL_VERIFYPEER => 0,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => '{
-                    "username":"niras_s@hotmail.com",
-                    "password":"LcNRemVEmAbS4Cv"
-                }',
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/json'
-            ),
-        ));
-
-
-        $response = curl_exec($curl);
-        if (curl_errno($curl)) {
-
-            echo json_encode(['success' => 'fail', 'msg' => 'เชื่อมฐานข้อมูลไม่สำเร็จ']);
-            return false;
-        }
-
-        curl_close($curl);
-        $result = json_decode($response, true);
-
-        $accessToken = '';
-        $encrypt_key = '';
-
-        if (json_last_error() === JSON_ERROR_NONE) {
-            if (array_key_exists("error", $result)) {
-                $arrsms = array(
-                    'status' => 'error',
-                    'msg' => $result['error']['message'],
-                );
-                return $arrsms;
-            }
-            $accessToken = $result['accessToken'];
-            $encrypt_key = $result['encrypt_key'];
-        } else {
-            $arrsms = array(
-                'status' => 'error',
-                'msg' => "",
-            );
-            return $arrsms;
-        }
-      
-        $url = "". $params['apiUrl'] ."/oapi/open_api_users/callapi";
-        $header = array(
-            'Content-Type: application/x-www-form-urlencoded',
-            'Authorization: ' . $accessToken
-        );
-
-        for ($p = 1; $p <= 1; ++$p) {
-
-            $param = array(
-                'endpoint' => 'tb_level',
-                'limit' => 1000,
-                'page' => $p
-            );
-
-            $data_result = self::calleservice($url, $header, $param);
-
-            if ($data_result['message'] != "success") {
-                $arrsms = array(
-                    'status' => 'error',
-                    'msg' => "",
-                );
-                return $arrsms;
-            }
-
-            $data = $data_result["data"];
-            $decrypt_data = self::ssl_decrypt_api($data, $encrypt_key);
-
-            $js = json_decode($decrypt_data);
-
-            if (count($js) == 0) {
-
-
-                break;
-            }
-
-            foreach ($js as $ka => $va) {
-
-                $SqlOrgs[] = "
-                    SELECT 
-                        '". $va->level_id ."' as level_id,
-                        '". $va->level_code ."' as level_code,
-                        '". $va->level_abbr ."' as level_abbr,
-                        '". $va->levelname_th ."' as levelname_th,
-                        '". $va->levelname_en ."' as levelname_en,
-                        '". $va->positiontype_id ."' as positiontype_id,
-                        '". $va->pertype_id ."' as pertype_id,
-                        '". $va->flag_executive ."' as flag_executive,
-                        '". $va->region_calc_flag ."' as region_calc_flag,
-                        '". $va->pos_value ."' as pos_value,
-                        '". $va->sortorder ."' as sortorder,
-                        '". $va->flag ."' as flag,
-                        '". $va->creator ."' as creator,
-                        '". $va->createdate ."' as createdate,
-                        '". $va->create_org ."' as create_org,
-                        '". $va->updateuser ."' as updateuser,
-                        '". $va->updatedate ."' as updatedate,
-                        '". $va->update_org ."' as update_org,
-                        '". $va->recode_id ."' as recode_id,
-                        '". $va->is_sync ."' as is_sync,
-                        '". $va->sync_datetime ."' as sync_datetime,
-                        '". $va->sync_status_code ."' as sync_status_code,
-                        '". $va->is_delete ."' as is_delete,
-                        '". $va->org_owner ."' as org_owner,
-                        '". $va->org_visible ."' as org_visible
-                    FROM dual
-                ";
-
-                if (count($SqlOrgs) > 100) {
-
-                 
-                    $sql = "
-                        MERGE INTO per_level_news d
-                        USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.level_id = s.level_id )
-                        WHEN NOT MATCHED THEN
-                        INSERT ( level_id,level_code,level_abbr,levelname_th,levelname_en,positiontype_id,pertype_id,flag_executive,region_calc_flag,pos_value,sortorder,flag,creator,createdate,create_org,updateuser,updatedate,update_org,recode_id,is_sync,sync_datetime,sync_status_code,is_delete,org_owner,org_visible ) VALUES
-                        ( s.level_id, s.level_code, s.level_abbr, s.levelname_th, s.levelname_en, s.positiontype_id, s.pertype_id, s.flag_executive, s.region_calc_flag, s.pos_value, s.sortorder, s.flag, s.creator, s.createdate, s.create_org, s.updateuser, s.updatedate, s.update_org, s.recode_id, s.is_sync, s.sync_datetime, s.sync_status_code, s.is_delete, s.org_owner, s.org_visible )               
-                        WHEN MATCHED THEN
-                        UPDATE
-                        SET
-                            level_code = s.level_code,
-                            level_abbr = s.level_abbr,
-                            levelname_th = s.levelname_th,
-                            levelname_en = s.levelname_en,
-                            positiontype_id = s.positiontype_id,
-                            pertype_id = s.pertype_id,
-                            flag_executive = s.flag_executive,
-                            region_calc_flag = s.region_calc_flag,
-                            pos_value = s.pos_value,
-                            sortorder = s.sortorder,
-                            flag = s.flag,
-                            creator = s.creator,
-                            createdate = s.createdate,
-                            create_org = s.create_org,
-                            updateuser = s.updateuser,
-                            updatedate = s.updatedate,
-                            update_org = s.update_org,
-                            recode_id = s.recode_id,
-                            is_sync = s.is_sync,
-                            sync_datetime = s.sync_datetime,
-                            sync_status_code = s.sync_status_code,
-                            is_delete = s.is_delete,
-                            org_owner = s.org_owner,
-                            org_visible = s.org_visible
-                    ";
-
-                    foreach ( $params['dbInserts'] as $kg => $vg) {
-
-                        if ($vg == 1) {
-
-                            $cmd = $con->createCommand($sql);
-                        } else {
-
-                            $cmd = $con2->createCommand($sql);
-                        }
-
-                        $cmd->execute();
-                    }
-
-
-                    $sql = "
-                        REPLACE INTO per_level_news 
-                        SELECT * FROM ( " . implode(' UNION ', $SqlOrgs) . " )  as new_tb                        
-                        
-                    ";
-
-                    $cmd = $con3->createCommand($sql);
-
-                    $cmd->execute();
-
-                    $SqlOrgs = [];
-
-
-                }
-            }
-        }
-
-        if (count($SqlOrgs) > 0) {
-
-                 
-            $sql = "
-                MERGE INTO per_level_news d
-                USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.level_id = s.level_id )
-                WHEN NOT MATCHED THEN
-                INSERT ( level_id,level_code,level_abbr,levelname_th,levelname_en,positiontype_id,pertype_id,flag_executive,region_calc_flag,pos_value,sortorder,flag,creator,createdate,create_org,updateuser,updatedate,update_org,recode_id,is_sync,sync_datetime,sync_status_code,is_delete,org_owner,org_visible ) VALUES
-                ( s.level_id, s.level_code, s.level_abbr, s.levelname_th, s.levelname_en, s.positiontype_id, s.pertype_id, s.flag_executive, s.region_calc_flag, s.pos_value, s.sortorder, s.flag, s.creator, s.createdate, s.create_org, s.updateuser, s.updatedate, s.update_org, s.recode_id, s.is_sync, s.sync_datetime, s.sync_status_code, s.is_delete, s.org_owner, s.org_visible )               
-                WHEN MATCHED THEN
-                UPDATE
-                SET
-                    level_code = s.level_code,
-                    level_abbr = s.level_abbr,
-                    levelname_th = s.levelname_th,
-                    levelname_en = s.levelname_en,
-                    positiontype_id = s.positiontype_id,
-                    pertype_id = s.pertype_id,
-                    flag_executive = s.flag_executive,
-                    region_calc_flag = s.region_calc_flag,
-                    pos_value = s.pos_value,
-                    sortorder = s.sortorder,
-                    flag = s.flag,
-                    creator = s.creator,
-                    createdate = s.createdate,
-                    create_org = s.create_org,
-                    updateuser = s.updateuser,
-                    updatedate = s.updatedate,
-                    update_org = s.update_org,
-                    recode_id = s.recode_id,
-                    is_sync = s.is_sync,
-                    sync_datetime = s.sync_datetime,
-                    sync_status_code = s.sync_status_code,
-                    is_delete = s.is_delete,
-                    org_owner = s.org_owner,
-                    org_visible = s.org_visible
-            ";
-
-            foreach ( $params['dbInserts'] as $kg => $vg) {
-
-                if ($vg == 1) {
-
-                    $cmd = $con->createCommand($sql);
-                } else {
-
-                    $cmd = $con2->createCommand($sql);
-                }
-
-                $cmd->execute();
-            }
-
-
-            $sql = "
-                REPLACE INTO per_level_news 
-                SELECT * FROM ( " . implode(' UNION ', $SqlOrgs) . " )  as new_tb                        
-                
-            ";
-
-            $cmd = $con3->createCommand($sql);
-
-            $cmd->execute();
-
-            $SqlOrgs = [];
-
-
-        }
-
-
-        $log_page = basename(Yii::$app->request->referrer); 
-        $log_description = 'อัพเดตข้อมูลระดับชั้น';
-        \app\models\CommonAction::AddEventLog($user_id, "Update", $log_page, $log_description);
-        $return['msg'] = 'ปรับปรุงข้อมูลเสร็จสิ้น';
-
-        $return['status'] = 'success';
-
-        return json_encode($return );
-    }
-
-
-
-    public static function saveFile($path = NULL, $content = NULL )
-    {
-         // $path = 'save_file/per_personal/' . date( 'Y-m-d') . '/1.txt';
-
-        $ex = explode( '/', $path );
-
-        $dirs = [];
-
-        foreach( $ex as $ke => $ve ) {
-
-            $dirs[] = $ve;
-
-            if( ($ke + 1) == count( $ex ) ) {
-
-                file_put_contents(  implode('/', $dirs ) , $content);
-
-            }
-            else {
-
-                if( !is_dir(implode('/', $dirs )) ) {
-
-                    mkdir( implode('/', $dirs ) );
-                }
-            }
-
-        }
-
-    }
-
     public static function getFromApi($user_id = 1)
     {
         global $params;
@@ -800,7 +485,14 @@ class PerPersonal1 extends \yii\db\ActiveRecord
         }
 
 
-         
+        
+        $LogEvents = new TbSaveFiles();
+        $LogEvents->tb_name = 'personal';
+
+        $LogEvents->path = 'save_file/per_personal/' . date( 'Y-m-d') . '';
+
+        $LogEvents->save();
+       
 
         $return['msg'] = 'ไม่มีการปรับปรุงข้อมูลใดๆ';
 
@@ -823,7 +515,321 @@ class PerPersonal1 extends \yii\db\ActiveRecord
         return json_encode($return);
     }
 
+    public static function getlevelApi($user_id = 1)
+    {
 
+        $con = Yii::$app->dbdpis;
+        $con2 = Yii::$app->dbdpisemp;
+
+		$con3 = Yii::$app->db;
+
+
+        ini_set('memory_limit', '2048M');
+        //ini_set('max_execution_time', 0);
+        set_time_limit(0);
+        global $params;
+
+        $url_gettoken = $params['apiUrl'] . '/oapi/login'; //prd domain
+
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $url_gettoken,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => '{
+                    "username":"niras_s@hotmail.com",
+                    "password":"LcNRemVEmAbS4Cv"
+                }',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json'
+            ),
+        ));
+
+
+        $response = curl_exec($curl);
+        if (curl_errno($curl)) {
+
+            echo json_encode(['success' => 'fail', 'msg' => 'เชื่อมฐานข้อมูลไม่สำเร็จ']);
+            return false;
+        }
+
+        curl_close($curl);
+        $result = json_decode($response, true);
+
+        $accessToken = '';
+        $encrypt_key = '';
+
+        if (json_last_error() === JSON_ERROR_NONE) {
+            if (array_key_exists("error", $result)) {
+                $arrsms = array(
+                    'status' => 'error',
+                    'msg' => $result['error']['message'],
+                );
+                return $arrsms;
+            }
+            $accessToken = $result['accessToken'];
+            $encrypt_key = $result['encrypt_key'];
+        } else {
+            $arrsms = array(
+                'status' => 'error',
+                'msg' => "",
+            );
+            return $arrsms;
+        }
+      
+        $url = "". $params['apiUrl'] ."/oapi/open_api_users/callapi";
+        $header = array(
+            'Content-Type: application/x-www-form-urlencoded',
+            'Authorization: ' . $accessToken
+        );
+
+        for ($p = 1; $p <= 1; ++$p) {
+
+            $param = array(
+                'endpoint' => 'tb_level',
+                'limit' => 1000,
+                'page' => $p
+            );
+
+            $data_result = self::calleservice($url, $header, $param);
+
+            if ($data_result['message'] != "success") {
+                $arrsms = array(
+                    'status' => 'error',
+                    'msg' => "",
+                );
+                return $arrsms;
+            }
+
+            $data = $data_result["data"];
+            $decrypt_data = self::ssl_decrypt_api($data, $encrypt_key);
+
+            $js = json_decode($decrypt_data);
+
+            if (count($js) == 0) {
+
+
+                break;
+            }
+
+            foreach ($js as $ka => $va) {
+
+                $SqlOrgs[] = "
+                    SELECT 
+                        '". $va->level_id ."' as level_id,
+                        '". $va->level_code ."' as level_code,
+                        '". $va->level_abbr ."' as level_abbr,
+                        '". $va->levelname_th ."' as levelname_th,
+                        '". $va->levelname_en ."' as levelname_en,
+                        '". $va->positiontype_id ."' as positiontype_id,
+                        '". $va->pertype_id ."' as pertype_id,
+                        '". $va->flag_executive ."' as flag_executive,
+                        '". $va->region_calc_flag ."' as region_calc_flag,
+                        '". $va->pos_value ."' as pos_value,
+                        '". $va->sortorder ."' as sortorder,
+                        '". $va->flag ."' as flag,
+                        '". $va->creator ."' as creator,
+                        '". $va->createdate ."' as createdate,
+                        '". $va->create_org ."' as create_org,
+                        '". $va->updateuser ."' as updateuser,
+                        '". $va->updatedate ."' as updatedate,
+                        '". $va->update_org ."' as update_org,
+                        '". $va->recode_id ."' as recode_id,
+                        '". $va->is_sync ."' as is_sync,
+                        '". $va->sync_datetime ."' as sync_datetime,
+                        '". $va->sync_status_code ."' as sync_status_code,
+                        '". $va->is_delete ."' as is_delete,
+                        '". $va->org_owner ."' as org_owner,
+                        '". $va->org_visible ."' as org_visible
+                    FROM dual
+                ";
+
+                if (count($SqlOrgs) > 100) {
+
+                 
+                    $sql = "
+                        MERGE INTO per_level_news d
+                        USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.level_id = s.level_id )
+                        WHEN NOT MATCHED THEN
+                        INSERT ( level_id,level_code,level_abbr,levelname_th,levelname_en,positiontype_id,pertype_id,flag_executive,region_calc_flag,pos_value,sortorder,flag,creator,createdate,create_org,updateuser,updatedate,update_org,recode_id,is_sync,sync_datetime,sync_status_code,is_delete,org_owner,org_visible ) VALUES
+                        ( s.level_id, s.level_code, s.level_abbr, s.levelname_th, s.levelname_en, s.positiontype_id, s.pertype_id, s.flag_executive, s.region_calc_flag, s.pos_value, s.sortorder, s.flag, s.creator, s.createdate, s.create_org, s.updateuser, s.updatedate, s.update_org, s.recode_id, s.is_sync, s.sync_datetime, s.sync_status_code, s.is_delete, s.org_owner, s.org_visible )               
+                        WHEN MATCHED THEN
+                        UPDATE
+                        SET
+                            level_code = s.level_code,
+                            level_abbr = s.level_abbr,
+                            levelname_th = s.levelname_th,
+                            levelname_en = s.levelname_en,
+                            positiontype_id = s.positiontype_id,
+                            pertype_id = s.pertype_id,
+                            flag_executive = s.flag_executive,
+                            region_calc_flag = s.region_calc_flag,
+                            pos_value = s.pos_value,
+                            sortorder = s.sortorder,
+                            flag = s.flag,
+                            creator = s.creator,
+                            createdate = s.createdate,
+                            create_org = s.create_org,
+                            updateuser = s.updateuser,
+                            updatedate = s.updatedate,
+                            update_org = s.update_org,
+                            recode_id = s.recode_id,
+                            is_sync = s.is_sync,
+                            sync_datetime = s.sync_datetime,
+                            sync_status_code = s.sync_status_code,
+                            is_delete = s.is_delete,
+                            org_owner = s.org_owner,
+                            org_visible = s.org_visible
+                    ";
+
+                    foreach ( $params['dbInserts'] as $kg => $vg) {
+
+                        if ($vg == 1) {
+
+                            $cmd = $con->createCommand($sql);
+                        } else {
+
+                            $cmd = $con2->createCommand($sql);
+                        }
+
+                        $cmd->execute();
+                    }
+
+
+                    $sql = "
+                        REPLACE INTO per_level_news 
+                        SELECT * FROM ( " . implode(' UNION ', $SqlOrgs) . " )  as new_tb                        
+                        
+                    ";
+
+                    $cmd = $con3->createCommand($sql);
+
+                    $cmd->execute();
+
+                    $SqlOrgs = [];
+
+
+                }
+            }
+        }
+
+        if (count($SqlOrgs) > 0) {
+
+                 
+            $sql = "
+                MERGE INTO per_level_news d
+                USING ( " . implode(' UNION ', $SqlOrgs) . " ) s ON ( d.level_id = s.level_id )
+                WHEN NOT MATCHED THEN
+                INSERT ( level_id,level_code,level_abbr,levelname_th,levelname_en,positiontype_id,pertype_id,flag_executive,region_calc_flag,pos_value,sortorder,flag,creator,createdate,create_org,updateuser,updatedate,update_org,recode_id,is_sync,sync_datetime,sync_status_code,is_delete,org_owner,org_visible ) VALUES
+                ( s.level_id, s.level_code, s.level_abbr, s.levelname_th, s.levelname_en, s.positiontype_id, s.pertype_id, s.flag_executive, s.region_calc_flag, s.pos_value, s.sortorder, s.flag, s.creator, s.createdate, s.create_org, s.updateuser, s.updatedate, s.update_org, s.recode_id, s.is_sync, s.sync_datetime, s.sync_status_code, s.is_delete, s.org_owner, s.org_visible )               
+                WHEN MATCHED THEN
+                UPDATE
+                SET
+                    level_code = s.level_code,
+                    level_abbr = s.level_abbr,
+                    levelname_th = s.levelname_th,
+                    levelname_en = s.levelname_en,
+                    positiontype_id = s.positiontype_id,
+                    pertype_id = s.pertype_id,
+                    flag_executive = s.flag_executive,
+                    region_calc_flag = s.region_calc_flag,
+                    pos_value = s.pos_value,
+                    sortorder = s.sortorder,
+                    flag = s.flag,
+                    creator = s.creator,
+                    createdate = s.createdate,
+                    create_org = s.create_org,
+                    updateuser = s.updateuser,
+                    updatedate = s.updatedate,
+                    update_org = s.update_org,
+                    recode_id = s.recode_id,
+                    is_sync = s.is_sync,
+                    sync_datetime = s.sync_datetime,
+                    sync_status_code = s.sync_status_code,
+                    is_delete = s.is_delete,
+                    org_owner = s.org_owner,
+                    org_visible = s.org_visible
+            ";
+
+            foreach ( $params['dbInserts'] as $kg => $vg) {
+
+                if ($vg == 1) {
+
+                    $cmd = $con->createCommand($sql);
+                } else {
+
+                    $cmd = $con2->createCommand($sql);
+                }
+
+                $cmd->execute();
+            }
+
+
+            $sql = "
+                REPLACE INTO per_level_news 
+                SELECT * FROM ( " . implode(' UNION ', $SqlOrgs) . " )  as new_tb                        
+                
+            ";
+
+            $cmd = $con3->createCommand($sql);
+
+            $cmd->execute();
+
+            $SqlOrgs = [];
+
+
+        }
+
+
+        $log_page = basename(Yii::$app->request->referrer); 
+        $log_description = 'อัพเดตข้อมูลระดับชั้น';
+        \app\models\CommonAction::AddEventLog($user_id, "Update", $log_page, $log_description);
+        $return['msg'] = 'ปรับปรุงข้อมูลเสร็จสิ้น';
+
+        $return['status'] = 'success';
+
+        return json_encode($return );
+    }
+
+
+
+    public static function saveFile($path = NULL, $content = NULL )
+    {
+         // $path = 'save_file/per_personal/' . date( 'Y-m-d') . '/1.txt';
+
+        $ex = explode( '/', $path );
+
+        $dirs = [];
+
+        foreach( $ex as $ke => $ve ) {
+
+            $dirs[] = $ve;
+
+            if( ($ke + 1) == count( $ex ) ) {
+
+                file_put_contents(  implode('/', $dirs ) , $content);
+
+            }
+            else {
+
+                if( !is_dir(implode('/', $dirs )) ) {
+
+                    mkdir( implode('/', $dirs ) );
+                }
+            }
+
+        }
+
+    }
+
+  
 
      //http://samservice/empdata/tb_pertype
      public static function getPertypeApi($user_id = 1)
