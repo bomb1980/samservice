@@ -17,18 +17,15 @@ class PerPersonal1 extends \yii\db\ActiveRecord
     {
         global $params;
 
+        $con = Yii::$app->dbdpis;
+        $con2 = Yii::$app->dbdpisemp;
+        $con3 = Yii::$app->db;
+
         ini_set("default_socket_timeout", 20000);
         ini_set('memory_limit', '2048M');
         set_time_limit(0);
 
-        $con = Yii::$app->dbdpis;
-
-        $con2 = Yii::$app->dbdpisemp;
-        $con3 = Yii::$app->db;
-
-
         $url_gettoken = $params['apiUrl'] . '/oapi/login'; //prd domain
-        // $url_gettoken = 'https://172.16.12.248/oapi/login'; //prd ip
         $curl = curl_init();
         curl_setopt_array($curl, array(
             CURLOPT_URL => $url_gettoken,
@@ -181,20 +178,24 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
                         $file_name = 'save_file/per_personal/' . date( 'Y-m-d') . '/'. ++$file_number .'.txt';
 
-                        if( file_exists( $file_name ) ) {
 
-                            if( file_get_contents( $file_name ) == $implodeUnion ) {
+                        if( !empty( $params['dbInserts'] ) ) {
 
-                                $implodeUnion = NULL;
-
-                                $SqlUnion[$ks] = [];
-
-                                continue;
+                            if( file_exists( $file_name ) ) {
+    
+                                if( file_get_contents( $file_name ) == $implodeUnion ) {
+    
+                                    $implodeUnion = NULL;
+    
+                                    $SqlUnion[$ks] = [];
+    
+                                    continue;
+                                }
                             }
+                           
+                            self::saveFile( $file_name, $implodeUnion );
                         }
                        
-                        self::saveFile( $file_name, $implodeUnion );
-
                         $sql = "
                             MERGE INTO per_personal_news d
                             USING ( 
@@ -293,8 +294,6 @@ class PerPersonal1 extends \yii\db\ActiveRecord
                                 per_level_date = s.per_level_date,
                                 per_line_date = s.per_line_date   
                         ";
-
-                       
 
                         if( in_array( $ks, $params['dbInserts'])) {
 
@@ -485,7 +484,59 @@ class PerPersonal1 extends \yii\db\ActiveRecord
         }
 
 
-        
+
+        $sql = "
+            SELECT 
+                p.per_cardno, p.per_id, p.per_status, p.pertype_id 
+            FROM per_personal_news p INNER JOIN ( 
+                SELECT IF( pertype_id IN ( 5, 42, 43, 44 ), 1, 2 ) as setType, per_cardno, COUNT(*) as t FROM per_personal_news WHERE per_cardno is not null GROUP by per_cardno, setType HAVING t > 1 ORDER BY t desc, per_cardno asc
+            ) as new_tb ON p.per_cardno = new_tb.per_cardno AND IF( p.pertype_id IN ( 5, 42, 43, 44 ), 1, 2 ) = new_tb.setType
+
+            ORDER BY p.per_cardno ASC, p.per_id DESC
+        ";
+
+        $cmd = $con3->createCommand($sql);
+
+        $keepDels = [];
+        foreach( $cmd->queryAll() as $ka => $va ) {
+
+            if( !isset( $keepDels[$va['per_cardno']] )) {
+
+                $keepDels[$va['per_cardno']][0] = 0;
+            }
+            else {
+                $keepDels[$va['per_cardno']][$va['per_id']] = $va['per_id'];
+
+            }
+        }
+
+
+        // arr($keepDels);
+
+        foreach( $keepDels as $ka => $va ) {
+
+
+            $sql = "DELETE FROM per_personal_news WHERE per_id IN (". implode(',', $va) .")";
+            $cmd = $con3->createCommand($sql);
+
+            $cmd->execute();
+
+            foreach( $params['dbInserts'] as $ks => $vs ) {
+
+
+                if ($ks == 1) {
+    
+                    $cmd = $con->createCommand($sql);
+                }
+                else {
+                    $cmd = $con2->createCommand($sql); 
+                }
+                
+                $cmd->execute();
+            }
+            
+        }
+
         $LogEvents = new TbSaveFiles();
         $LogEvents->tb_name = 'personal';
 
@@ -802,7 +853,6 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
     public static function saveFile($path = NULL, $content = NULL )
     {
-         // $path = 'save_file/per_personal/' . date( 'Y-m-d') . '/1.txt';
 
         $ex = explode( '/', $path );
 

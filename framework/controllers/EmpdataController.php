@@ -26,6 +26,84 @@ class EmpdataController extends Controller
         }
     }
 
+    public function actionSyndata()
+    {
+
+        // arr('dsasddf');
+        $datas['columns'] = [
+            [
+                'name' => 'personal_id',
+                'label' => 'เลขบัตร',
+                'classname' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'position',
+                'label' => 'เลขที่ตำแหน่ง',
+                'classname' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'full_name',
+                'label' => 'ชื่อ นามสกุล',
+                'classname' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'level_name',
+                'label' => 'ระดับผู้ดำรงตำแหน่ง',
+                'classname' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'org_name',
+                'label' => 'สังกัดตามกฏหมาย',
+                'classname' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'org_ass_name',
+                'label' => 'สังกัดตามมอบหมายงาน',
+                'classname' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'off_type',
+                'label' => 'ประเภทบุคลากร',
+                'classname' => "text-center",
+                'orderable' => false
+            ],
+            [
+                'name' => 'per_status_name',
+                'label' => 'สถานะ',
+                'classname' => "text-center",
+                'orderable' => false
+            ],
+        ];
+
+        $LogEvents = LogEvent::find(['log_page' => 'syndata'])->orderBy(['log_id' => SORT_DESC])->limit(1)->all();
+
+        $datas['last_user'] = NULL;
+        foreach ($LogEvents as $ka => $LogEvent) {
+            if ($LogEvent['log_user'] == yii::$app->user->getId()) {
+
+                $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">' . $LogEvent->log_date . '</b> โดย <b style="color: #a53f6f;">คุณ</b> </div>';
+            } else {
+
+                $res = MasUser::findOne($LogEvent->log_user);
+
+                if ($res) {
+                    $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">' . $LogEvent->log_date . '</b> โดยคุณ  <b style="color: #a53f6f;">' . $res['displayname'] . '</b> </div>';
+                }
+            }
+        }
+
+        $datas['datatableUrl'] = 'api';
+        $datas['apiUrl'] = 'cronemp/perpersonal';
+        $datas['title'] = 'ข้อมูลบุคลากร (per_personal)';
+
+        return $this->render('view_per_personal', $datas);
+    }
     
 
     // http://samservice/empdata/user_register
@@ -432,83 +510,7 @@ class EmpdataController extends Controller
         return $this->render('view', $datas);
     }
 
-    public function actionSyndata()
-    {
-
-        $datas['columns'] = [
-            [
-                'name' => 'personal_id',
-                'label' => 'เลขบัตร',
-                'classname' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'position',
-                'label' => 'เลขที่ตำแหน่ง',
-                'classname' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'full_name',
-                'label' => 'ชื่อ นามสกุล',
-                'classname' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'level_name',
-                'label' => 'ระดับผู้ดำรงตำแหน่ง',
-                'classname' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'org_name',
-                'label' => 'สังกัดตามกฏหมาย',
-                'classname' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'org_ass_name',
-                'label' => 'สังกัดตามมอบหมายงาน',
-                'classname' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'off_type',
-                'label' => 'ประเภทบุคลากร',
-                'classname' => "text-center",
-                'orderable' => false
-            ],
-            [
-                'name' => 'per_status_name',
-                'label' => 'สถานะ',
-                'classname' => "text-center",
-                'orderable' => false
-            ],
-        ];
-
-        $LogEvents = LogEvent::find(['log_page' => 'syndata'])->orderBy(['log_id' => SORT_DESC])->limit(1)->all();
-
-        $datas['last_user'] = NULL;
-        foreach ($LogEvents as $ka => $LogEvent) {
-            if ($LogEvent['log_user'] == yii::$app->user->getId()) {
-
-                $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">' . $LogEvent->log_date . '</b> โดย <b style="color: #a53f6f;">คุณ</b> </div>';
-            } else {
-
-                $res = MasUser::findOne($LogEvent->log_user);
-
-                if ($res) {
-                    $datas['last_user'] = '<div>อัพเดทข้อมูลล่าสุดเมื่อ <b style="color: #df390c;">' . $LogEvent->log_date . '</b> โดยคุณ  <b style="color: #a53f6f;">' . $res['displayname'] . '</b> </div>';
-                }
-            }
-        }
-
-        $datas['datatableUrl'] = 'api';
-        $datas['apiUrl'] = 'cronemp/perpersonal';
-        $datas['title'] = 'ข้อมูลบุคลากร (per_personal)';
-
-        return $this->render('view_per_personal', $datas);
-    }
+   
 
     public function actionTest1()
     {

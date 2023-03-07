@@ -13,12 +13,46 @@ use app\models\PerPersonal1;
 class CronempController extends Controller
 {
 
+	// http://samservice/cronemp/perpersonal/?ciphering=AES-256-CBC&encryption_iv=1234567891011121
+	public function actionPerpersonal()
+	{
+		if (Yii::$app->user->getId()) {
+
+
+			echo PerPersonal1::getFromApi(Yii::$app->user->getId());
+			exit;
+		} else {
+
+			$r = Yii::$app->request->get();
+
+			$headers = CommonFnc::getAuthorizationHeader();
+
+			if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
+
+
+				$MasUser = MasUser::find()
+					->where(['uid' => CommonFnc::getEncrypter($matches[1], 'decypt', $r['ciphering'], $r['encryption_iv'])])
+					->one();
+
+				if ($MasUser) {
+
+					echo PerPersonal1::getFromApi($MasUser->id);
+					exit;
+				}
+			}
+		}
+
+		$datas['status'] = 'fail';
+		$datas['msg'] = 'ไม่สำเร็จ';
+
+		echo json_encode($datas);
+
+		exit;
+	}
 
 	// http://samservice/empdata/personaltosql
 	public function actionPersonaltosql()
 	{
-
-		
 		ini_set("default_socket_timeout", 60000);
 		ini_set('memory_limit', '2048M');
 		set_time_limit(0);
@@ -133,46 +167,6 @@ class CronempController extends Controller
 		exit;
 	}
 
-
-	// http://samservice/cronemp/perpersonal/?ciphering=AES-256-CBC&encryption_iv=1234567891011121
-	public function actionPerpersonal()
-	{
-
-		if (Yii::$app->user->getId()) {
-
-
-			echo PerPersonal1::getFromApi(Yii::$app->user->getId());
-			exit;
-		} else {
-
-			$r = Yii::$app->request->get();
-
-			$headers = CommonFnc::getAuthorizationHeader();
-
-			if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
-
-				$ciphering = $r['ciphering'];
-				$encryption_iv = $r['encryption_iv'];
-
-				$MasUser = MasUser::find()
-					->where(['uid' => CommonFnc::getEncrypter($matches[1], 'decypt', $ciphering, $encryption_iv)])
-					->one();
-
-				if ($MasUser) {
-
-					echo PerPersonal1::getFromApi($MasUser->id);
-					exit;
-				}
-			}
-		}
-
-		$datas['status'] = 'fail';
-		$datas['msg'] = 'ไม่สำเร็จ';
-
-		echo json_encode($datas);
-
-		exit;
-	}
 
 	public function actionPertype()
 	{
