@@ -588,21 +588,16 @@ class ApiController extends Controller
     public function actionIndex()
     {
 
+        $con = Yii::$app->db;
+
+
         $req = Yii::$app->request->get();
 
         $seltype = isset($req['seltype']) ? $req['seltype'] : 1;
         $start = isset($req['start']) ? $req['start'] : 0;
         $length = isset($req['length']) ? $req['length'] : 10;
 
-        // if ($seltype == 1) {
-
-        //     $con = Yii::$app->dbdpis;
-        // } else {
-
-        //     $con = Yii::$app->dbdpisemp;
-        // }
         
-        $con = Yii::$app->db;
         $sql = "
             SELECT
                 COUNT( * ) as tt
@@ -627,6 +622,16 @@ class ApiController extends Controller
 
         }
 
+        if($seltype == 1 ) {
+
+            $replace['WHERE'][] = "p.pertype_id IN (5, 42, 43, 44)";
+        }
+        else {
+
+            $replace['WHERE'][] = "p.pertype_id NOT IN (5, 42, 43, 44)";
+        }
+
+
         $cmd = genCond_($sql, $replace, $con, $bindValue);
 
         // arr( $cmd->sql );
@@ -638,51 +643,7 @@ class ApiController extends Controller
             $totalRecords = $vt['tt'];
         }
 
-        // $sql = "
-        //     SELECT
-        //         p.per_cardno,
-        //         p.pos_id,
-        //         CONCAT( p.per_name, CONCAT(' ', p.per_surname ) ) as full_name_thai,
-        //         l.level_code as level_no,
-        //         orga.organize_th as organize_th_ass,
-        //         orga2.organize_th as organize_th,
-        //         t.pertype as ot_name,
-        //         CASE
-        //             WHEN p.per_status = -1 THEN 'ยังไม่มี per_id'
-        //             WHEN p.per_status = 0 THEN 'รอบรรจุ'
-        //             WHEN p.per_status = 1 THEN 'ปกติ'
-        //             WHEN p.per_status = 2 THEN 'พ้นจากราชการแล้ว'
-        //             WHEN p.per_status = 3 THEN 'รอคำสั่งบรรจุ/รอเลขที่ตำแหน่ง'
-        //             ELSE 'ไม่มาปฏิบัติงาน'
-        //         END as per_status_name
-        //     FROM per_personal_news p
-        //     LEFT JOIN per_off_type_news t ON p.pertype_id = t.pertype_id
-        //     LEFT JOIN per_position_news po ON p.pos_id = po.pos_id
-        //     LEFT JOIN per_org_ass_news orga2 ON p.organize_id_ass = orga2.organize_id
-        //     LEFT JOIN per_org_ass_news orga ON po.organize_id = orga.organize_id
-        //     LEFT JOIN per_level_news l ON p.per_level_id = l.level_id
-        //     [WHERE]
-        //     [ORDER]
-        //     LIMIT " . $start . ", ". $length ."
-        // ";
-
-        // [personal_id] => 3100601829038
-        // [thai_title] => นางสาว
-        // [thai_firstname] => ภรัณยา
-        // [eng_title] => Miss
-        // [eng_firstname] => PARUNYA
-        // [eng_lastname] => THANOMKAEO
-        // [start_date] => 2001-10-29
-        // [birth_date] => 1972-10-17
-        // [status] => 1
-        // [thai_lastname] => ถนอมแก้ว
-        // [per_status_name] => ปกติ
-        // [branch_name] => กองบริหารทรัพยากรบุคคล
-        // [off_type] => ข้าราชการพลเรือนสามัญ
-        // [org_name] => กองบริหารทรัพยากรบุคคล
-        // [org_ass_name] => กองบริหารทรัพยากรบุคคล
-        // [position] => นิติกร
-        // [level_name] => ระดับชำนาญการ
+    
         $sql = "
         
             SELECT
@@ -725,6 +686,9 @@ class ApiController extends Controller
             // OFFSET " . $start . " ROWS FETCH NEXT :length ROWS ONLY
         // $bindValue['length'] = $length;
 
+
+        // arr('fadsdsdsf');
+
         $orders = [];
         if( isset( $req['columns'] ) ) {
 
@@ -745,22 +709,18 @@ class ApiController extends Controller
         
         $cmd = genCond_( $sql, $replace, $con, $bindValue );
 
+        // $keep = [];
+        // foreach( $cmd->queryAll() as $kd => $vd ) {
 
-        // arr( $cmd->sql );
-        
-        $keep = [];
-        foreach( $cmd->queryAll() as $kd => $vd ) {
 
-            // arr($vd);
-
-            $keep[] = $vd;
-        }
+        //     $keep[] = $vd;
+        // }
 
         echo json_encode(
             [
                 "iTotalRecords" => $totalRecords,
                 "iTotalDisplayRecords" => $totalRecords,
-                "aaData" =>  $keep,
+                "aaData" =>  $cmd->queryAll(),
             ]
         );
 
