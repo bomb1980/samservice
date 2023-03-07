@@ -10,14 +10,14 @@ class CreatePerPersonalNewsTable extends Migration
     public function up()
     {
 
-
         if (config('database.default')  == 'mysql') {
 
             Schema::create('per_personal_news', function (Blueprint $table) {
 
+                $table->bigInteger('per_cardno')->nullable();
+                $table->integer('pertype_id')->nullable();
+                $table->integer('per_status')->nullable();
                 $table->bigInteger('per_id')->autoIncrement();
-
-
                 $table->string('per_name')->nullable();
                 $table->string('per_surname')->nullable();
 
@@ -82,14 +82,11 @@ class CreatePerPersonalNewsTable extends Migration
 
 
 
-                $table->bigInteger('per_cardno')->nullable();
                 $table->integer('is_sync')->nullable();
                 $table->bigInteger('pos_id')->nullable();
                 $table->integer('per_level_id')->nullable();
-                $table->integer('pertype_id')->nullable();
                 $table->string('d5_per_id')->nullable();
                 $table->string('pos_no')->nullable();
-                $table->integer('per_status')->nullable();
                 $table->integer('per_gender')->nullable();
                 $table->integer('organize_id_ass')->nullable();
                 $table->string('is_delete')->nullable();
@@ -128,6 +125,9 @@ class CreatePerPersonalNewsTable extends Migration
 
             Schema::create('per_personal_news', function (Blueprint $table) {
 
+                $table->bigInteger('per_cardno')->nullable();
+                $table->bigInteger('per_id')->autoIncrement();
+                $table->integer('pertype_id')->nullable();
                 $table->string('per_name')->nullable();
                 $table->string('per_surname')->nullable();
                 $table->string('per_start_org')->nullable();
@@ -189,12 +189,9 @@ class CreatePerPersonalNewsTable extends Migration
 
 
 
-                $table->bigInteger('per_cardno')->nullable();
                 $table->integer('is_sync')->nullable();
-                $table->bigInteger('per_id')->autoIncrement();
                 $table->bigInteger('pos_id')->nullable();
                 $table->integer('per_level_id')->nullable();
-                $table->integer('pertype_id')->nullable();
                 $table->string('d5_per_id')->nullable();
                 $table->string('pos_no')->nullable();
                 $table->integer('per_status')->nullable();

@@ -487,12 +487,23 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
         $sql = "
             SELECT 
-                p.per_cardno, p.per_id, p.per_status, p.pertype_id 
+                p.per_cardno, 
+                p.per_id, 
+                p.per_status, 
+                p.pertype_id 
             FROM per_personal_news p INNER JOIN ( 
-                SELECT IF( pertype_id IN ( 5, 42, 43, 44 ), 1, 2 ) as setType, per_cardno, COUNT(*) as t FROM per_personal_news WHERE per_cardno is not null GROUP by per_cardno, setType HAVING t > 1 ORDER BY t desc, per_cardno asc
+                SELECT 
+                    IF( pertype_id IN ( 5, 42, 43, 44 ), 1, 2 ) as setType, 
+                    per_cardno, COUNT(*) as t 
+                FROM per_personal_news 
+                WHERE per_cardno is not null 
+                GROUP by per_cardno, setType 
+                HAVING t > 1 
+               
             ) as new_tb ON p.per_cardno = new_tb.per_cardno AND IF( p.pertype_id IN ( 5, 42, 43, 44 ), 1, 2 ) = new_tb.setType
-
-            ORDER BY p.per_cardno ASC, p.per_id DESC
+            ORDER BY 
+                p.per_cardno ASC, 
+                p.per_id DESC
         ";
 
         $cmd = $con3->createCommand($sql);
@@ -509,9 +520,6 @@ class PerPersonal1 extends \yii\db\ActiveRecord
 
             }
         }
-
-
-        // arr($keepDels);
 
         foreach( $keepDels as $ka => $va ) {
 
